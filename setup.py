@@ -2,9 +2,9 @@ from setuptools import find_packages, setup
 from lbutils import __version__
 
 setup(
-    name='lbworkflow',
+    name='django-lb-workflow',
     version=__version__,
-    url='https://github.com/vicalloy/lbworkflow',
+    url='https://github.com/vicalloy/django-lb-workflow',
     author='vicalloy',
     author_email='vicalloy@gmail.com',
     description="Reusable workflow library for Django",
