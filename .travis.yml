@@ -1,0 +1,27 @@
+sudo: false
+
+language: python
+
+python:
+  - "3.5"
+  - "3.6"
+
+env:
+  - DJANGO="Django>=1.8,<1.9"
+  - DJANGO="Django>=1.9,<1.10"
+  - DJANGO="Django>=1.10,<1.11"
+
+cache:
+  directories:
+  - $HOME/.cache/pip/wheels
+
+install:
+  - nvm install 7
+  - pip install -U pip wheel setuptools
+  - pip install $DJANGO -e .[tests]
+  - pip freeze
+
+script:
+  - python runtests.py
+  - flake8
+  - isort --check-only --recursive channels

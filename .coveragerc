@@ -1,0 +1,12 @@
+[run]
+branch = True
+source = lbworkflow
+omit = lbworkflow/tests/*
+
+[report]
+show_missing = True
+skip_covered = True
+omit = lbworkflow/tests/*
+
+[html]
+directory = coverage_html
