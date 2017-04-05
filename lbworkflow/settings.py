@@ -8,6 +8,12 @@ USER_PARSER = getattr(
 
 EVAL_FUNCS = getattr(django_settings, 'LBWF_EVAL_FUNCS', {})
 
+WF_SEND_MSG_FUNCS = getattr(
+    django_settings,
+    'LBWF_WF_SEND_MSG_FUNCS',
+    ['lbworkflow.core.sendmsg.wf_print', ],
+)
+
 GET_USER_DISPLAY_NAME_FUNC = getattr(
     django_settings, 'LBWF_GET_USER_DISPLAY_NAME_FUNC',
     lambda user: "%s" % user)
