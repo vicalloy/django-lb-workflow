@@ -1,23 +1,13 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 from lbworkflow.core.userparser import SimpleUserParser
 
+from .test_base import BaseTests
 
 User = get_user_model()
 
 
-class UserSimpleParserTests(TestCase):
-
-    def setUp(self):
-        def create_user(username):
-            return User.objects.create(username=username, password='pass')
-        super(UserSimpleParserTests, self).setUp()
-        self.users = {
-            'owner': create_user('owner'),
-            'operator': create_user('operator'),
-            'vicalloy': create_user('vicalloy'),
-        }
+class UserSimpleParserTests(BaseTests):
 
     def test_parser_users(self):
         users = SimpleUserParser('[vicalloy]').parse()
@@ -38,8 +28,8 @@ class UserSimpleParserTests(TestCase):
 
     def test_eval_as_list(self):
         # [o.auditors]
-        # TODO
-        pass
+        users = SimpleUserParser('[o.created_by]', self.leave.pinstance).parse()
+        self.assertEqual(users[0], self.users['owner'])
 
     def test_condition_rules(self):
         rules = """
