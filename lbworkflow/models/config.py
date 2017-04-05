@@ -211,7 +211,7 @@ class ActivityManager(models.Manager):
 
 
 class Activity(models.Model):
-    TYPE_CHOICES = (
+    STATUS_CHOICES = (
         ('draft', 'Draft'),
         ('given up', 'Given up'),
         ('rejected', 'Rejected'),
@@ -234,7 +234,7 @@ class Activity(models.Model):
     )
     status = models.CharField(
         'Type', max_length=16,
-        default='in progress', choices=TYPE_CHOICES)
+        default='in progress', choices=STATUS_CHOICES)
     audit_page_type = models.CharField(
         'Audit page type', max_length=64,
         choices=AUDIT_PAGE_TYPE_CHOICES,
@@ -242,8 +242,8 @@ class Activity(models.Model):
         default='view')
 
     can_edit = models.BooleanField('Can edit', default=False)
-    can_reject = models.BooleanField('Can reject', default=False)
-    can_give_up = models.BooleanField('Can give up', default=False)
+    can_reject = models.BooleanField('Can reject', default=True)
+    can_give_up = models.BooleanField('Can give up', default=True)
 
     operators = models.TextField('Audit users', blank=True)
     notice_users = models.TextField('Notice users', blank=True)
@@ -264,6 +264,9 @@ class Activity(models.Model):
         return (
             self.uuid,
         )
+
+    def is_submitted(self):
+        return self.status in ['in progress', 'completed']
 
     def get_operators(self, owner, operator, instance=None):
         return create_instance(
@@ -302,7 +305,7 @@ class Transition(models.Model):
     name = models.CharField(
         'Name', max_length=100, default='Agree',
         help_text="It also the action's name, like: Agree/Submit")
-    code = models.CharField(
+    code = models.CharField(  # 'back to', 'rollback'
         'Code', max_length=100, blank=True,
     )
     is_agree = models.BooleanField(
