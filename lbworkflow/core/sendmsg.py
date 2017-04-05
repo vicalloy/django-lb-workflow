@@ -20,4 +20,4 @@ def wf_send_msg(users, msg_type, event=None, ext_ctx=None):
 
 
 def wf_print(users, msg_type, event=None, ext_ctx=None):
-    print("%s, %s, %s" % (users, msg_type, event))
+    print("wf_print: %s, %s, %s" % (users, msg_type, event))
