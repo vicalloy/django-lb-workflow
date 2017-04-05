@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Q
 from jsonfield import JSONField
 from lbattachment.models import LBAttachment
+from lbutils import get_or_none
 
 from lbworkflow.settings import AUTH_USER_MODEL, GET_USER_DISPLAY_NAME_FUNC
 
@@ -84,7 +85,7 @@ class ProcessInstance(models.Model):
         return [e for e in users if e]
 
     def get_users_display(self):
-        return ', '.join(["%s" % e for e in self.get_users()])
+        return ', '.join([GET_USER_DISPLAY_NAME_FUNC(e) for e in self.get_users()])
 
     def get_reject_transition(self):
         return self.process.get_reject_transition(self.cur_activity)
@@ -101,17 +102,17 @@ class ProcessInstance(models.Model):
     def get_give_up_transition(self):
         return self.process.get_give_up_transition(self.cur_activity)
 
-    def create_workitem(self, act_user):
-        """ create workitem for give up & rollback """
+    def create_workitem(self, operator):
+        """ create workitem for submit/give up/rollback """
         return WorkItem.objects.create(
             instance=self,
             activity=self.cur_activity,
-            user=act_user,
+            user=operator,
         )
 
     def get_transitions(self, only_agree=False, only_can_auto_agree=False):
         qs = Transition.objects.filter(
-            process=self.process, input=self.cur_activity
+            process=self.process, input_activity=self.cur_activity
         ).order_by('is_agree', 'oid', 'id')
         if only_agree:
             qs = qs.filter(is_agree=True)
@@ -144,10 +145,16 @@ class ProcessInstance(models.Model):
 
         return merged_transitions
 
-    def get_todo_workitem(self, user):
-        return WorkItem.objects.filter(
+    def get_todo_workitem(self, user=None):
+        return self.get_todo_workitems(user).first()
+
+    def get_todo_workitems(self, user=None):
+        qs = WorkItem.objects.filter(
             instance=self, activity=self.cur_activity,
-            status='in progress').filter(Q(agent_user=user) | Q(user=user)).first()
+            status='in progress').filter(Q(agent_user=user) | Q(user=user))
+        if user:
+            qs = qs.filter(Q(agent_user=user) | Q(user=user))
+        return qs
 
     def is_user_agreed(self, user):
         events = Event.objects.filter(instance=self).order_by('-created_on', '-id')
@@ -194,7 +201,7 @@ class ProcessInstance(models.Model):
             self.no = wf_obj.get_process_no()
             self.created_by = wf_obj.created_by
             self.summary = wf_obj.get_process_summary()
-            super(ProcessInstance, self).save(*args, **kwargs)
+            super(ProcessInstance, self).save(force_update=True)
 
 
 class Authorization(models.Model):
@@ -260,12 +267,12 @@ class WorkItem(models.Model):
     created_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '%s - %s - %s' % (self.instance.descn, self.activity.name, self.pk)
+        return '%s - %s - %s' % (self.instance.summary, self.activity.name, self.pk)
 
     def update_authorization(self, commit=True):
         today = datetime.date.today()
         authorization = Authorization.objects.filter(
-            processes=self.instance.process, authorized_user=self.user,
+            processes=self.instance.process, user=self.user,
             start_on__lte=today, end_on__gte=today,
         ).first()
 
@@ -326,8 +333,10 @@ class Event(models.Model):
         AUTH_USER_MODEL, related_name='notice_events',
         blank=True)
 
+    comment = models.TextField(blank=True, default='')
+    attachments = models.ManyToManyField(
+        LBAttachment, verbose_name='Attachment', blank=True)
     ext_data = JSONField(null=True, blank=True)
-    comment = models.ForeignKey(Comment, null=True, blank=True)
 
     created_on = models.DateTimeField(auto_now=True)
 
@@ -340,7 +349,7 @@ class Event(models.Model):
     def get_next_notice_users_display(self):
         if self.old_activity == self.new_activity:
             return ''
-        return ', '.join([GET_USER_DISPLAY_NAME_FUNC(e) for e in self.next_notice_users.all()])
+        return ', '.join([GET_USER_DISPLAY_NAME_FUNC(e) for e in self.notice_users.all()])
 
     def __str__(self):
         old_activity = self.old_activity.name if self.old_activity else ''
@@ -364,10 +373,10 @@ class BaseWFObj(models.Model):
         abstract = True
 
     def get_process_no(self):
-        pinstance = self.pinstance
-        if not pinstance.pk:
-            return ''
-        return '%s%s' % (pinstance.process.prefix, pinstance.pk)
+        instance = self.pinstance
+        if instance and instance.pk:
+            return '%s%s' % (instance.process.prefix, instance.pk)
+        return ''
 
     def get_status(self):
         return self.pinstance.cur_activity.status
@@ -383,7 +392,7 @@ class BaseWFObj(models.Model):
         if commit:
             pinstance.save()
 
-    def on_finish(self):
+    def on_complete(self):
         pass
 
     def on_submit(self):
@@ -400,13 +409,33 @@ class BaseWFObj(models.Model):
 
     def save(self, *args, **kwargs):
         super(BaseWFObj, self).save(*args, **kwargs)
-        pinstance = self.pinstance
-        if pinstance:
-            pinstance.summary = self.get_process_summary()
-            pinstance.save()
+        instance = self.pinstance
+        if instance:
+            instance.summary = self.get_process_summary()
+            instance.save()
 
-    def create_pinstance(self, wf_code, submit=False):
-        # TODO ....
-        # from .helper import create_process_instance
-        # return create_process_instance(self, wf_code, submit)
-        pass
+    def create_pinstance(self, process, submit=False):
+        created_by = self.created_by
+        if not isinstance(process, Process):
+            process = get_or_none(Process, code=process)
+        if not self.pk:
+            self.save()
+        instance = ProcessInstance.objects.create(
+            process=process, created_by=created_by, content_object=self,
+            cur_activity=process.get_draft_active())
+        self.pinstance = instance
+        self.save()  # instance will save after self.save
+        if submit:
+            self.submit_process()
+        return instance
+
+    def submit_process(self, user=None):
+        from lbworkflow.core.transition import TransitionExecutor
+
+        instance = self.pinstance
+        if instance.cur_activity.is_submitted():
+            return
+        user = user or self.created_by
+        workitem = instance.create_workitem(user)
+        transition = instance.get_transitions()[0]
+        TransitionExecutor(user, instance, workitem, transition).execute()
