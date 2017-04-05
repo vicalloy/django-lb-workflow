@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from .models import (
-    Activity, App, Authorization, Comment, Event, Process, ProcessCategory, ProcessInstance, ProcessReportLink,
-    Transition, WorkItem,
+    Activity, App, Authorization, Event, Process, ProcessCategory, ProcessInstance, ProcessReportLink, Transition,
+    WorkItem,
 )
 
 
@@ -85,12 +85,8 @@ class EventAdmin(admin.ModelAdmin):
         'instance', 'user', 'get_act_name', 'old_activity',
         'new_activity', 'created_on')
     raw_id_fields = (
-        'instance', 'user', 'workitem', 'comment', 'next_operators',
+        'instance', 'user', 'workitem', 'next_operators',
         'notice_users')
-
-
-class CommentAdmin(admin.ModelAdmin):
-    raw_id_fields = ('instance', )
 
 
 class AuthorizationAdmin(admin.ModelAdmin):
@@ -107,6 +103,5 @@ admin.site.register(App, AppAdmin)
 admin.site.register(ProcessInstance, ProcessInstanceAdmin)
 admin.site.register(WorkItem, WorkItemAdmin)
 admin.site.register(Event, EventAdmin)
-admin.site.register(Comment, CommentAdmin)
 admin.site.register(Authorization, AuthorizationAdmin)
 admin.site.register(ProcessReportLink, ProcessReportLinkAdmin)
