@@ -21,9 +21,9 @@ class BaseUserParser(object):
         self.wf_obj = None
         if pinstance:
             self.wf_obj = pinstance.content_object
-            self.owner = pinstance.owner
+            self.owner = pinstance.created_by
 
-    def get_eval_val(self, eval_str):
+    def _get_eval_val(self, eval_str):
         return safe_eval(eval_str, {'o': self.wf_obj})
 
     def eval_as_list(self, eval_str):
@@ -64,7 +64,7 @@ class SimpleUserParser(BaseUserParser):
             return User.objects.filter(pk=pk)
         return User.objects.filter(username=user_str)
 
-    def get_groups(self, group_str):
+    def _get_groups(self, group_str):
         """
         g[o.group]
         g[o.groups]
@@ -78,7 +78,7 @@ class SimpleUserParser(BaseUserParser):
         return [group] if group else []
 
     def _get_users_by_groups(self, group_str):
-        groups = self.get_groups(group_str)
+        groups = self._get_groups(group_str)
         return User.objects.filter(group__in=groups)
 
     def _paser_atom_rule(self, atom_rule):
