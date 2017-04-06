@@ -7,7 +7,7 @@ from .test_base import BaseTests
 User = get_user_model()
 
 
-class UserSimpleParserTests(BaseTests):
+class TransitionExecutorTests(BaseTests):
 
     def test_submit(self):
         leave = self.leave
