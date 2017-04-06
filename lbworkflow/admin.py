@@ -1,9 +1,15 @@
 from django.contrib import admin
 
-from .models import (
-    Activity, App, Authorization, Event, Process, ProcessCategory, ProcessInstance, ProcessReportLink, Transition,
-    WorkItem,
-)
+from .models import Activity
+from .models import App
+from .models import Authorization
+from .models import Event
+from .models import Process
+from .models import ProcessCategory
+from .models import ProcessInstance
+from .models import ProcessReportLink
+from .models import Transition
+from .models import WorkItem
 
 
 class ProcessCategoryAdmin(admin.ModelAdmin):

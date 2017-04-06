@@ -1,6 +1,7 @@
 from django.utils import timezone
 
-from lbworkflow.models import Event, WorkItem
+from lbworkflow.models import Event
+from lbworkflow.models import WorkItem
 
 from .sendmsg import wf_send_msg
 
@@ -80,7 +81,7 @@ class TransitionExecutor(object):
         workitem.status = 'completed'
         workitem.save()
 
-        to_activity = self.to_activity if need_transfer else workitem.activity
+        to_activity = self.to_activity if need_transfer else instance.cur_activity
 
         event = create_event(
             instance, transition,

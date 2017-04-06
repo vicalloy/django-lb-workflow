@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db import models
-from lbutils import safe_eval  # TODO add helper function to eval
 from lbutils import get_or_none
+from lbutils import safe_eval  # TODO add helper function to eval
 
 User = get_user_model()
 

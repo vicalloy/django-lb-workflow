@@ -2,7 +2,9 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 
-from lbworkflow.models import Activity, Process, Transition
+from lbworkflow.models import Activity
+from lbworkflow.models import Process
+from lbworkflow.models import Transition
 
 from .models import Leave
 

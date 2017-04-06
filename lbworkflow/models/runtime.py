@@ -9,9 +9,12 @@ from jsonfield import JSONField
 from lbattachment.models import LBAttachment
 from lbutils import get_or_none
 
-from lbworkflow.settings import AUTH_USER_MODEL, GET_USER_DISPLAY_NAME_FUNC
+from lbworkflow.settings import AUTH_USER_MODEL
+from lbworkflow.settings import GET_USER_DISPLAY_NAME_FUNC
 
-from .config import Activity, Process, Transition
+from .config import Activity
+from .config import Process
+from .config import Transition
 
 
 class ProcessInstance(models.Model):
