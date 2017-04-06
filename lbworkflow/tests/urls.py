@@ -1,6 +1,8 @@
 from django.conf.urls import url
-from django.contrib import admin
+
+import lbworkflow
+
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^wf/', lbworkflow.urls),
 ]
