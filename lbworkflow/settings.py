@@ -18,4 +18,17 @@ GET_USER_DISPLAY_NAME_FUNC = getattr(
     django_settings, 'LBWF_GET_USER_DISPLAY_NAME_FUNC',
     lambda user: "%s" % user)
 
-DEBUG_WORKFLOW = getattr(django_settings, 'WF_DEBUG_WORKFLOW', False)
+CAN_EDIT_WF_FUNC = getattr(
+    django_settings, 'LBWF_CAN_EDIT_WF_FUNC',
+    lambda *args, **kwargs: True)
+
+CAN_SUBMIT_WF_FUNC = getattr(
+    django_settings, 'LBWF_CAN_SUBMIT_WF_FUNC',
+    lambda *args, **kwargs: True)
+
+CAN_VIEW_WF_FUNC = getattr(
+    django_settings, 'LBWF_CAN_VIEW_WF_FUNC',
+    lambda *args, **kwargs: True)
+
+DEBUG_WORKFLOW = getattr(django_settings, 'LBWF_DEBUG_WORKFLOW', False)
+WF_APPS = getattr(django_settings, 'LBWF_APPS', {})
