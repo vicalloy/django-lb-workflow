@@ -62,7 +62,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsMixin, ProcessFormsView)
         activity_is_ok = (
             transition.input == instance.cur_activity
             and workitem.activity == instance.cur_activity
-            and workitem.status == 'in process')
+            and workitem.status == 'in progress')
         user_is_ok = (
             request.user in [workitem.assign, workitem.agent_user]
             or instance.is_wf_admin(request.user))
