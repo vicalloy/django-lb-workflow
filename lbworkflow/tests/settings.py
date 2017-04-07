@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'lbattachment',
 
     'lbworkflow',
-    'lbworkflow.tests',
+    'lbworkflow.tests.leave',
 ]
 
 MIDDLEWARE = [
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'lbworkflow.test.urls'
+ROOT_URLCONF = 'lbworkflow.tests.urls'
 
 TEMPLATES = [
     {
@@ -121,3 +121,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LBWF_APPS = {
+    'leave': 'lbworkflow.tests.leave',
+    'leave2': 'lbworkflow.tests.leave2',
+}
