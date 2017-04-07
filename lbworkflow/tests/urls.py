@@ -1,8 +1,7 @@
 from django.conf.urls import url
-
-import lbworkflow
+from django.conf.urls import include
 
 
 urlpatterns = [
-    url(r'^wf/', lbworkflow.urls),
+    url(r'^wf/', include('lbworkflow.urls')),
 ]
