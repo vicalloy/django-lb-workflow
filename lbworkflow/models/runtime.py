@@ -51,7 +51,7 @@ class ProcessInstance(models.Model):
 
     def can_rollback(self, user):
         """ if can roll back, return last event """
-        last_event = self.event_set.order_by('-date', '-pk').first()
+        last_event = self.event_set.order_by('-created_on', '-pk').first()
         if not last_event:
             return None
         if last_event.new_activity == self.cur_activity \
@@ -73,13 +73,15 @@ class ProcessInstance(models.Model):
     def can_give_up(self, user):
         if self.cur_activity.status != 'in progress':
             return False
+        if not self.cur_activity.can_give_up:
+            return False
         if self.is_wf_admin(user):
             return True
         if self.created_by == user:
             return True
         return False
 
-    def get_users(self):
+    def get_operators(self):
         # TODO select_related
         qs = self.workitem_set.filter(status='in progress')
         users = []
@@ -87,8 +89,8 @@ class ProcessInstance(models.Model):
             users.extend([e.user, e.agent_user])
         return [e for e in users if e]
 
-    def get_users_display(self):
-        return ', '.join([GET_USER_DISPLAY_NAME_FUNC(e) for e in self.get_users()])
+    def get_operators_display(self):
+        return ', '.join([GET_USER_DISPLAY_NAME_FUNC(e) for e in self.get_operators()])
 
     def get_reject_transition(self):
         return self.process.get_reject_transition(self.cur_activity)
@@ -140,7 +142,7 @@ class ProcessInstance(models.Model):
         for transition in transitions:
             if not transition.is_agree:
                 merged_transitions.append(transition)
-            elif transition_names.count() == 1:
+            elif len(transition_names) == 1:
                 merged_transitions.append(transition)
             elif not simple_agree_added:  # use which transition depend on condition
                 simple_agree_added = True
@@ -189,7 +191,7 @@ class ProcessInstance(models.Model):
         messages.info(
             request,
             'Process "%s" has been %s. Current status："%s" Current user："%s"' %
-            (self.no, act_descn, self.cur_activity.name, self.get_users_display())
+            (self.no, act_descn, self.cur_activity.name, self.get_operators_display())
         )
 
     def has_received(self):
