@@ -21,7 +21,7 @@ can_view_wf = as_func(settings.CAN_VIEW_WF_FUNC)
 
 
 def import_wf_views(wf_code):
-    wf_module = settings.LBWF_APPS.get(wf_code)
+    wf_module = settings.WF_APPS.get(wf_code)
     return importlib.import_module('%s.views' % wf_module)
 
 
