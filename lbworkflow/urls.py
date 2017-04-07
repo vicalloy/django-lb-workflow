@@ -16,8 +16,8 @@ urlpatterns = [
     url(r'^new/(?P<wf_code>\w+)/$', processinstance.new, name='wf_new'),
     url(r'^list/(?P<wf_code>\w+)/$', processinstance.show_list, name='wf_list'),
     url(r'^edit/(?P<pk>\d+)/$', processinstance.edit, name='wf_edit'),
-    url(r'^(?P<id>\d+)/$', processinstance.detail, name='wf_detail'),
-    url(r'^(?P<id>\d+)/print/$', processinstance.detail,
+    url(r'^(?P<pk>\d+)/$', processinstance.detail, name='wf_detail'),
+    url(r'^(?P<pk>\d+)/print/$', processinstance.detail,
         {
             'ext_ctx': {'is_print': True}
         },
