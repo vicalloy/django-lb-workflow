@@ -6,7 +6,7 @@ from lbworkflow.models import Activity
 from lbworkflow.models import Process
 from lbworkflow.models import Transition
 
-from .models import Leave
+from .leave.models import Leave
 
 User = get_user_model()
 
