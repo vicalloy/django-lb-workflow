@@ -16,7 +16,7 @@ class TransitionExecutorTests(BaseTests):
 
         # A1 will auto agree
         self.assertEqual(leave.pinstance.cur_activity.name, 'A2')
-        self.assertEqual(leave.pinstance.get_users_display(), 'tom')
+        self.assertEqual(leave.pinstance.get_operators_display(), 'tom')
 
         # A3 not auto agree
         workitem = instance.get_todo_workitem()
