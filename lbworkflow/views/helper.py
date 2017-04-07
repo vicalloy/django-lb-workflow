@@ -6,6 +6,8 @@ from lbworkflow.models import WorkItem
 
 def user_wf_info_as_dict(wf_obj, user):
     ctx = {}
+    if user.is_anonymous:
+        return ctx
     instance = wf_obj.pinstance
     is_wf_admin = instance.is_wf_admin(user)
     in_process = instance.cur_activity.status == 'in progress'
