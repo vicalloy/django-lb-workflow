@@ -124,5 +124,4 @@ STATIC_URL = '/static/'
 
 LBWF_APPS = {
     'leave': 'lbworkflow.tests.leave',
-    'leave2': 'lbworkflow.tests.leave2',
 }
