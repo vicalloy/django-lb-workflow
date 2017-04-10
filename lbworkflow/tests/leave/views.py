@@ -1,16 +1,30 @@
-from django.http import HttpResponse
+from lbworkflow.views.generics import CreateView
+from lbworkflow.views.generics import ListView
+from lbworkflow.views.generics import UpdateView
+
+from .forms import LeaveForm
 
 
-def new(request, *args, **kwargs):
-    return HttpResponse('todo')
+class LeaveCreateView(CreateView):
+    form_classes = {
+        'main_form': LeaveForm,
+    }
+
+new = LeaveCreateView.as_view()
 
 
-def edit(request, pk, *args, **kwargs):
-    return HttpResponse('todo')
+class LeaveUpdateView(UpdateView):
+    form_classes = {
+        'main_form': LeaveForm,
+    }
+
+edit = LeaveUpdateView.as_view()
 
 
-def show_list(request, *args, **kwargs):
-    return HttpResponse('todo')
+class LeaveListView(ListView):
+    pass
+
+show_list = LeaveListView.as_view()
 
 
 def detail(request, instance, ext_ctx, *args, **kwargs):
