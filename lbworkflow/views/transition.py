@@ -12,11 +12,10 @@ from lbworkflow.models import Activity
 from lbworkflow.models import Transition
 from lbworkflow.models import WorkItem
 
-from .mixin import FormsMixin
-from .mixin import ProcessFormsView
+from .mixin import FormsView
 
 
-class ExecuteTransitionView(TemplateResponseMixin, FormsMixin, ProcessFormsView):
+class ExecuteTransitionView(TemplateResponseMixin, FormsView):
     """
     request.GET:
         ts_id: transition pk
