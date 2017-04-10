@@ -1,5 +1,5 @@
-from django.utils import timezone
 from django.db.models import Q
+from django.utils import timezone
 
 from lbworkflow.models import WorkItem
 
