@@ -14,7 +14,7 @@ class FormsMixin(ContextMixin):
     success_url = None
 
     def get_initial(self, form_class_key):
-        return self.initial.get(form_class_key).copy()
+        return self.initial.get(form_class_key, {}).copy()
 
     def get_form_classes(self):
         """
@@ -24,11 +24,13 @@ class FormsMixin(ContextMixin):
             raise ImproperlyConfigured("Provide form_classes.")
         return self.form_classes
 
-    def get_forms(self, **form_classes):
+    def create_forms(self, **form_classes):
         """
         Returns an instance of the forms to be used in this view.
+        forms can be access by self.forms
         """
         forms = {}
+        self.forms = forms
         for form_class_key, form_class in form_classes.items():
             forms[form_class_key] = form_class(**self.get_form_kwargs(form_class_key))
         return forms
@@ -71,7 +73,19 @@ class FormsMixin(ContextMixin):
         return self.render_to_response(self.get_context_data(**forms))
 
 
-class ProcessFormsView(View):
+class ModelFormsMixin(object):
+
+    def get_form_kwargs(self, form_class_key):
+        kwargs = super().get_form_kwargs(form_class_key)
+        instance = getattr(self, 'object', None)
+        main_form = self.forms.get('main_form')
+        if main_form:
+            kwargs['instance'] = main_form.instance
+        kwargs['instance'] = instance
+        return kwargs
+
+
+class FormsView(FormsMixin, View):
     """
     A mixin that renders any number of forms on GET and processes it on POST.
     """
@@ -80,7 +94,7 @@ class ProcessFormsView(View):
         Handles GET requests and instantiates a blank version of the forms.
         """
         form_classes = self.get_form_classes()
-        forms = self.get_forms(**form_classes)
+        forms = self.create_forms(**form_classes)
         return self.render_to_response(self.get_context_data(**forms))
 
     def post(self, request, *args, **kwargs):
@@ -89,7 +103,7 @@ class ProcessFormsView(View):
         POST variables and then checked for validity.
         """
         form_classes = self.get_form_classes()
-        forms = self.get_forms(**form_classes)
+        forms = self.create_forms(**form_classes)
         if all([forms[form].is_valid() for form in forms]):
             return self.forms_valid(**forms)
         else:
