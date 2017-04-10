@@ -15,10 +15,10 @@ from .mixin import FormsView
 from .mixin import ModelFormsMixin
 
 
-class ProcessTemplateResponseMixin(TemplateResponseMixin):
+class WorkflowTemplateResponseMixin(TemplateResponseMixin):
     def get_template_names(self):
         try:
-            return super(ProcessTemplateResponseMixin, self).get_template_names()
+            return super(WorkflowTemplateResponseMixin, self).get_template_names()
         except ImproperlyConfigured:
             base_tmpl = self.base_template_name
             templates = ["%s/%s" % (self.wf_code, base_tmpl,), ]
@@ -54,7 +54,7 @@ class ExcelResponseMixin(object):
             object_list, lambda o: self.get_data(o))
 
 
-class CreateView(ModelFormsMixin, ProcessTemplateResponseMixin, FormsView):
+class CreateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
     form_classes = {
         # 'main_form': None,
     }
@@ -82,7 +82,7 @@ class CreateView(ModelFormsMixin, ProcessTemplateResponseMixin, FormsView):
         return super(CreateView, self).dispatch(request, *args, **kwargs)
 
 
-class UpdateView(ModelFormsMixin, ProcessTemplateResponseMixin, FormsView):
+class UpdateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
     form_classes = {
         # 'main_form': None,
     }
@@ -109,7 +109,7 @@ class UpdateView(ModelFormsMixin, ProcessTemplateResponseMixin, FormsView):
         return super(UpdateView, self).dispatch(request, *args, **kwargs)
 
 
-class ListView(ExcelResponseMixin, ProcessTemplateResponseMixin, MultipleObjectMixin, View):
+class ListView(ExcelResponseMixin, WorkflowTemplateResponseMixin, MultipleObjectMixin, View):
     search_form_class = None
     quick_query_fields = []
     int_quick_query_fields = []
