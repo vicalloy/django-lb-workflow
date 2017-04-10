@@ -2,11 +2,13 @@
 from __future__ import unicode_literals
 
 import importlib
-from django.shortcuts import get_object_or_404, render
-from django.shortcuts import redirect
-from django.core.urlresolvers import reverse
+
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from django.shortcuts import render
 
 from lbworkflow import settings
 from lbworkflow.core.helper import as_func
@@ -81,3 +83,14 @@ def detail(request, pk, template_name=None, ext_ctx={}):
         ret.update(ctx)
         return _default_detail(request, instance, ret, template_name)
     return ret
+
+
+def delete(request):
+    pks = request.POST.getlist('pk') or request.GET.getlist('pk')
+    instances = ProcessInstance.objects.filter(pk__in=pks)
+    for instance in instances:
+        # only workflow admin can delete
+        if instance.is_wf_admin(request.user):
+            instance.delete()
+    messages.info(request, 'Deleted')
+    return redirect(reverse('wf_my_wf'))

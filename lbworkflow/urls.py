@@ -1,11 +1,10 @@
 from django.conf.urls import url
 
+from .views import processinstance
 from .views.transition import ExecuteAgreeTransitionView
 from .views.transition import ExecuteBackToTransitionView
 from .views.transition import ExecuteRejectTransitionView
 from .views.transition import ExecuteTransitionView
-
-from .views import processinstance
 
 urlpatterns = [
     url(r'^t/$', ExecuteTransitionView.as_view(), name="wf_execute_transition"),
@@ -14,6 +13,7 @@ urlpatterns = [
     url(r'^t/reject/$', ExecuteRejectTransitionView.as_view(), name="wf_reject"),
 
     url(r'^new/(?P<wf_code>\w+)/$', processinstance.new, name='wf_new'),
+    url(r'^delete/$', processinstance.delete, name='wf_delete'),
     url(r'^list/(?P<wf_code>\w+)/$', processinstance.show_list, name='wf_list'),
     url(r'^edit/(?P<pk>\d+)/$', processinstance.edit, name='wf_edit'),
     url(r'^(?P<pk>\d+)/$', processinstance.detail, name='wf_detail'),
