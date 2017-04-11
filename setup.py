@@ -1,5 +1,5 @@
 from setuptools import find_packages, setup
-from lbutils import __version__
+from lbworkflow import __version__
 
 setup(
     name='django-lb-workflow',
