@@ -1,4 +1,5 @@
 *.sqlite3
+vendor/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
