@@ -1,5 +1,6 @@
 *.sqlite3
 vendor/
+bower_components/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
