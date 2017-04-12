@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.base import View
 from django.views.generic.list import MultipleObjectMixin
+from django.views.generic.list import MultipleObjectTemplateResponseMixin
 from lbutils import do_filter
 from lbutils import simple_export2xlsx
 
@@ -56,7 +57,7 @@ class ExcelResponseMixin(object):
 
 class CreateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
     form_classes = {
-        # 'main_form': None,
+        # 'form': None,
     }
     wf_code = None
     model = None
@@ -71,7 +72,7 @@ class CreateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
         return kwargs
 
     def forms_valid(self, **forms):
-        form = forms.pop('main_form')
+        form = forms.pop('form')
         self.object = form.save_new_process(self.request, self.wf_code)
         # TODO forms.save
         return HttpResponseRedirect(self.get_success_url())
@@ -84,7 +85,7 @@ class CreateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
 
 class UpdateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
     form_classes = {
-        # 'main_form': None,
+        # 'form': None,
     }
     wf_code = None
     model = None
@@ -98,7 +99,7 @@ class UpdateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
         return kwargs
 
     def forms_valid(self, **forms):
-        form = forms.pop('main_form')
+        form = forms.pop('form')
         self.object = form.update_process(self.request, self.wf_code)
         # TODO forms.save
         return HttpResponseRedirect(self.get_success_url())
@@ -109,7 +110,7 @@ class UpdateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
         return super(UpdateView, self).dispatch(request, *args, **kwargs)
 
 
-class ListView(ExcelResponseMixin, WorkflowTemplateResponseMixin, MultipleObjectMixin, View):
+class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
     search_form_class = None
     quick_query_fields = []
     int_quick_query_fields = []
@@ -119,24 +120,19 @@ class ListView(ExcelResponseMixin, WorkflowTemplateResponseMixin, MultipleObject
     def dispatch(self, request, *args, wf_code=None, **kwargs):
         self.request = request
         self.wf_code = wf_code
-        return super(ListView, self).dispatch(request, *args, **kwargs)
+        return super(BaseListView, self).dispatch(request, *args, **kwargs)
 
     def get_quick_query_fields(self):
-        fields = [
-            'pinstance__no',
-            'pinstance__summary',
-            'pinstance__created_by__username',
-        ]
-        fields.extend(self.quick_query_fields)
-        return fields
+        return self.quick_query_fields
 
-    def get_base_queryset(self, query_data):
+    def get_base_queryset(self):
         # qs = get_can_view_wf(model, request.user, wf_code, ext_param_process=__ext_param_process)
         from django.contrib.auth.models import User
-        qs = User.objects.all()
+        return User.objects.all()
+
+    def do_filter(self, queryset, query_data):
         quick_query_fields = self.get_quick_query_fields()
-        qs = do_filter(qs, query_data, quick_query_fields, self.int_quick_query_fields)
-        return qs
+        return do_filter(queryset, query_data, quick_query_fields, self.int_quick_query_fields)
 
     def get_search_form(self, request):
         if not self.search_form_class:
@@ -148,8 +144,10 @@ class ListView(ExcelResponseMixin, WorkflowTemplateResponseMixin, MultipleObject
 
     def get(self, request, *args, **kwargs):
         search_form = self.get_search_form(request)
-        self.queryset = self.get_base_queryset(
-            search_form.cleaned_data if search_form else None)
+        queryset = self.get_base_queryset()
+        self.queryset = self.do_filter(
+            queryset,
+            search_form.cleaned_data if search_form else {})
         self.object_list = self.get_queryset()
 
         if request.GET.get('export'):
@@ -161,3 +159,25 @@ class ListView(ExcelResponseMixin, WorkflowTemplateResponseMixin, MultipleObject
         context = self.get_context_data(
             search_form=search_form, process=process)
         return self.render_to_response(context)
+
+
+class ListView(MultipleObjectTemplateResponseMixin, BaseListView):
+    pass
+
+
+class WFListView(WorkflowTemplateResponseMixin, BaseListView):
+
+    def get_quick_query_fields(self):
+        fields = [
+            'pinstance__no',
+            'pinstance__summary',
+            'pinstance__created_by__username',
+            'pinstance__cur_activity__name',
+        ]
+        fields.extend(self.quick_query_fields)
+        return fields
+
+    def get_base_queryset(self):
+        # qs = get_can_view_wf(model, request.user, wf_code, ext_param_process=__ext_param_process)
+        from django.contrib.auth.models import User
+        return User.objects.all()
