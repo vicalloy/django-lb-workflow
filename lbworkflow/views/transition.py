@@ -23,7 +23,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         pid: process instance pk (not used)
     """
     form_classes = {
-        'main_form': WorkFlowForm
+        'form': WorkFlowForm
     }
 
     def get_template_names(self):
@@ -100,13 +100,13 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
 
         TransitionExecutor(user, instance, self.workitem, transition, comment, attachments).execute()
 
-    def save_main_form(self, form):
+    def save_form(self, form):
         return form.save()
 
     def forms_valid(self, **forms):
-        form = forms.pop('main_form')
+        form = forms.pop('form')
         if isinstance(form, forms.ModelForm):
-            wf_obj = self.save_main_form(form)
+            wf_obj = self.save_form(form)
             # update cache for wf_obj
             self.wf_obj = wf_obj
             self.process_instance = wf_obj
@@ -124,7 +124,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
 
 class ExecuteBackToTransitionView(ExecuteTransitionView):
     form_classes = {
-        'main_form': BackToActivityForm
+        'form': BackToActivityForm
     }
 
     def get_init_transition(self, process_instance, request):
@@ -147,7 +147,7 @@ class ExecuteAgreeTransitionView(ExecuteTransitionView):
 
 class ExecuteRejectTransitionView(ExecuteTransitionView):
     form_classes = {
-        'main_form': BackToActivityForm  # reason for reject.
+        'form': BackToActivityForm  # reason for reject.
     }
 
     def get_init_transition(self, process_instance, request):
