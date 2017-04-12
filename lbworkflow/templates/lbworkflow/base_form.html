@@ -1,0 +1,67 @@
+{% extends "base_form.html" %}
+
+{% block nav_sel_node %}id-nav-mywf{% endblock %}
+
+{% block right_side_content_top %}
+  {% if object %}
+    <div class="nav-tabs-custom">
+      <ul class="nav nav-tabs" role="tablist" id="id-m-nav-tabs">
+        <li class="active">
+          <a href="##id-tb-base" role="tab" data-toggle="tab">申请信息</a>
+        </li>
+        {% block right_side_tab_nav_ext %}
+        {% endblock %}
+        <li>
+          <a href="#id-tb-wf-log" role="tab" data-toggle="tab">Workflow operation history</a>
+        </li>
+        <li>
+          <a href="#id-tb-wf-graph" role="tab" data-toggle="tab">Help</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="id-tb-base">
+          {% block right_side_tab_base_ctx %}
+            {% include "lbworkflow/inc_wf_status.html" %}
+          {% endblock %}
+        </div>
+        {% block right_side_tab_ctx_ext %}
+        {% endblock %}
+        <div class="tab-pane" id="id-tb-wf-log">
+          {% include "lbworkflow/inc_wf_history.html" %}
+        </div>
+        <div class="tab-pane" id="id-tb-wf-graph">
+          {% block flow_help %}
+          {% endblock %}
+          <a href="{% url 'wf_process_flowchart' process.code %}" target="_blank">Open in new window</a>
+          <br/>
+          <img src="{% url 'wf_process_flowchart' wf_code %}"/>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block right_side_header %}
+  <div class="right-btns">
+    {% if wf_code %}
+      <a target="_black" href="{% url 'wf_process_flowchart' wf_code %}">Flowchart</a>
+    {% endif %}
+  </div>
+  <h1>
+    <a href="{% url 'wf_my_wf' %}">My workflow</a>
+    &gt;
+    {% if obj %}
+      {{ obj }}
+    {% else %}
+      {{ process.name }}
+    {% endif %}
+  </h1>
+{% endblock %}
+
+{% block form_act_btns %}
+  {% if not process_instance.cur_activity.is_submitted %}
+    <input type="submit" class="btn btn-primary" name="act_submit" value="Submit"/>
+  {% endif %}
+  <button type="submit" class="btn btn-default" name="act_save">Save</button>
+  <button type="button" class="btn btn-default goback" name="act_cancel">Cancel</button>
+{% endblock %}

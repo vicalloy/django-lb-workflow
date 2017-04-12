@@ -1,0 +1,60 @@
+{% extends "base_ext.html" %}
+
+{% load crispy_forms_tags %}
+{% load pagination_tags %}
+{% load wf_tags %}
+
+{% block nav_sel_node %}id-nav-mywf{% endblock %}
+
+{% block right_side %}
+  <section class="content-header">
+    {% include "incs/messages.html" %}
+    <div class="right-btns">
+        <a href="{% url 'wf_start_wf' %}">Submit a new workflow</a>
+    </div>
+    <h1>
+        I submitted
+    </h1>
+  </section>
+  <section class="content">
+    <div class="box">
+      <div class="box-header">
+        <div class="input-group">
+          {% crispy sform %}
+        </div>
+      </div><!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+          <tbody>
+            <tr>
+              <th>NO.</th>
+              <th>Process name</th>
+              <th>Summary</th>
+              <th>Created on</th>
+              <th>Current operator</th>
+              <th>Activity</th>
+            </tr>
+            {% autopaginate objs %}
+            {% for pi in objs %}
+              <tr>
+                <td><a href="{% url 'wf_detail' pi.pk %}">{{ pi.no }}</a></td>
+                <td>{{ pi.process.name }}</td>
+                <td>{{ pi.descn }}</td>
+                <td>{{ pi.creation_time|date:"Y-m-d H:i" }}</td>
+                <td>{{ pi.get_assignners_display }}</td>
+                <td>
+                  <span class="label label-{{ pi|flow_resolution_class }}">
+                    {{ pi.cur_activity.name }}
+                  </span>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="box-footer clearfix">
+        {% paginate %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

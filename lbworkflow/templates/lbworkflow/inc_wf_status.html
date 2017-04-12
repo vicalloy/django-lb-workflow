@@ -1,0 +1,32 @@
+<table class="table table-bordered tb-detail wf-act-history">
+  <tr>
+    <th class="w-mid">NO.</th>
+    <td class="process-no">
+      {{process_instance.no}}
+    </td>
+    <th class="w-mid">Created by</th>
+    <td>{{process_instance.poster.profile.name}}</td>
+  </tr>
+  <tr>
+    <th>Created on</th>
+    <td>{{process_instance.creation_time|date:"Y-m-d H:i"}}</td>
+    <th>Current activity</th>
+    <td>
+      {{process_instance.cur_activity.name}}
+      {% if workitem.is_hold %}
+        (hold)
+      {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <th>Process name</th>
+    <td>{{ process_instance.process.name}}</td>
+    <th>Current operator</th>
+    <td>
+      {{assignners}}
+      {% if not process_instance.has_received %}
+          [unreceived]
+      {% endif %}
+    </td>
+  </tr>
+</table>
