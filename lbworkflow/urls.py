@@ -5,6 +5,8 @@ from .views.transition import ExecuteAgreeTransitionView
 from .views.transition import ExecuteBackToTransitionView
 from .views.transition import ExecuteRejectTransitionView
 from .views.transition import ExecuteTransitionView
+from .views import flowchart
+from .views.list import MyWF
 
 urlpatterns = [
     url(r'^t/$', ExecuteTransitionView.as_view(), name="wf_execute_transition"),
@@ -23,5 +25,9 @@ urlpatterns = [
         },
         name='wf_print_detail'),
 
+    url(r'^my/wf/$', MyWF.as_view(), name='wf_my_wf'),
+
+    url(r'^flowchart/process/(?P<wf_code>\w+)/$',
+        flowchart.process_flowchart, name='wf_process_flowchart'),
 
 ]
