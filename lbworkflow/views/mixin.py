@@ -78,9 +78,9 @@ class ModelFormsMixin(object):
     def get_form_kwargs(self, form_class_key):
         kwargs = super().get_form_kwargs(form_class_key)
         instance = getattr(self, 'object', None)
-        main_form = self.forms.get('main_form')
-        if main_form:
-            kwargs['instance'] = main_form.instance
+        form = self.forms.get('form')
+        if form:
+            kwargs['instance'] = form.instance
         kwargs['instance'] = instance
         return kwargs
 
