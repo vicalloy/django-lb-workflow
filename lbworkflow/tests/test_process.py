@@ -16,7 +16,7 @@ class HelperTests(BaseTests):
 
         info = user_wf_info_as_dict(leave, self.users['tom'])
         self.assertIsNotNone(info['workitem'])
-        self.assertIsNotNone(info['wf_obj'])
+        self.assertIsNotNone(info['object'])
         self.assertFalse(info['can_give_up'])
         self.assertEqual(info['wf_code'], 'leave')
 
@@ -29,6 +29,15 @@ class HelperTests(BaseTests):
 
 
 class ViewTests(BaseTests):
+
+    def test_flowchart(self):
+        resp = self.client.get(reverse('wf_process_flowchart', args=('leave', )))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_my_wf(self):
+        # FIXME NEED LOGIN
+        resp = self.client.get(reverse('wf_my_wf'))
+        self.assertEqual(resp.status_code, 200)
 
     def test_base_get(self):
         resp = self.client.get(reverse('wf_new', args=('leave', )))
