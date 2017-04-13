@@ -1,7 +1,15 @@
+import importlib
+
 from django.db.models import Q
 from django.utils import timezone
 
+from lbworkflow import settings
 from lbworkflow.models import WorkItem
+
+
+def import_wf_views(wf_code):
+    wf_module = settings.WF_APPS.get(wf_code)
+    return importlib.import_module('%s.views' % wf_module)
 
 
 def user_wf_info_as_dict(wf_obj, user):

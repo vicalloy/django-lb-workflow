@@ -1,8 +1,3 @@
-# -*- coding: UTF-8 -*-
-from __future__ import unicode_literals
-
-import importlib
-
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
@@ -15,16 +10,12 @@ from lbworkflow.core.helper import as_func
 from lbworkflow.models import Process
 from lbworkflow.models import ProcessInstance
 
+from .helper import import_wf_views
 from .helper import user_wf_info_as_dict
 
 can_edit_wf = as_func(settings.CAN_EDIT_WF_FUNC)
 can_submit_wf = as_func(settings.CAN_SUBMIT_WF_FUNC)
 can_view_wf = as_func(settings.CAN_VIEW_WF_FUNC)
-
-
-def import_wf_views(wf_code):
-    wf_module = settings.WF_APPS.get(wf_code)
-    return importlib.import_module('%s.views' % wf_module)
 
 
 def new(request, wf_code):
