@@ -1,6 +1,9 @@
 from lbworkflow.tests.settings import *  # NOQA
 
-INSTALLED_APPS += ['testproject']
+INSTALLED_APPS += [
+    'testproject',
+    'stronghold',
+]
 
 DATABASES = {
     'default': {
@@ -8,3 +11,15 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+STRONGHOLD_PUBLIC_URLS = [
+    r'^admin/',
+]
+
+MIDDLEWARE += [
+    'impersonate.middleware.ImpersonateMiddleware',
+    #'testproject.middleware.LoginRequiredStrongholdMiddleware',
+]
+
+LOGIN_URL ='/admin/login/'
+LOGOUT_URL = '/admin/logout/'
