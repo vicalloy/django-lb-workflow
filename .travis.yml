@@ -21,7 +21,10 @@ install:
   - pip install $DJANGO -e .[tests]
   - pip freeze
 
+notifications:
+  email: false
+
 script:
   - python runtests.py
   - flake8
-  - isort --check-only --recursive channels
+  - isort --check-only --recursive lbworkflow
