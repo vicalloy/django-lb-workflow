@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'lbutils',
     'compressor',
     'djangobower',
+    'el_pagination',
 
     'lbworkflow',
     'lbworkflow.tests.leave',
@@ -159,6 +160,8 @@ BOWER_INSTALLED_APPS = (
     'pie',
     # HTML5 tag support for IE 6-8.
     'html5shiv',
+
+    'masonry#4.1.1',
 )
 
 # django-compressor
