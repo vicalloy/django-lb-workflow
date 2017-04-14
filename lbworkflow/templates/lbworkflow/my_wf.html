@@ -1,8 +1,8 @@
 {% extends "base_ext.html" %}
 
 {% load crispy_forms_tags %}
-{% load pagination_tags %}
-{% load wf_tags %}
+{% load el_pagination_tags %}
+{% load lbworkflow_tags %}
 
 {% block nav_sel_node %}id-nav-mywf{% endblock %}
 
@@ -18,11 +18,13 @@
   </section>
   <section class="content">
     <div class="box">
-      <div class="box-header">
-        <div class="input-group">
-          {% crispy sform %}
+      {% if sform %}
+        <div class="box-header">
+          <div class="input-group">
+            {% crispy sform %}
+          </div>
         </div>
-      </div><!-- /.box-header -->
+      {% endif %}
       <div class="box-body table-responsive no-padding">
         <table class="table table-hover">
           <tbody>
@@ -34,8 +36,8 @@
               <th>Current operator</th>
               <th>Activity</th>
             </tr>
-            {% autopaginate objs %}
-            {% for pi in objs %}
+            {% paginate object_list %}
+            {% for pi in object_list %}
               <tr>
                 <td><a href="{% url 'wf_detail' pi.pk %}">{{ pi.no }}</a></td>
                 <td>{{ pi.process.name }}</td>
@@ -43,7 +45,7 @@
                 <td>{{ pi.creation_time|date:"Y-m-d H:i" }}</td>
                 <td>{{ pi.get_assignners_display }}</td>
                 <td>
-                  <span class="label label-{{ pi|flow_resolution_class }}">
+                  <span class="label label-{{ pi|flow_status_css_class }}">
                     {{ pi.cur_activity.name }}
                   </span>
                 </td>
@@ -53,7 +55,7 @@
         </table>
       </div>
       <div class="box-footer clearfix">
-        {% paginate %}
+        {% show_pages %}
       </div>
     </div>
   </section>
