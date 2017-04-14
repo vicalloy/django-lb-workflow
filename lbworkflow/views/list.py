@@ -6,6 +6,27 @@ from lbworkflow.models import ProcessInstance
 from lbworkflow.models import WorkItem
 
 
+class ListWF(ListView):
+    ordering = '-created_on'
+    template_name = 'lbworkflow/list_wf.html'
+    search_form_class = None  # can config search_form_class
+    quick_query_fields = [
+        'no',
+        'summary',
+        'created_by__username',
+        'cur_activity__name',
+    ]
+
+    def get_base_queryset(self):
+        qs = ProcessInstance.objects.filter(cur_activity__status__in=['draft', 'given up'])
+        qs = qs.select_related(
+            'process__name',
+            'created_by__username',
+            'cur_activity__name'
+        ).distinct()
+        return qs
+
+
 class MyWF(ListView):
     template_name = 'lbworkflow/my_wf.html'
     search_form_class = None  # can config search_form_class
@@ -32,9 +53,8 @@ class Todo(ListView):
     def get_base_queryset(self):
         user = self.request.user
         qs = WorkItem.objects.filter(
-            Q(assign=user) | Q(agent_user=user),
-            status='running',
-            instance__cur_activity__resolution='started')
+            Q(user=user) | Q(agent_user=user),
+            status='in process')
         qs = qs.select_related(
             'instance__no',
             'instance__summary',
