@@ -41,8 +41,10 @@ class ProcessCategory(models.Model):
             self.uuid,
         )
 
-    def get_can_apply_processes(self, user):
-        # TODO check permission
+    def get_can_apply_processes(self, user, force_fetch=False):
+        processes = getattr(self, '__cache__can_apply_processes', None)
+        if processes and not force_fetch:
+            return  processes
         return self.process_set.all()
 
     def get_report_links(self):
