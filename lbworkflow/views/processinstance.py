@@ -8,6 +8,7 @@ from django.shortcuts import render
 from lbworkflow import settings
 from lbworkflow.core.helper import as_func
 from lbworkflow.models import Process
+from lbworkflow.models import ProcessCategory
 from lbworkflow.models import ProcessInstance
 
 from .helper import import_wf_views
@@ -85,3 +86,15 @@ def delete(request):
             instance.delete()
     messages.info(request, 'Deleted')
     return redirect(reverse('wf_my_wf'))
+
+
+def start_wf(request):
+    template_name = 'lbworkflow/start_wf.html'
+    categories = ProcessCategory.objects.filter(
+        is_active=True).order_by('oid')
+    # only have perm's categories
+    categories = [e for e in categories if e.get_can_apply_processes(request.user)]
+    ctx = {
+        'categories': categories,
+    }
+    return render(request, template_name, ctx)

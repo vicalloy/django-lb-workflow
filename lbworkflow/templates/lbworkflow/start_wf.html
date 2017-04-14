@@ -1,0 +1,72 @@
+{% extends "base_ext.html" %}
+
+{% load staticfiles %}
+{% load lbworkflow_tags %}
+
+{% block head_ext %}
+  {{ block.super }}
+  <style>
+    .small-box:hover {
+      text-decoration: inherit;
+      color: inherit;
+    }
+    .small-box ul {
+      margin: 0;
+      padding: 0 0 0 0px;
+      list-style-type: none;
+    }
+    .bg-white {
+      background-color: #ffffff;
+    }
+    .grid-item {
+        width: 300px;
+    }
+    .grid {
+      margin-left: 0px;
+    }
+  </style>
+{% endblock %}
+
+{% block nav_sel_node %}id-nav-start-wf{% endblock %}
+
+{% block right_side %}
+  <section class="content-header">
+    {% include "incs/messages.html" %}
+    <div class="right-btns">
+    </div>
+    <h1>
+      Submit a new workflow
+    </h1>
+  </section>
+  <section class="content">
+    <div class="row grid">
+    {% for category in categories %}
+        <div class="grid-item">
+            {% if category %}
+              <div class="small-box bg-white">
+                <div class="inner">
+                  <strong>{{ category.name }}</strong>
+                  <ul>
+                    {% for o in category|category_have_perm_processes:user %}
+                      <li><a href="{% url 'wf_new' o.code %}">{{ o.name }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block footer_ext %}
+  {{ block.super }}
+  <script src="{% static 'masonry/dist/masonry.pkgd.min.js' %}" type="text/javascript"></script>
+  <script type="text/javascript">
+    $('.grid').masonry({
+        itemSelector: '.grid-item',
+        columnWidth: 320
+    });
+  </script>
+{% endblock %}
