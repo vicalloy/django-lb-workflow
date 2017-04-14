@@ -27,7 +27,7 @@ class BaseTests(TestCase):
 
     def init_users(self):
         def create_user(username):
-            return User.objects.create(username=username, password='pass')
+            return User.objects.create_user(username, "%s@v.cn" % username, 'password')
 
         super(BaseTests, self).setUp()
         self.users = {
