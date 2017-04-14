@@ -14,7 +14,7 @@ class LeaveForm(BootstrapFormHelperMixin, WorkflowFormMixin, forms.ModelForm):
         self.init_crispy_helper()
         self.layout_fields([
             ['start_on', 'end_on'],
-            ['leave_days', ''],
+            ['leave_days', None],
             ['reason', ],
         ])
 
