@@ -6,6 +6,8 @@ from .views.transition import ExecuteBackToTransitionView
 from .views.transition import ExecuteRejectTransitionView
 from .views.transition import ExecuteTransitionView
 from .views import flowchart
+from .views.list import ListWF
+from .views.list import Todo
 from .views.list import MyWF
 
 urlpatterns = [
@@ -14,6 +16,7 @@ urlpatterns = [
     url(r'^t/back_to/$', ExecuteBackToTransitionView.as_view(), name="wf_back_to"),
     url(r'^t/reject/$', ExecuteRejectTransitionView.as_view(), name="wf_reject"),
 
+    url(r'^start_wf/$', processinstance.start_wf, name='wf_start_wf'),
     url(r'^new/(?P<wf_code>\w+)/$', processinstance.new, name='wf_new'),
     url(r'^delete/$', processinstance.delete, name='wf_delete'),
     url(r'^list/(?P<wf_code>\w+)/$', processinstance.show_list, name='wf_list'),
@@ -25,6 +28,8 @@ urlpatterns = [
         },
         name='wf_print_detail'),
 
+    url(r'^todo/$', Todo.as_view(), name='wf_todo'),
+    url(r'^list/$', ListWF.as_view(), name='wf_list_wf'),
     url(r'^my/wf/$', MyWF.as_view(), name='wf_my_wf'),
 
     url(r'^flowchart/process/(?P<wf_code>\w+)/$',
