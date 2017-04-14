@@ -1,0 +1,10 @@
+Django
+django-compressor
+django-bower
+django-impersonate
+django-stronghold
+django-crispy-forms
+jsonfield
+pygraphviz
+xlsxwriter
+django-el-pagination
