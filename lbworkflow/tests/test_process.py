@@ -30,16 +30,10 @@ class HelperTests(BaseTests):
 
 class ViewTests(BaseTests):
 
-    def test_flowchart(self):
-        resp = self.client.get(reverse('wf_process_flowchart', args=('leave', )))
-        self.assertEqual(resp.status_code, 200)
-
-    def test_my_wf(self):
-        # FIXME NEED LOGIN
-        resp = self.client.get(reverse('wf_my_wf'))
-        self.assertEqual(resp.status_code, 200)
-
     def test_base_get(self):
+        resp = self.client.get(reverse('wf_start_wf'))
+        self.assertEqual(resp.status_code, 200)
+
         resp = self.client.get(reverse('wf_new', args=('leave', )))
         self.assertEqual(resp.status_code, 200)
 
