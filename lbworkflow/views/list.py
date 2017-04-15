@@ -20,9 +20,9 @@ class ListWF(ListView):
     def get_base_queryset(self):
         qs = ProcessInstance.objects.filter(cur_activity__status__in=['draft', 'given up'])
         qs = qs.select_related(
-            'process__name',
-            'created_by__username',
-            'cur_activity__name'
+            'process',
+            'created_by',
+            'cur_activity'
         ).distinct()
         return qs
 
