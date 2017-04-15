@@ -10,6 +10,7 @@ class LeaveCreateView(CreateView):
         'form': LeaveForm,
     }
 
+
 new = LeaveCreateView.as_view()
 
 
@@ -18,11 +19,13 @@ class LeaveUpdateView(UpdateView):
         'form': LeaveForm,
     }
 
+
 edit = LeaveUpdateView.as_view()
 
 
 class LeaveListView(WFListView):
     pass
+
 
 show_list = LeaveListView.as_view()
 
