@@ -1,9 +1,9 @@
 from django.db.models import Q
 from django.utils import timezone
 
-from lbworkflow.views.generics import ListView
 from lbworkflow.models import ProcessInstance
 from lbworkflow.models import WorkItem
+from lbworkflow.views.generics import ListView
 
 
 class ListWF(ListView):

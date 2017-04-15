@@ -1,14 +1,14 @@
 from django.conf.urls import url
 
+from .views import flowchart
 from .views import processinstance
+from .views.list import ListWF
+from .views.list import MyWF
+from .views.list import Todo
 from .views.transition import ExecuteAgreeTransitionView
 from .views.transition import ExecuteBackToTransitionView
 from .views.transition import ExecuteRejectTransitionView
 from .views.transition import ExecuteTransitionView
-from .views import flowchart
-from .views.list import ListWF
-from .views.list import Todo
-from .views.list import MyWF
 
 urlpatterns = [
     url(r'^t/$', ExecuteTransitionView.as_view(), name="wf_execute_transition"),
