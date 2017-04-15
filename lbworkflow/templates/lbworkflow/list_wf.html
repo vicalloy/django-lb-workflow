@@ -1,10 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base_ext.html" %}
 
-</body>
-</html>
+{% load crispy_forms_tags %}
+{% load el_pagination_tags %}
+{% load lbworkflow_tags %}
+
+{% block nav_sel_node %}id-nav-list-wf{% endblock %}
+
+{% block right_side %}
+  <section class="content-header">
+    {% include "incs/messages.html" %}
+    <div class="right-btns">
+        <a href="{% url 'wf_start_wf' %}">发起流程</a>
+    </div>
+    <h1>
+      流程查询
+    </h1>
+  </section>
+  <section class="content">
+    <div class="box">
+      {% if sform %}
+      <div class="box-header">
+        <div class="input-group">
+          {% crispy sform %}
+        </div>
+      </div>
+      {% endif %}
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+          <tbody>
+            <tr>
+              <th>NO.</th>
+              <th>Process name</th>
+              <th>Summary</th>
+              <th>Created on</th>
+              <th>Created by</th>
+              <th>Current operator</th>
+              <th>Activity</th>
+            </tr>
+            {% paginate object_list %}
+            {% for pi in object_list %}
+              <tr>
+                <td><a href="{% url 'wf_detail' pi.pk %}">{{ pi.no }}</a></td>
+                <td>{{ pi.process.name }}</td>
+                <td>{{ pi.summary }}</td>
+                <td>{{ pi.created_on|date:"Y-m-d H:i" }}</td>
+                <td>{{ pi.created_by }}</td>
+                <td>{{ pi.get_operators_display }}</td>
+                <td>
+                  <span class="label label-{{ pi|flow_status_css_class }}">
+                    {{ pi.cur_activity.name }}
+                  </span>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="box-footer clearfix">
+        {% show_pages %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
