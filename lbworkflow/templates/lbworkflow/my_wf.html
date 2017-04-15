@@ -41,9 +41,9 @@
               <tr>
                 <td><a href="{% url 'wf_detail' pi.pk %}">{{ pi.no }}</a></td>
                 <td>{{ pi.process.name }}</td>
-                <td>{{ pi.descn }}</td>
-                <td>{{ pi.creation_time|date:"Y-m-d H:i" }}</td>
-                <td>{{ pi.get_assignners_display }}</td>
+                <td>{{ pi.summary }}</td>
+                <td>{{ pi.created_on|date:"Y-m-d H:i" }}</td>
+                <td>{{ pi.get_operators_display }}</td>
                 <td>
                   <span class="label label-{{ pi|flow_status_css_class }}">
                     {{ pi.cur_activity.name }}
