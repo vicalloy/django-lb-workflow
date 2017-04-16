@@ -56,11 +56,9 @@ class Todo(ListView):
             Q(user=user) | Q(agent_user=user),
             status='in process')
         qs = qs.select_related(
-            'instance__no',
-            'instance__summary',
-            'instance__created_on',
-            'instance__process__name',
-            'instance__cur_activity__name'
+            'instance',
+            'instance__process',
+            'instance__cur_activity'
         ).distinct()
         return qs
 
