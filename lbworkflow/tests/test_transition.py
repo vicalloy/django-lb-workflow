@@ -23,3 +23,10 @@ class TransitionExecutorTests(BaseTests):
         transition = instance.get_agree_transition()
         TransitionExecutor(self.users['tom'], instance, workitem, transition).execute()
         self.assertEqual(leave.pinstance.cur_activity.name, 'A3')
+
+
+class ViewTests(BaseTests):
+
+    def test_base_get(self):
+        # TODO test for wf_execute_transitions
+        pass
