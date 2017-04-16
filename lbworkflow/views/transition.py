@@ -12,6 +12,7 @@ from lbworkflow.models import Activity
 from lbworkflow.models import Transition
 from lbworkflow.models import WorkItem
 
+from .helper import import_wf_views
 from .mixin import FormsView
 
 
@@ -152,3 +153,9 @@ class ExecuteRejectTransitionView(ExecuteTransitionView):
 
     def get_init_transition(self, process_instance, request):
         return process_instance.get_reject_transition()
+
+
+def execute_transitions(request, wf_code, trans_func):
+    views = import_wf_views(wf_code, 'wf_views')
+    func = getattr(views, trans_func)
+    return func(request)
