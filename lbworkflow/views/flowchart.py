@@ -25,7 +25,7 @@ def generate_process_flowchart(process):
                 [label="{{ transition.name }} {%if transition.get_condition_descn %}: {%endif%} flow_note transition.get_condition_descn"] ;
                 {% endfor %}
             }
-        """
+        """  # NOQA
         transitions = process.transition_set.all()
         request = Context({'name': process.name, 'transitions': transitions})
         t = Template(file_template)
