@@ -7,9 +7,9 @@ from lbworkflow import settings
 from lbworkflow.models import WorkItem
 
 
-def import_wf_views(wf_code):
+def import_wf_views(wf_code, view_module_name='views'):
     wf_module = settings.WF_APPS.get(wf_code)
-    return importlib.import_module('%s.views' % wf_module)
+    return importlib.import_module('%s.%s' % (wf_module, view_module_name))
 
 
 def user_wf_info_as_dict(wf_obj, user):
