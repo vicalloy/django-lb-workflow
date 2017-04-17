@@ -1,8 +1,8 @@
 from lbworkflow.models import Activity
 from lbworkflow.models import App
-from lbworkflow.models import Transition
 from lbworkflow.models import Process
 from lbworkflow.models import ProcessCategory
+from lbworkflow.models import Transition
 
 
 def get_or_create(cls, uid, **kwargs):
