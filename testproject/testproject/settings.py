@@ -1,5 +1,7 @@
 from lbworkflow.tests.settings import *  # NOQA
 
+ALLOWED_HOSTS = ['*']
+
 INSTALLED_APPS += [
     'testproject',
     'stronghold',
