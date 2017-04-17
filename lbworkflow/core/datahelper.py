@@ -36,8 +36,8 @@ def create_activity(uuid, process, name, **kwargs):
 def get_activity(process, name):
     """
     get activity
-    :param process: 
-    :param name: 'submit' or 'submit,5f31d065-4a87-487b-beea-641f0a6720c3' 
+    :param process:
+    :param name: 'submit' or 'submit,5f31d065-4a87-487b-beea-641f0a6720c3'
     :return: activity
     """
     name_and_uuid = [e.strip() for e in name.split(',') if e.strip()]
