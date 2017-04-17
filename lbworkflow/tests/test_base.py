@@ -2,10 +2,10 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 
-from lbworkflow.models import Activity
-from lbworkflow.models import App
-from lbworkflow.models import Process
-from lbworkflow.models import Transition
+from lbworkflow.core.datahelper import create_process
+from lbworkflow.core.datahelper import create_activity
+from lbworkflow.core.datahelper import create_transition
+from lbworkflow.core.datahelper import create_app
 
 from .leave.models import Leave
 
@@ -28,34 +28,21 @@ class BaseTests(TestCase):
             'vicalloy': create_user('vicalloy'),
             'tom': create_user('tom'),
         }
-        self.apps = {
-            'app_simple_url': App.objects.create(
-                name='simple url', app_type='url', action='wf_execute_transition')
-        }
-
-    def create_transition(self, process, from_activity, to_activity, app=None, **kwargs):
-        from_activity = Activity.objects.get(process=process, name=from_activity)
-        to_activity = Activity.objects.get(process=process, name=to_activity)
-        if not app:
-            app = self.apps['app_simple_url']
-
-        return Transition.objects.create(
-            process=process, input_activity=from_activity, output_activity=to_activity,
-            app=app, **kwargs)
+        create_app('5f31d065-00aa-0010-beea-641f0a670010', 'Simple URL', action='wf_execute_transition')
 
     def init_leave_config(self):
-        process = Process.objects.create(code='leave', name='Leave')
-        Activity.objects.create(process=process, name='Draft', status='draft')
-        Activity.objects.create(process=process, name='Given up', status='given up')
-        Activity.objects.create(process=process, name='Rejected', status='rejected')
-        Activity.objects.create(process=process, name='Completed', status='completed')
-        Activity.objects.create(process=process, name='A1', operators='[owner]')
-        Activity.objects.create(process=process, name='A2', operators='[tom]')
-        Activity.objects.create(process=process, name='A3', operators='[vicalloy]')
-        self.create_transition(process, 'Draft', 'A1')
-        self.create_transition(process, 'A1', 'A2')
-        self.create_transition(process, 'A2', 'A3')
-        self.create_transition(process, 'A3', 'Completed')
+        process = create_process('leave', 'Leave')
+        create_activity('5f31d065-00a0-0010-beea-641f0a670010', process, 'Draft', status='draft')
+        create_activity('5f31d065-00a0-0010-beea-641f0a670020', process, 'Given up', status='given up')
+        create_activity('5f31d065-00a0-0010-beea-641f0a670030', process, 'Rejected', status='rejected')
+        create_activity('5f31d065-00a0-0010-beea-641f0a670040', process, 'Completed', status='completed')
+        create_activity('5f31d065-00a0-0010-beea-641f0a670050', process, 'A1', operators='[owner]')
+        create_activity('5f31d065-00a0-0010-beea-641f0a670060', process, 'A2', operators='[tom]')
+        create_activity('5f31d065-00a0-0010-beea-641f0a670070', process, 'A3', operators='[vicalloy]')
+        create_transition('5f31d065-00e0-0010-beea-641f0a670010', process, 'Draft,', 'A1')
+        create_transition('5f31d065-00e0-0010-beea-641f0a670020', process, 'A1,', 'A2')
+        create_transition('5f31d065-00e0-0010-beea-641f0a670030', process, 'A2,', 'A3')
+        create_transition('5f31d065-00e0-0010-beea-641f0a670040', process, 'A3,', 'Completed')
 
     def init_leave(self):
         leave = Leave(
