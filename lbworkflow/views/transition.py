@@ -1,8 +1,10 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateResponseMixin
+from django.forms import ModelForm
 
 from lbworkflow.core.exceptions import HttpResponseException
 from lbworkflow.core.transition import TransitionExecutor
@@ -26,6 +28,9 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
     form_classes = {
         'form': WorkFlowForm
     }
+
+    def get_success_url(self):
+        return reverse("wf_todo")
 
     def get_template_names(self):
         try:
@@ -106,15 +111,22 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
 
     def forms_valid(self, **forms):
         form = forms.pop('form')
-        if isinstance(form, forms.ModelForm):
+        if isinstance(form, ModelForm):
             wf_obj = self.save_form(form)
             # update cache for wf_obj
             self.wf_obj = wf_obj
             self.process_instance = wf_obj
-            self.do_transition(form.cleaned_data)
+        self.do_transition(form.cleaned_data)
         return HttpResponseRedirect(self.get_success_url())
 
+    def get_context_data(self, **kwargs):
+        kwargs = super(ExecuteTransitionView, self).get_context_data(**kwargs)
+        kwargs['workitem'] = self.workitem
+        kwargs['transition'] = self.transition
+        return kwargs
+
     def dispatch(self, request, *args, **kwargs):
+        # TODO redirect to ExecuteAgreeTransitionView
         self.request = request
         try:
             self.init_process_data(request=request)
