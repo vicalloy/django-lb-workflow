@@ -31,7 +31,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         try:
             return super(ExecuteTransitionView, self).get_template_names()
         except ImproperlyConfigured:
-            base_tmpl = 'workflows/do_transition_form.html'
+            base_tmpl = 'lbworkflow/do_transition_form.html'
             _meta = self.wf_obj._meta
             app_label = _meta.app_label
             object_name = _meta.object_name.lower()
@@ -118,7 +118,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         self.request = request
         try:
             self.init_process_data(request=request)
-            super(ExecuteTransitionView, self).dispatch(request, *args, **kwargs)
+            return super(ExecuteTransitionView, self).dispatch(request, *args, **kwargs)
         except HttpResponseException as error:
             return error.http_response
 
