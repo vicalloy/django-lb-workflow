@@ -1,13 +1,17 @@
 from lbworkflow.models import Activity
-from lbworkflow.models import Transition
 from lbworkflow.models import App
+from lbworkflow.models import Transition
 from lbworkflow.models import Process
+from lbworkflow.models import ProcessCategory
 
 
 def get_or_create(cls, uid, **kwargs):
     uid_field_name = kwargs.pop('uid_field_name', 'uuid')
     obj = cls.objects.filter(**{uid_field_name: uid}).first()
     if obj:
+        for k, v in kwargs.items():
+            setattr(obj, k, v)
+        obj.save()
         return obj
     kwargs[uid_field_name] = uid
     return cls.objects.create(**kwargs)
@@ -15,6 +19,10 @@ def get_or_create(cls, uid, **kwargs):
 
 def create_app(uuid, name, **kwargs):
     return get_or_create(App, uuid, name=name, **kwargs)
+
+
+def create_category(uuid, name, **kwargs):
+    return get_or_create(ProcessCategory, uuid, name=name, **kwargs)
 
 
 def create_process(code, name, **kwargs):
