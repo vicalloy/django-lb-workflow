@@ -1,1 +1,29 @@
 {% extends "lbadminlte/base_ext.html" %}
+
+{% block left_side %}
+  <section class="sidebar">
+    <ul class="sidebar-menu">
+      <li id="id-nav-todo">
+        <a href="{% url 'wf_todo' %}">
+          <i class="fa fa-th"></i> Todo
+          <small class="badge pull-right bg-red todo-count hide"></small>
+        </a>
+      </li>
+      <li id="id-nav-mywf">
+        <a href="{% url 'wf_my_wf' %}">
+          <i class="fa fa-th"></i> My
+        </a>
+      </li>
+      <li id="id-nav-start-wf">
+        <a href="{% url 'wf_start_wf' %}">
+          <i class="fa fa-th"></i> Submit
+        </a>
+      </li>
+      <li id="id-nav-list-wf">
+        <a href="{% url 'wf_list_wf' %}">
+          <i class="fa fa-th"></i> All
+        </a>
+      </li>
+    </ul>
+  </section>
+{% endblock %}
