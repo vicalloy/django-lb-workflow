@@ -378,6 +378,9 @@ class Transition(models.Model):
         if not self.code:
             self.code = 'agree'
 
+    def get_app_url(self, workitem):
+        return self.app.get_url(workitem, self)
+
 
 class AppManager(models.Manager):
     def get_by_natural_key(self, uuid):
