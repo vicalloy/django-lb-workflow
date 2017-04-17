@@ -8,3 +8,6 @@ jsonfield
 pygraphviz
 xlsxwriter
 django-el-pagination
+django-lbutils
+django-lbattachment
+django-lb-adminlte
