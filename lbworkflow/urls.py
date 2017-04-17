@@ -7,6 +7,7 @@ from .views.list import MyWF
 from .views.list import Todo
 from .views.transition import ExecuteAgreeTransitionView
 from .views.transition import ExecuteBackToTransitionView
+from .views.transition import ExecuteGiveUpTransitionView
 from .views.transition import ExecuteRejectTransitionView
 from .views.transition import ExecuteTransitionView
 from .views.transition import execute_transitions
@@ -16,6 +17,7 @@ urlpatterns = [
     url(r'^t/agree/$', ExecuteAgreeTransitionView.as_view(), name="wf_agree"),
     url(r'^t/back_to/$', ExecuteBackToTransitionView.as_view(), name="wf_back_to"),
     url(r'^t/reject/$', ExecuteRejectTransitionView.as_view(), name="wf_reject"),
+    url(r'^t/give_up/$', ExecuteGiveUpTransitionView.as_view(), name="wf_give_up"),
     url(
         r'^t/e/(?P<wf_code>\w+)/(?P<trans_func>\w+)/$', execute_transitions,
         name='wf_execute_transitions'),

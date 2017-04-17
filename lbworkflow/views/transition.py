@@ -1,10 +1,10 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
+from django.forms import ModelForm
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateResponseMixin
-from django.forms import ModelForm
 
 from lbworkflow.core.exceptions import HttpResponseException
 from lbworkflow.core.transition import TransitionExecutor
@@ -62,20 +62,9 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         self.process_instance = instance
         self.wf_obj = instance.content_object
 
-    def check_permission(self, request, instance, workitem, transition):
-        """ If no permission raise HttpResponseException """
-        activity_is_ok = (
-            transition.input == instance.cur_activity
-            and workitem.activity == instance.cur_activity
-            and workitem.status == 'in progress')
-        user_is_ok = (
-            request.user in [workitem.user, workitem.agent_user]
-            or instance.is_wf_admin(request.user))
-        is_ok = activity_is_ok and user_is_ok
-
-        if not is_ok:
-            from django.template import Context, Template
-            t = Template("""
+    def raise_no_permission_exception(self, instance):
+        from django.template import Context, Template
+        t = Template("""
             <!DOCTYPE HTML>
             <html lang="en">
             <head>
@@ -89,9 +78,23 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
             </body>
             </html>
             """)
-            http_response = HttpResponse(
-                t.render(Context({"instance": instance})), content_type='text/html', status=403)
-            raise HttpResponseException(http_response)
+        http_response = HttpResponse(
+            t.render(Context({"instance": instance})), content_type='text/html', status=403)
+        raise HttpResponseException(http_response)
+
+    def check_permission(self, request, instance, workitem, transition):
+        """ If no permission raise HttpResponseException """
+        activity_is_ok = (
+            transition.input == instance.cur_activity
+            and workitem.activity == instance.cur_activity
+            and workitem.status == 'in progress')
+        user_is_ok = (
+            request.user in [workitem.user, workitem.agent_user]
+            or instance.is_wf_admin(request.user))
+        is_ok = activity_is_ok and user_is_ok
+
+        if not is_ok:
+            self.raise_no_permission_exception(instance)
 
     def get_transition_before_execute(self, cleaned_data):
         return self.transition
@@ -126,7 +129,6 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         return kwargs
 
     def dispatch(self, request, *args, **kwargs):
-        # TODO redirect to ExecuteAgreeTransitionView
         self.request = request
         try:
             self.init_process_data(request=request)
@@ -140,6 +142,13 @@ class ExecuteBackToTransitionView(ExecuteTransitionView):
         'form': BackToActivityForm
     }
 
+    def check_permission(self, request, instance, workitem, transition):
+        # TODO ...
+        is_ok = True
+
+        if not is_ok:
+            self.raise_no_permission_exception(instance)
+
     def get_init_transition(self, process_instance, request):
         return process_instance.get_reject_transition()
 
@@ -148,6 +157,20 @@ class ExecuteBackToTransitionView(ExecuteTransitionView):
         transition = self.transition
         transition.output_activity = Activity.objects.get(pk=back_to_activity)
         return transition
+
+
+class ExecuteGiveUpTransitionView(ExecuteTransitionView):
+    form_classes = {
+        'form': BackToActivityForm
+    }
+
+    def check_permission(self, request, instance, workitem, transition):
+        is_ok = request.user == instance.created_by
+        if not is_ok:
+            self.raise_no_permission_exception(instance)
+
+    def get_init_transition(self, process_instance, request):
+        return process_instance.get_give_up_transition()
 
 
 class ExecuteAgreeTransitionView(ExecuteTransitionView):
