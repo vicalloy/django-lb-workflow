@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model
+from django.core.urlresolvers import reverse
 
 from lbworkflow.core.transition import TransitionExecutor
 from lbworkflow.views.helper import user_wf_info_as_dict
 
 from .test_base import BaseTests
+from .leave.models import Leave
 
 User = get_user_model()
 
@@ -32,15 +34,30 @@ class ViewTests(BaseTests):
         super(ViewTests, self).setUp()
         self.leave.submit_process()
 
-    def test_execute_transition(self):
-        self.client.login(username='tom', password='password')
-
         leave = self.leave
         ctx = user_wf_info_as_dict(leave, self.users['tom'])
+
         transitions = ctx['transitions']
         transition = transitions[0]
-        url = transition.get_app_url(ctx['workitem'])
+        self.transition_url = transition.get_app_url(ctx['workitem'])
 
-        resp = self.client.get(url)
+        self.workitem = ctx['workitem']
+
+        self.client.login(username='tom', password='password')
+
+    def test_execute_transition(self):
+        resp = self.client.get(self.transition_url)
         self.assertEqual(resp.status_code, 200)
 
+    def test_execute_transition(self):
+        resp = self.client.post(self.transition_url)
+        self.assertRedirects(resp, '/wf/todo/')
+        leave = Leave.objects.get(pk=self.leave.pk)
+        self.assertEqual('A3', leave.pinstance.cur_activity.name)
+
+    def test_simple_agree(self):
+        url = reverse('wf_agree')
+        resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
+        self.assertRedirects(resp, '/wf/todo/')
+        leave = Leave.objects.get(pk=self.leave.pk)
+        self.assertEqual('A3', leave.pinstance.cur_activity.name)
