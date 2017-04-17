@@ -4,8 +4,8 @@ from django.core.urlresolvers import reverse
 from lbworkflow.core.transition import TransitionExecutor
 from lbworkflow.views.helper import user_wf_info_as_dict
 
-from .test_base import BaseTests
 from .leave.models import Leave
+from .test_base import BaseTests
 
 User = get_user_model()
 
@@ -44,10 +44,6 @@ class ViewTests(BaseTests):
         self.workitem = ctx['workitem']
 
         self.client.login(username='tom', password='password')
-
-    def test_execute_transition(self):
-        resp = self.client.get(self.transition_url)
-        self.assertEqual(resp.status_code, 200)
 
     def test_execute_transition(self):
         resp = self.client.post(self.transition_url)
