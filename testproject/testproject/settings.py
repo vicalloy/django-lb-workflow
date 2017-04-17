@@ -15,12 +15,12 @@ DATABASES = {
 }
 
 STRONGHOLD_PUBLIC_URLS = [
-    r'^admin/',
+    r'^/admin/',
 ]
 
 MIDDLEWARE += [
     'impersonate.middleware.ImpersonateMiddleware',
-    #'testproject.middleware.LoginRequiredStrongholdMiddleware',
+    'testproject.middleware.LoginRequiredStrongholdMiddleware',
 ]
 
 LOGIN_URL ='/admin/login/'
