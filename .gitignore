@@ -1,6 +1,7 @@
 *.sqlite3
 vendor/
 bower_components/
+py3env/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
