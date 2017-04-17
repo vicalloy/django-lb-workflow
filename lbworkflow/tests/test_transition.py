@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 
 from lbworkflow.core.transition import TransitionExecutor
+from lbworkflow.views.helper import user_wf_info_as_dict
 
 from .test_base import BaseTests
 
@@ -27,6 +28,19 @@ class TransitionExecutorTests(BaseTests):
 
 class ViewTests(BaseTests):
 
-    def test_base_get(self):
-        # TODO test for wf_execute_transitions
-        pass
+    def setUp(self):
+        super(ViewTests, self).setUp()
+        self.leave.submit_process()
+
+    def test_execute_transition(self):
+        self.client.login(username='tom', password='password')
+
+        leave = self.leave
+        ctx = user_wf_info_as_dict(leave, self.users['tom'])
+        transitions = ctx['transitions']
+        transition = transitions[0]
+        url = transition.get_app_url(ctx['workitem'])
+
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+
