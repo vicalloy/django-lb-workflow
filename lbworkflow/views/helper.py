@@ -30,7 +30,6 @@ def user_wf_info_as_dict(wf_obj, user):
     ctx['wf_code'] = instance.process.code
     ctx['process'] = instance.process
     ctx['process_instance'] = instance
-    ctx['transitions'] = transitions
     ctx['object'] = object
     ctx['workitem'] = workitem
     ctx['wf_history'] = instance.event_set.all().order_by('-created_on', '-pk')
@@ -44,8 +43,8 @@ def user_wf_info_as_dict(wf_obj, user):
     can_edit = can_edit or is_wf_admin
     ctx['can_edit'] = can_edit
     ctx['can_audit'] = instance.get_todo_workitem(user)
-    ctx['can_act_transitions'] = transitions
     ctx['can_rollback'] = instance.can_rollback(user)
-    ctx['agree_can_act_transitions'] = instance.get_merged_agree_transitions()
-    ctx['other_can_act_transitions'] = [e for e in transitions if not e.is_agree]
+    ctx['transitions'] = transitions
+    ctx['agree_transitions'] = instance.get_merged_agree_transitions()
+    ctx['other_transitions'] = [e for e in transitions if not e.is_agree]
     return ctx
