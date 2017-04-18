@@ -20,7 +20,7 @@ urlpatterns = [
     url(r'^t/give_up/$', ExecuteGiveUpTransitionView.as_view(), name="wf_give_up"),
     url(
         r'^t/e/(?P<wf_code>\w+)/(?P<trans_func>\w+)/$', execute_transitions,
-        name='wf_execute_transitions'),
+        name='wf_execute_transition'),
 
     url(r'^t/reject/$', ExecuteRejectTransitionView.as_view(), name="wf_do_batch_trans"),
 
