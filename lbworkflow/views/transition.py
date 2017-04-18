@@ -252,6 +252,14 @@ class ExecuteRejectTransitionView(ExecuteTransitionView):
         'form': BackToActivityForm  # reason for reject.
     }
 
+    def get_form_kwargs(self, form_class_key):
+        """
+        Returns the keyword arguments for instantiating the form.
+        """
+        kwargs = super(ExecuteRejectTransitionView, self).get_form_kwargs(form_class_key)
+        kwargs['process_instance'] = self.process_instance
+        return kwargs
+
     def get_init_transition(self, process_instance, request):
         return process_instance.get_reject_transition()
 
