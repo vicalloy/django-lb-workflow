@@ -30,6 +30,14 @@ class TransitionExecutorTests(BaseTests):
 
 class ViewTests(BaseTests):
 
+    def get_transition_url(self, leave, user):
+        ctx = user_wf_info_as_dict(leave, user)
+
+        transitions = ctx['transitions']
+        transition = transitions[0]
+        transition_url = transition.get_app_url(ctx['workitem'])
+        return transition_url
+
     def setUp(self):
         super(ViewTests, self).setUp()
         self.leave.submit_process()
@@ -50,6 +58,13 @@ class ViewTests(BaseTests):
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
         self.assertEqual('A3', leave.pinstance.cur_activity.name)
+
+        self.client.login(username='vicalloy', password='password')
+        transition_url = self.get_transition_url(leave, self.users['vicalloy'])
+        resp = self.client.post(transition_url)
+        self.assertRedirects(resp, '/wf/todo/')
+        leave = Leave.objects.get(pk=self.leave.pk)
+        self.assertEqual('Completed', leave.pinstance.cur_activity.name)
 
     def test_simple_agree(self):
         url = reverse('wf_agree')
