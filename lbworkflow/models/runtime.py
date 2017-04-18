@@ -175,7 +175,7 @@ class ProcessInstance(models.Model):
         return user in users
 
     def get_can_back_to_activities(self):
-        events = Event.objects.filter(instance=self).order_by('-date', '-id')
+        events = Event.objects.filter(instance=self).order_by('-created_on', '-id')
         activities = []
         for event in events:
             if event.old_activity == self.cur_activity:
