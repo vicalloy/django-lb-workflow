@@ -154,8 +154,8 @@ class Process(models.Model):
             process=self,
             is_agree=False,
             can_auto_agree=False,
-            input=in_activity,
-            output=out_activity,
+            input_activity=in_activity,
+            output_activity=out_activity,
         )
         return transition
 
@@ -167,8 +167,8 @@ class Process(models.Model):
             process=self,
             is_agree=False,
             can_auto_agree=False,
-            input=in_activity,
-            output=output,
+            input_activity=in_activity,
+            output_activity=output,
         )
         return transition
 
@@ -179,8 +179,8 @@ class Process(models.Model):
             process=self,
             is_agree=True,
             can_auto_agree=False,
-            input=in_activity,
-            output=out_activity,
+            input_activity=in_activity,
+            output_activity=out_activity,
         )
         return transition
 
@@ -191,8 +191,8 @@ class Process(models.Model):
             process=self,
             is_agree=False,
             can_auto_agree=False,
-            input=in_activity,
-            output=out_activity,
+            input_activity=in_activity,
+            output_activity=out_activity,
         )
         return transition
 
@@ -203,8 +203,8 @@ class Process(models.Model):
             process=self,
             is_agree=False,
             can_auto_agree=False,
-            input=in_activity,
-            output=self.get_rejected_active(),
+            input_activity=in_activity,
+            output_activity=self.get_rejected_active(),
         )
         return transition
 
