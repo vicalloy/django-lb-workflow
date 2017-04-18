@@ -410,6 +410,8 @@ class App(models.Model):
         )
 
     def get_url(self, workitem, transition):
+        def render(templ_str, ctx):
+            return Template(templ_str).render(Context(ctx))
         if transition == 'reject':
             transition = workitem.instance.process.get_reject_transition()
         if transition == 'back to':
@@ -418,6 +420,7 @@ class App(models.Model):
 
         ctx = {
             "wi": workitem,
+            "wf_code": transition.process.code,
             "ts": transition,
             "ts_id": ts_id,
             "in": workitem.instance,
@@ -431,13 +434,11 @@ class App(models.Model):
             url = transition.app_param
         try:
             url_component_list = url.split(' ')
-            url = reverse(url_component_list[0], args=url_component_list[1:])
+            url_param = [render(e, ctx) for e in url_component_list[1:]]
+            url = reverse(url_component_list[0], args=url_param)
         except:
             pass
         if "?" not in url:
             url = "%s?a=" % url
         url = "%s&ts_id={{ts_id}}&wi_id={{wi.id}}" % url
-
-        t = Template(url)
-        c = Context(ctx)
-        return t.render(c)
+        return render(url, ctx)
