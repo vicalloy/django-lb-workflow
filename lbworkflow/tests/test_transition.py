@@ -72,3 +72,33 @@ class ViewTests(BaseTests):
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
         self.assertEqual('A3', leave.pinstance.cur_activity.name)
+
+    def test_reject(self):
+        url = reverse('wf_reject')
+        resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
+        self.assertRedirects(resp, '/wf/todo/')
+        leave = Leave.objects.get(pk=self.leave.pk)
+        self.assertEqual('Rejected', leave.pinstance.cur_activity.name)
+
+    def test_give_up(self):
+        self.client.login(username='owner', password='password')
+        url = reverse('wf_give_up')
+        resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
+        self.assertRedirects(resp, '/wf/todo/')
+        leave = Leave.objects.get(pk=self.leave.pk)
+        self.assertEqual('Given up', leave.pinstance.cur_activity.name)
+
+    def test_back_to(self):
+        pass
+
+    def test_batch_agree(self):
+        pass
+
+    def test_batch_reject(self):
+        pass
+
+    def test_batch_give_up(self):
+        pass
+
+    def test_batch_back_to(self):
+        pass
