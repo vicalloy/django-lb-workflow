@@ -8,6 +8,7 @@ from .sendmsg import wf_send_msg
 
 def create_event(instance, transition, **kwargs):
     act_type = 'transition' if transition.pk else transition.code
+    transition = transition if transition.pk else None
     event = Event.objects.create(
         instance=instance, transition=transition, act_type=act_type,
         **kwargs)
