@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.edit import FormView
 
 from lbworkflow.core.exceptions import HttpResponseException
 from lbworkflow.core.transition import TransitionExecutor
@@ -13,6 +14,7 @@ from lbworkflow.forms import WorkFlowForm
 from lbworkflow.models import Activity
 from lbworkflow.models import Transition
 from lbworkflow.models import WorkItem
+from lbworkflow.models import ProcessInstance
 
 from .helper import import_wf_views
 from .mixin import FormsView
@@ -140,6 +142,47 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
             return error.http_response
 
 
+class BatchExecuteTransitionView(FormView):
+    form_class = None
+
+    def get_context_data(self, **kwargs):
+        kwargs['workitem_list'] = self.workitem_list
+        return super(BatchExecuteTransitionView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_transition(self, process_instance):
+        pass
+
+    def form_invalid(self, form):
+        user = self.request.user
+        cleaned_data = form.cleaned_data
+        for workitem in self.workitem_list:
+            if workitem.user != user:
+                # TODO message for ignore
+                continue
+            instance = workitem.instance
+            transition = self.get_transition(workitem.instance)
+            comment = cleaned_data.get('comment')
+            attachments = cleaned_data.get('attachments')
+            TransitionExecutor(
+                user, instance, self.workitem, transition, comment, attachments
+            ).execute()
+            # TODO Hint message
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_workitem_list(self, request):
+        workitem_pk_list = request.POST.getlist('sel_pi')
+        workitem_pk_list = [e for e in workitem_pk_list if e]
+        workitem_list = WorkItem.objects.filter(pk__in=workitem_pk_list)
+        return workitem_list
+
+    def dispatch(self, request, *args, **kwargs):
+        self.workitem_list = self.get_workitem_list(request)
+        super(BatchExecuteTransitionView, self).dispatch(request, *args, **kwargs)
+
+
 class ExecuteBackToTransitionView(ExecuteTransitionView):
     form_classes = {
         'form': BackToActivityForm
@@ -172,6 +215,25 @@ class ExecuteGiveUpTransitionView(ExecuteTransitionView):
         return process_instance.get_give_up_transition()
 
 
+class BatchExecuteGiveUpTransitionView(BatchExecuteTransitionView):
+
+    def get_workitem_list(self, request):
+        instance_pk_list = request.POST.getlist('pinstance_pks')
+        instance_list = ProcessInstance.objects.filter(pk__in=instance_pk_list)
+        workitem_list = []
+        for instance in instance_list:
+            workitem = WorkItem(
+                instance=instance,
+                activity=instance.cur_activity,
+                user=instance.created_by,
+            )
+            workitem_list.append(workitem)
+        return workitem_list
+
+    def get_transition(self, process_instance):
+        return process_instance.get_give_up_transition()
+
+
 class ExecuteAgreeTransitionView(ExecuteTransitionView):
     def get_init_transition(self, process_instance, request):
         return process_instance.get_agree_transition(False)
@@ -180,12 +242,22 @@ class ExecuteAgreeTransitionView(ExecuteTransitionView):
         return self.process_instance.get_agree_transition(False)
 
 
+class BatchExecuteAgreeTransitionView(BatchExecuteTransitionView):
+    def get_transition(self, process_instance):
+        return process_instance.get_agree_transition(False)
+
+
 class ExecuteRejectTransitionView(ExecuteTransitionView):
     form_classes = {
         'form': BackToActivityForm  # reason for reject.
     }
 
     def get_init_transition(self, process_instance, request):
+        return process_instance.get_reject_transition()
+
+
+class BatchExecuteRejectTransitionView(BatchExecuteTransitionView):
+    def get_transition(self, process_instance):
         return process_instance.get_reject_transition()
 
 

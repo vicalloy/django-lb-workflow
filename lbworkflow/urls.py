@@ -5,6 +5,9 @@ from .views import processinstance
 from .views.list import ListWF
 from .views.list import MyWF
 from .views.list import Todo
+from .views.transition import BatchExecuteAgreeTransitionView
+from .views.transition import BatchExecuteGiveUpTransitionView
+from .views.transition import BatchExecuteRejectTransitionView
 from .views.transition import ExecuteAgreeTransitionView
 from .views.transition import ExecuteBackToTransitionView
 from .views.transition import ExecuteGiveUpTransitionView
@@ -18,6 +21,9 @@ urlpatterns = [
     url(r'^t/back_to/$', ExecuteBackToTransitionView.as_view(), name="wf_back_to"),
     url(r'^t/reject/$', ExecuteRejectTransitionView.as_view(), name="wf_reject"),
     url(r'^t/give_up/$', ExecuteGiveUpTransitionView.as_view(), name="wf_give_up"),
+    url(r'^t/batch/agree/$', BatchExecuteAgreeTransitionView.as_view(), name="wf_batch_agree"),
+    url(r'^t/batch/reject/$', BatchExecuteRejectTransitionView.as_view(), name="wf_batch_reject"),
+    url(r'^t/batch/give_up/$', BatchExecuteGiveUpTransitionView.as_view(), name="wf_batch_give_up"),
     url(
         r'^t/e/(?P<wf_code>\w+)/(?P<trans_func>\w+)/$', execute_transitions,
         name='wf_execute_transition'),
