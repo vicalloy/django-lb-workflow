@@ -49,11 +49,26 @@ def get_activity(process, name):
     return qs[0]
 
 
-def create_transition(uuid, process, from_activity, to_activity, app=None, **kwargs):
+def get_app(name):
+    """
+    get activity
+    :param process:
+    :param name: 'submit' or 'submit,5f31d065-4a87-487b-beea-641f0a6720c3'
+    :return: activity
+    """
+    name_and_uuid = [e.strip() for e in name.split(',') if e.strip()]
+    qs = App.objects
+    if len(name_and_uuid) == 1:
+        qs = qs.filter(name=name_and_uuid[0])
+    else:
+        qs = qs.filter(uuid=name_and_uuid[1])
+    return qs[0]
+
+
+def create_transition(uuid, process, from_activity, to_activity, app='Simple', **kwargs):
     from_activity = get_activity(process, from_activity)
     to_activity = get_activity(process, to_activity)
-    if not app:
-        app = App.objects.get(name='Simple URL')
+    app = get_app(app)
     return get_or_create(
         Transition, uuid, process=process, input_activity=from_activity,
         output_activity=to_activity, app=app, **kwargs)
