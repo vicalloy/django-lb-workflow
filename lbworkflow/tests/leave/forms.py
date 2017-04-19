@@ -17,6 +17,15 @@ class LeaveForm(BootstrapFormHelperMixin, WorkflowFormMixin, forms.ModelForm):
             ['leave_days', None],
             ['reason', ],
         ])
+        
+    def save(self, commit=True):
+        obj = super(LeaveForm, self).save(commit=False)
+        obj.init_actual_info()
+        if commit:
+            self.save_m2m()
+            obj.save()
+        return obj
+
 
     class Meta:
         model = Leave
