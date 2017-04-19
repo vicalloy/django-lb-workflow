@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import messages
 from lbattachment.models import LBAttachment
-from lbutils import FormHelperMixin
+from lbutils import BootstrapFormHelperMixin
 from lbutils import JustSelectedSelectMultiple
 
 from lbworkflow.models import Event
@@ -32,7 +32,7 @@ class QuickSearchFormMixin(object):
     q_quick_search_kw = forms.CharField(label="关键字", required=False)
 
 
-class BSQuickSearchForm(FormHelperMixin, BSSearchFormMixin, QuickSearchFormMixin, forms.Form):
+class BSQuickSearchForm(BootstrapFormHelperMixin, BSSearchFormMixin, QuickSearchFormMixin, forms.Form):
     def __init__(self, *args, **kw):
         super(BSQuickSearchForm, self).__init__(*args, **kw)
         self.init_crispy_helper()
@@ -94,6 +94,10 @@ class WorkFlowForm(forms.Form):
 
     def save_m2m(self, *args, **kwargs):
         return self.instance
+
+
+class BatchWorkFlowForm(WorkFlowForm):
+    pass
 
 
 class BackToActivityForm(WorkFlowForm):
