@@ -55,13 +55,13 @@ class WorkflowFormMixin(object):
         act_name = request.POST.get('act_submit') or 'Save'
         obj = self.save()
         # add a edit event, change resolution to draft
-        instance = obj.process_instance
+        instance = obj.pinstance
         if instance.cur_activity.status in ['rejected', 'draft']:
             WorkItem.objects.filter(instance=instance, status='running').delete()
             Event.objects.create(
                 instance=instance, old_activity=instance.cur_activity,
                 new_activity=instance.process.get_draft_active(),
-                act_type='edit', user=request.user, status='completed',
+                act_type='edit', user=request.user,
             )
             instance.cur_activity = instance.process.get_draft_active()
             instance.save()
