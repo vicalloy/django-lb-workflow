@@ -1,5 +1,5 @@
 test:
-	coverage run --parallel-mode ./runtests.py
+	coverage run ./runtests.py
 
 isort:
 	isort --recursive lbworkflow
