@@ -9,7 +9,7 @@ def flow_status_css_class(pinstance):
         return 'default'
     if pinstance.cur_activity.status in ['rejected']:
         return 'danger'
-    if pinstance.cur_activity.status == 'in process':
+    if pinstance.cur_activity.status == 'in progress':
         return 'info'
     if pinstance.cur_activity.status == 'finished':
         return 'success'
