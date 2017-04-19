@@ -151,4 +151,3 @@ class ViewTests(BaseTests):
         self.assertRedirects(resp, '/wf/my/')
         leave = Leave.objects.get(pk=self.leave.pk)
         self.assertEqual('Given up', leave.pinstance.cur_activity.name)
-
