@@ -85,7 +85,7 @@ def delete(request):
         if instance.is_wf_admin(request.user):
             instance.delete()
     messages.info(request, 'Deleted')
-    return redirect(reverse('wf_my_wf'))
+    return redirect(reverse('wf_list_wf'))
 
 
 def start_wf(request):
