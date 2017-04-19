@@ -1,5 +1,7 @@
 language: python
 
+python: 3.4
+
 addons:
   apt:
     sources:
@@ -17,7 +19,7 @@ install:
 
 env:
   - TOXENV=isort
-  - TOXENV=py35-flake8
+  - TOXENV=flake8
   - TOXENV=py34-django18
   - TOXENV=py34-django19
   - TOXENV=py34-django110
