@@ -6,6 +6,7 @@ import django
 from django.conf import settings
 from django.test.utils import get_runner
 
+
 def run_test():
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
