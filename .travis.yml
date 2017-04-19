@@ -7,11 +7,13 @@ addons:
     packages:
       - python3.5
       - python3.5-dev
+      - graphviz
+      - libgraphviz-dev
+      - pkg-config
 
 install:
   - pip install --upgrade pip setuptools tox virtualenv coveralls
   - npm install -g bower
-  - apt install -y graphviz libgraphviz-dev pkg-config
 
 env:
   - TOXENV=isort
