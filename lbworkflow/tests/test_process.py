@@ -95,3 +95,20 @@ class ViewTests(BaseTests):
         leave = Leave.objects.get(reason='test submit')
         self.assertRedirects(resp, '/wf/%s/' % leave.pinstance.pk)
         self.assertEqual('A2', leave.pinstance.cur_activity.name)
+
+    def test_delete(self):
+        self.client.login(username='admin', password='password')
+        # POST
+        url = reverse('wf_delete')
+        leave = self.create_leave('to delete')
+        data = {'pk': leave.pinstance.pk}
+        resp = self.client.post(url, data)
+        self.assertRedirects(resp, '/wf/list/')
+        self.assertIsNone(self.get_leave('to delete'))
+
+        # GET
+        leave = self.create_leave('to delete')
+        data = {'pk': leave.pinstance.pk}
+        resp = self.client.get(url, data)
+        self.assertRedirects(resp, '/wf/list/')
+        self.assertIsNone(self.get_leave('to delete'))
