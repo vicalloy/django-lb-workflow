@@ -1,30 +1,34 @@
-sudo: false
-
 language: python
 
-python:
-  - "3.5"
-  - "3.6"
-
-env:
-  - DJANGO="Django>=1.8,<1.9"
-  - DJANGO="Django>=1.9,<1.10"
-  - DJANGO="Django>=1.10,<1.11"
-
-cache:
-  directories:
-  - $HOME/.cache/pip/wheels
+addons:
+  apt:
+    sources:
+      - deadsnakes
+    packages:
+      - python3.5
+      - python3.5-dev
 
 install:
-  - nvm install 7
-  - pip install -U pip wheel setuptools
-  - pip install $DJANGO -e .[tests]
-  - pip freeze
+  - pip install --upgrade pip setuptools tox virtualenv coveralls
+  - npm install -g bower
+
+env:
+  - TOXENV=isort
+  - TOXENV=flake8
+  - TOXENV=py27-django18
+  - TOXENV=py27-django111
+  - TOXENV=py35-django18
+  - TOXENV=py35-django19
+  - TOXENV=py35-django110
+  - TOXENV=py35-django111
+  - TOXENV=py35-django_trunk
+
+script:
+  - tox
 
 notifications:
   email: false
 
-script:
-  - python runtests.py
-  - flake8
-  - isort --check-only --recursive lbworkflow
+matrix:
+  allow_failures:
+    - env: TOXENV=py35-django_trunk
