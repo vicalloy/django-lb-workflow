@@ -12,9 +12,9 @@ from lbworkflow.core.transition import TransitionExecutor
 from lbworkflow.forms import BackToActivityForm
 from lbworkflow.forms import WorkFlowForm
 from lbworkflow.models import Activity
+from lbworkflow.models import ProcessInstance
 from lbworkflow.models import Transition
 from lbworkflow.models import WorkItem
-from lbworkflow.models import ProcessInstance
 
 from .helper import import_wf_views
 from .mixin import FormsView
@@ -196,7 +196,7 @@ class ExecuteBackToTransitionView(ExecuteTransitionView):
         """
         Returns the keyword arguments for instantiating the form.
         """
-        kwargs = super(ExecuteRejectTransitionView, self).get_form_kwargs(form_class_key)
+        kwargs = super(ExecuteBackToTransitionView, self).get_form_kwargs(form_class_key)
         kwargs['process_instance'] = self.process_instance
         return kwargs
 
