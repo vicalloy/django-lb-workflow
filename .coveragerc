@@ -1,12 +1,16 @@
 [run]
 branch = True
 source = lbworkflow
-omit = lbworkflow/tests/*
+omit =
+        lbworkflow/tests/*
+        */migrations/*
 
 [report]
 show_missing = True
 skip_covered = True
-omit = lbworkflow/tests/*
+omit =
+        lbworkflow/tests/*
+        */migrations/*
 
 [html]
 directory = coverage_html
