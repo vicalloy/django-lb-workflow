@@ -66,8 +66,16 @@ class ViewTests(BaseTests):
         leave = Leave.objects.get(pk=self.leave.pk)
         self.assertEqual('Completed', leave.pinstance.cur_activity.name)
 
+    def test_execute_transition_no_permission(self):
+        self.client.login(username='vicalloy', password='password')
+        resp = self.client.post(self.transition_url)
+        self.assertEqual(resp.status_code, 403)
+
     def test_simple_agree(self):
         url = reverse('wf_agree')
+        resp = self.client.get('%s?wi_id=%s' % (url, self.workitem.pk))
+        self.assertEqual(resp.status_code, 200)
+
         resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
@@ -75,6 +83,9 @@ class ViewTests(BaseTests):
 
     def test_reject(self):
         url = reverse('wf_reject')
+        resp = self.client.get('%s?wi_id=%s' % (url, self.workitem.pk))
+        self.assertEqual(resp.status_code, 200)
+
         resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
@@ -83,13 +94,30 @@ class ViewTests(BaseTests):
     def test_give_up(self):
         self.client.login(username='owner', password='password')
         url = reverse('wf_give_up')
+        resp = self.client.get('%s?wi_id=%s' % (url, self.workitem.pk))
+        self.assertEqual(resp.status_code, 200)
+
         resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
         self.assertEqual('Given up', leave.pinstance.cur_activity.name)
 
     def test_back_to(self):
-        pass
+        self.client.post(self.transition_url)  # A2 TO A3
+        leave = Leave.objects.get(pk=self.leave.pk)
+
+        url = reverse('wf_back_to')
+        resp = self.client.get('%s?wi_id=%s' % (url, self.workitem.pk))
+        self.assertEqual(resp.status_code, 200)
+        back_to_activity = leave.pinstance.get_can_back_to_activities()[0]
+
+        resp = self.client.post(
+            '%s?wi_id=%s' % (url, self.workitem.pk),
+            {'back_to_activity': back_to_activity.pk}
+        )
+        self.assertRedirects(resp, '/wf/todo/')
+        leave = Leave.objects.get(pk=self.leave.pk)
+        self.assertEqual('A2', leave.pinstance.cur_activity.name)
 
     def test_batch_agree(self):
         pass
@@ -98,7 +126,4 @@ class ViewTests(BaseTests):
         pass
 
     def test_batch_give_up(self):
-        pass
-
-    def test_batch_back_to(self):
         pass
