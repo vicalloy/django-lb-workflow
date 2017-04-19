@@ -64,7 +64,7 @@ class CreateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
     base_template_name = 'form.html'
 
     def get_success_url(self):
-        return reverse('wf_detail', pk=self.object.pinstance.pk)
+        return reverse('wf_detail', args=(self.object.pinstance.pk, ))
 
     def get_context_data(self, **kwargs):
         kwargs['wf_code'] = self.wf_code
@@ -92,7 +92,7 @@ class UpdateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
     base_template_name = 'form.html'
 
     def get_success_url(self):
-        return reverse('wf_detail', pk=self.object.pinstance.pk)
+        return reverse('wf_detail', args=(self.object.pinstance.pk, ))
 
     def get_context_data(self, **kwargs):
         kwargs.update(user_wf_info_as_dict(self.object, self.request.user))
@@ -100,7 +100,7 @@ class UpdateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
 
     def forms_valid(self, **forms):
         form = forms.pop('form')
-        self.object = form.update_process(self.request, self.wf_code)
+        self.object = form.update_process(self.request)
         # TODO forms.save
         return HttpResponseRedirect(self.get_success_url())
 
