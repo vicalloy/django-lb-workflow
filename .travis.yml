@@ -11,6 +11,7 @@ addons:
 install:
   - pip install --upgrade pip setuptools tox virtualenv coveralls
   - npm install -g bower
+  - apt install -y graphviz libgraphviz-dev pkg-config
 
 env:
   - TOXENV=isort
