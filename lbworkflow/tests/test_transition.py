@@ -98,7 +98,7 @@ class ViewTests(BaseTests):
         self.assertEqual(resp.status_code, 200)
 
         resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
-        self.assertRedirects(resp, '/wf/todo/')
+        self.assertRedirects(resp, '/wf/my/')
         leave = Leave.objects.get(pk=self.leave.pk)
         self.assertEqual('Given up', leave.pinstance.cur_activity.name)
 
@@ -120,10 +120,35 @@ class ViewTests(BaseTests):
         self.assertEqual('A2', leave.pinstance.cur_activity.name)
 
     def test_batch_agree(self):
-        pass
+        url = reverse('wf_batch_agree')
+        ctx = user_wf_info_as_dict(self.leave, self.users['tom'])
+        data = {
+            'wi': [ctx['workitem'].pk, 1, 2, 3]
+        }
+        resp = self.client.post(url, data)
+        self.assertRedirects(resp, '/wf/todo/')
+        leave = Leave.objects.get(pk=self.leave.pk)
+        self.assertEqual('A3', leave.pinstance.cur_activity.name)
 
     def test_batch_reject(self):
-        pass
+        url = reverse('wf_batch_reject')
+        ctx = user_wf_info_as_dict(self.leave, self.users['tom'])
+        data = {
+            'wi': [ctx['workitem'].pk, 1, 2, 3]
+        }
+        resp = self.client.post(url, data)
+        self.assertRedirects(resp, '/wf/todo/')
+        leave = Leave.objects.get(pk=self.leave.pk)
+        self.assertEqual('Rejected', leave.pinstance.cur_activity.name)
 
     def test_batch_give_up(self):
-        pass
+        self.client.login(username='owner', password='password')
+        url = reverse('wf_batch_give_up')
+        data = {
+            'pi': [self.leave.pinstance.pk, 1, 2, 3]
+        }
+        resp = self.client.post(url, data)
+        self.assertRedirects(resp, '/wf/my/')
+        leave = Leave.objects.get(pk=self.leave.pk)
+        self.assertEqual('Given up', leave.pinstance.cur_activity.name)
+
