@@ -10,6 +10,7 @@ from django.views.generic.edit import FormView
 from lbworkflow.core.exceptions import HttpResponseException
 from lbworkflow.core.transition import TransitionExecutor
 from lbworkflow.forms import BackToActivityForm
+from lbworkflow.forms import BatchWorkFlowForm
 from lbworkflow.forms import WorkFlowForm
 from lbworkflow.models import Activity
 from lbworkflow.models import ProcessInstance
@@ -143,19 +144,20 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
 
 
 class BatchExecuteTransitionView(FormView):
-    form_class = None
+    template_name = 'lbworkflow/batch_transition_form.html'
+    form_class = BatchWorkFlowForm
+
+    def get_success_url(self):
+        return reverse("wf_todo")
 
     def get_context_data(self, **kwargs):
         kwargs['workitem_list'] = self.workitem_list
         return super(BatchExecuteTransitionView, self).get_context_data(**kwargs)
 
-    def form_valid(self, form):
-        return HttpResponseRedirect(self.get_success_url())
-
     def get_transition(self, process_instance):
         pass
 
-    def form_invalid(self, form):
+    def form_valid(self, form):
         user = self.request.user
         cleaned_data = form.cleaned_data
         for workitem in self.workitem_list:
@@ -167,20 +169,20 @@ class BatchExecuteTransitionView(FormView):
             comment = cleaned_data.get('comment')
             attachments = cleaned_data.get('attachments')
             TransitionExecutor(
-                user, instance, self.workitem, transition, comment, attachments
+                user, instance, workitem, transition, comment, attachments
             ).execute()
             # TODO Hint message
-        return self.render_to_response(self.get_context_data(form=form))
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_workitem_list(self, request):
-        workitem_pk_list = request.POST.getlist('sel_pi')
+        workitem_pk_list = request.POST.getlist('wi')
         workitem_pk_list = [e for e in workitem_pk_list if e]
-        workitem_list = WorkItem.objects.filter(pk__in=workitem_pk_list)
+        workitem_list = WorkItem.objects.filter(status='in progress', pk__in=workitem_pk_list)
         return workitem_list
 
     def dispatch(self, request, *args, **kwargs):
         self.workitem_list = self.get_workitem_list(request)
-        super(BatchExecuteTransitionView, self).dispatch(request, *args, **kwargs)
+        return super(BatchExecuteTransitionView, self).dispatch(request, *args, **kwargs)
 
 
 class ExecuteBackToTransitionView(ExecuteTransitionView):
@@ -212,6 +214,9 @@ class ExecuteBackToTransitionView(ExecuteTransitionView):
 
 class ExecuteGiveUpTransitionView(ExecuteTransitionView):
 
+    def get_success_url(self):
+        return reverse("wf_my_wf")
+
     def has_permission(self, request, instance, workitem, transition):
         is_ok = request.user == instance.created_by
         return is_ok
@@ -222,9 +227,14 @@ class ExecuteGiveUpTransitionView(ExecuteTransitionView):
 
 class BatchExecuteGiveUpTransitionView(BatchExecuteTransitionView):
 
+    def get_success_url(self):
+        return reverse("wf_my_wf")
+
     def get_workitem_list(self, request):
-        instance_pk_list = request.POST.getlist('pinstance_pks')
-        instance_list = ProcessInstance.objects.filter(pk__in=instance_pk_list)
+        instance_pk_list = request.POST.getlist('pi')
+        instance_list = ProcessInstance.objects.filter(
+            cur_activity__status='in progress',
+            pk__in=instance_pk_list)
         workitem_list = []
         for instance in instance_list:
             workitem = WorkItem(
