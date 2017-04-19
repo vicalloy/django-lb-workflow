@@ -59,6 +59,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+MIDDLEWARE_CLASSES = MIDDLEWARE
+
 ROOT_URLCONF = 'lbworkflow.tests.urls'
 
 TEMPLATES = [
