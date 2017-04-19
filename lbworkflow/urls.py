@@ -44,7 +44,7 @@ urlpatterns = [
 
     url(r'^todo/$', Todo.as_view(), name='wf_todo'),
     url(r'^list/$', ListWF.as_view(), name='wf_list_wf'),
-    url(r'^my/wf/$', MyWF.as_view(), name='wf_my_wf'),
+    url(r'^my/$', MyWF.as_view(), name='wf_my_wf'),
 
     url(r'^flowchart/process/(?P<wf_code>\w+)/$',
         flowchart.process_flowchart, name='wf_process_flowchart'),
