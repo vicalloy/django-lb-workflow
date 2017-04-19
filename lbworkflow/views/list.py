@@ -54,7 +54,7 @@ class Todo(ListView):
         user = self.request.user
         qs = WorkItem.objects.filter(
             Q(user=user) | Q(agent_user=user),
-            status='in process')
+            status='in progress')
         qs = qs.select_related(
             'instance',
             'instance__process',
