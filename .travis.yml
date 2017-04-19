@@ -17,7 +17,7 @@ install:
 
 env:
   - TOXENV=isort
-  - TOXENV=flake8
+  - TOXENV=py35-flake8
   - TOXENV=py34-django18
   - TOXENV=py34-django19
   - TOXENV=py34-django110
