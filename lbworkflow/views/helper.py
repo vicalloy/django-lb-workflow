@@ -1,5 +1,6 @@
 import importlib
 
+from django.contrib import messages
 from django.db.models import Q
 from django.utils import timezone
 
@@ -10,6 +11,17 @@ from lbworkflow.models import WorkItem
 def import_wf_views(wf_code, view_module_name='views'):
     wf_module = settings.WF_APPS.get(wf_code)
     return importlib.import_module('%s.%s' % (wf_module, view_module_name))
+
+
+def add_processed_message(request, process_instance, act_descn='Processed'):
+    messages.info(
+        request,
+        'Process "%s" has been %s. Current status："%s" Current user："%s"' %
+        (
+            process_instance.no, act_descn, process_instance.cur_activity.name,
+            process_instance.get_operators_display()
+        )
+    )
 
 
 def user_wf_info_as_dict(wf_obj, user):
@@ -47,4 +59,5 @@ def user_wf_info_as_dict(wf_obj, user):
     ctx['transitions'] = transitions
     ctx['agree_transitions'] = instance.get_merged_agree_transitions()
     ctx['other_transitions'] = [e for e in transitions if not e.is_agree]
+    # TODO add reject,given up to other_transitions?
     return ctx
