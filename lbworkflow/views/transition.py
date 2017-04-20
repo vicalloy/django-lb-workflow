@@ -18,6 +18,7 @@ from lbworkflow.models import Transition
 from lbworkflow.models import WorkItem
 
 from .helper import import_wf_views
+from .helper import add_processed_message
 from .mixin import FormsView
 
 
@@ -114,6 +115,9 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
 
         TransitionExecutor(user, instance, self.workitem, transition, comment, attachments).execute()
 
+    def add_processed_message(self, process_instance, act_descn='Processed'):
+        add_processed_message(self.request, process_instance, act_descn)
+
     def save_form(self, form):
         return form.save()
 
@@ -125,6 +129,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
             self.wf_obj = wf_obj
             self.process_instance = wf_obj.pinstance
         self.do_transition(form.cleaned_data)
+        self.add_processed_message(self.process_instance)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
@@ -157,6 +162,9 @@ class BatchExecuteTransitionView(FormView):
     def get_transition(self, process_instance):
         pass
 
+    def add_processed_message(self, process_instance, act_descn='Processed'):
+        add_processed_message(self.request, process_instance, act_descn)
+
     def form_valid(self, form):
         user = self.request.user
         cleaned_data = form.cleaned_data
@@ -171,7 +179,7 @@ class BatchExecuteTransitionView(FormView):
             TransitionExecutor(
                 user, instance, workitem, transition, comment, attachments
             ).execute()
-            # TODO Hint message
+            self.add_processed_message(instance)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_workitem_list(self, request):
@@ -203,7 +211,7 @@ class ExecuteBackToTransitionView(ExecuteTransitionView):
         return kwargs
 
     def get_init_transition(self, process_instance, request):
-        return process_instance.get_reject_transition()
+        return process_instance.get_back_to_transition()
 
     def get_transition_before_execute(self, cleaned_data):
         back_to_activity = cleaned_data.get('back_to_activity')
@@ -218,8 +226,7 @@ class ExecuteGiveUpTransitionView(ExecuteTransitionView):
         return reverse("wf_my_wf")
 
     def has_permission(self, request, instance, workitem, transition):
-        is_ok = request.user == instance.created_by
-        return is_ok
+        return instance.can_give_up(request.user)
 
     def get_init_transition(self, process_instance, request):
         return process_instance.get_give_up_transition()
@@ -271,6 +278,9 @@ class ExecuteRejectTransitionView(ExecuteTransitionView):
 class BatchExecuteRejectTransitionView(BatchExecuteTransitionView):
     def get_transition(self, process_instance):
         return process_instance.get_reject_transition()
+
+
+# TODO Rollback
 
 
 def execute_transitions(request, wf_code, trans_func):
