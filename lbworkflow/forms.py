@@ -28,14 +28,34 @@ class BSSearchFormMixin(object):
         )
 
 
-class QuickSearchFormMixin(object):
-    q_quick_search_kw = forms.CharField(label="关键字", required=False)
+class QuickSearchFormMixin(forms.Form):
+    q_quick_search_kw = forms.CharField(label="Key word", required=False)
 
 
 class BSQuickSearchForm(BootstrapFormHelperMixin, BSSearchFormMixin, QuickSearchFormMixin, forms.Form):
+
+    def layout(self):
+        self.helper.layout = Layout(
+            'q_quick_search_kw',
+            StrictButton('Search', type="submit", css_class='btn-sm btn-default'),
+        )
+
     def __init__(self, *args, **kw):
         super(BSQuickSearchForm, self).__init__(*args, **kw)
-        self.init_crispy_helper()
+        self.helper = helper = FormHelper()
+        helper.form_class = 'form-inline'
+        helper.form_method = 'get'
+        helper.field_template = 'bootstrap3/layout/inline_field.html'
+        self.layout()
+
+
+class BSQuickSearchWithExportForm(BSQuickSearchForm):
+    def layout(self):
+        self.helper.layout = Layout(
+            'q_quick_search_kw',
+            StrictButton('Search', type="submit", css_class='btn-sm btn-default'),
+            StrictButton('Export', type="submit", name="export", css_class='btn-sm btn-default'),
+        )
 
 
 class WorkflowFormMixin(object):
