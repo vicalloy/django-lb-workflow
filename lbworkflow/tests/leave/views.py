@@ -1,9 +1,9 @@
-from lbworkflow.forms import BSQuickSearchForm
 from lbworkflow.views.generics import CreateView
 from lbworkflow.views.generics import UpdateView
 from lbworkflow.views.generics import WFListView
 
 from .forms import LeaveForm
+from .models import Leave
 
 
 class LeaveCreateView(CreateView):
@@ -25,7 +25,7 @@ edit = LeaveUpdateView.as_view()
 
 
 class LeaveListView(WFListView):
-    search_form_class = BSQuickSearchForm
+    model = Leave
 
 
 show_list = LeaveListView.as_view()
