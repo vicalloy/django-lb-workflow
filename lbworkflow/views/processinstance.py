@@ -101,7 +101,7 @@ def start_wf(request):
 
 
 def report_list(request):
-    template_name='lbworkflow/report_list.html'
+    template_name = 'lbworkflow/report_list.html'
     categories = ProcessCategory.objects.filter(
         is_active=True).order_by('oid')
     categories = [e for e in categories]
