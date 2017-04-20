@@ -1,0 +1,87 @@
+{% extends "base_ext.html" %}
+
+{% load lbworkflow_tags %}
+
+{% block nav_sel_node %}id-nav-mywf{% endblock %}
+
+{% block right_side %}
+  <section class="content-header">
+    {% include "incs/messages.html" %}
+    {% block right_side_header %}
+      <div class="right-btns">
+        {% include "lbworkflow/inc_wf_btns.html" %}
+        {% if is_wf_admin %}
+          <a class="btn-del" href="{% url 'wf_delete' %}?pk={{ instance.pk }}">Delete</a>
+          <span>|</span>
+        {% endif %}
+        {% block right_side_header_ext_btns %}
+        {% endblock %}
+      </div>
+
+      {% block right_side_header_title %}
+        <h1>
+          <a href="{% url 'wf_my_wf' %}">I submitted</a>
+          &gt;
+          {{ object }}
+        </h1>
+      {% endblock %}
+    {% endblock %}
+  </section>
+  <section class="content">
+    <div class="nav-tabs-custom">
+      <ul class="nav nav-tabs" role="tablist" id="id-m-nav-tabs">
+        <li class="active">
+          <a href="##id-tb-base" role="tab" data-toggle="tab">Information</a>
+        </li>
+        {% block right_side_tab_nav_ext %}
+        {% endblock %}
+        <li>
+          <a href="#id-tb-wf-log" role="tab" data-toggle="tab">History</a>
+        </li>
+        <li>
+          <a href="#id-tb-wf-graph" role="tab" data-toggle="tab">Help</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="id-tb-base">
+          {% block right_side_tab_base_ctx %}
+            {% include "lbworkflow/inc_wf_status.html" %}
+            <table class="table table-bordered tb-detail no-margin">
+              <tr>
+                <th>Title 1</th>
+                <td>hello a</td>
+                <th>Title 2</th>
+                <td>hello b</td>
+              </tr>
+              <tr>
+                <th>Note</th>
+                <td colspan="3">
+                  hello....
+                </td>
+              </tr>
+            </table>
+          {% endblock %}
+        </div>
+        {% block right_side_tab_ctx_ext %}
+        {% endblock %}
+        <div class="tab-pane" id="id-tb-wf-log">
+          {% include "lbworkflow/inc_wf_history.html" %}
+        </div>
+        <div class="tab-pane" id="id-tb-wf-graph">
+          {% block flow_help %}
+          {% endblock %}
+          <a href="{% url 'wf_process_flowchart' wf_code %}" target="_blank">Open in new window</a>
+          <br/>
+            <img src="{% url 'wf_process_flowchart' wf_code %}"/>
+        </div>
+      </div>
+    </div>
+    {% block wf_detail_ext %}
+      {% with btn_css="1" %}
+        <div class="">
+          {% include "lbworkflow/inc_wf_btns.html" %}
+        </div>
+      {% endwith %}
+    {% endblock %}
+  </section>
+{% endblock %}
