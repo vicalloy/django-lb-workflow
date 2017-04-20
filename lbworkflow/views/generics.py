@@ -9,6 +9,8 @@ from django.views.generic.list import MultipleObjectTemplateResponseMixin
 from lbutils import do_filter
 from lbutils import simple_export2xlsx
 
+from lbworkflow.forms import BSQuickSearchForm
+from lbworkflow.forms import BSQuickSearchWithExportForm
 from lbworkflow.models import Process
 
 from .helper import user_wf_info_as_dict
@@ -111,7 +113,7 @@ class UpdateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
 
 
 class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
-    search_form_class = None
+    search_form_class = BSQuickSearchForm
     quick_query_fields = []
     int_quick_query_fields = []
     ordering = '-pk'
@@ -126,9 +128,7 @@ class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
         return self.quick_query_fields
 
     def get_base_queryset(self):
-        # qs = get_can_view_wf(model, request.user, wf_code, ext_param_process=__ext_param_process)
-        from django.contrib.auth.models import User
-        return User.objects.all()
+        return self.queryset
 
     def do_filter(self, queryset, query_data):
         quick_query_fields = self.get_quick_query_fields()
@@ -144,11 +144,11 @@ class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         search_form = self.get_search_form(request)
-        queryset = self.get_base_queryset()
-        self.queryset = self.do_filter(
+        self.queryset = self.get_base_queryset()
+        queryset = self.get_queryset()
+        self.object_list = self.do_filter(
             queryset,
             search_form.cleaned_data if search_form else {})
-        self.object_list = self.get_queryset()
 
         if request.GET.get('export'):
             return self.render_to_excel(self.object_list)
@@ -166,6 +166,8 @@ class ListView(MultipleObjectTemplateResponseMixin, BaseListView):
 
 
 class WFListView(WorkflowTemplateResponseMixin, BaseListView):
+    search_form_class = BSQuickSearchWithExportForm
+    model = None
 
     def get_quick_query_fields(self):
         fields = [
@@ -178,6 +180,6 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
         return fields
 
     def get_base_queryset(self):
+        # TODO only show have permission
         # qs = get_can_view_wf(model, request.user, wf_code, ext_param_process=__ext_param_process)
-        from django.contrib.auth.models import User
-        return User.objects.all()
+        return self.model.objects.all()
