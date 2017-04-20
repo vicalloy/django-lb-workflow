@@ -1,6 +1,5 @@
 import datetime
 
-from django.contrib import messages
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -98,9 +97,6 @@ class ProcessInstance(models.Model):
     def get_back_to_transition(self, out_activity=None):
         return self.process.get_back_to_transition(self.cur_activity, out_activity)
 
-    def get_common_agree_transition(self, out_activity=None):
-        return self.process.get_common_agree_transition(self.cur_activity, out_activity)
-
     def get_rollback_transition(self, out_activity):
         return self.process.get_rollback_transition(self.cur_activity, out_activity)
 
@@ -186,13 +182,6 @@ class ProcessInstance(models.Model):
             if event.old_activity not in activities:
                 activities.append(event.old_activity)
         return activities
-
-    def add_processed_message(self, request, act_descn='Processed'):
-        messages.info(
-            request,
-            'Process "%s" has been %s. Current status："%s" Current user："%s"' %
-            (self.no, act_descn, self.cur_activity.name, self.get_operators_display())
-        )
 
     def has_received(self):
         if self.cur_activity.status != 'in progress':

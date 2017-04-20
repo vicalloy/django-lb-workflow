@@ -172,18 +172,6 @@ class Process(models.Model):
         )
         return transition
 
-    def get_common_agree_transition(self, in_activity, out_activity=None):
-        transition = Transition(
-            name='Agree',
-            code='agree',
-            process=self,
-            is_agree=True,
-            can_auto_agree=False,
-            input_activity=in_activity,
-            output_activity=out_activity,
-        )
-        return transition
-
     def get_back_to_transition(self, in_activity, out_activity=None):
         transition = Transition(
             name='Back to',
