@@ -15,12 +15,8 @@ class BaseTests(TestCase):
         self.init_data()
 
     def init_users(self):
-        def create_user(username, is_superuser=False, **kwargs):
-            user = User.objects.create_user(username, "%s@v.cn" % username, 'password', **kwargs)
-            if is_superuser:
-                user.is_superuser = True
-                user.save()
-            return user
+        def create_user(username, **kwargs):
+            return User.objects.create_user(username, "%s@v.cn" % username, 'password', **kwargs)
 
         super(BaseTests, self).setUp()
         self.users = {
