@@ -42,7 +42,7 @@ def user_wf_info_as_dict(wf_obj, user):
     ctx['wf_code'] = instance.process.code
     ctx['process'] = instance.process
     ctx['process_instance'] = instance
-    ctx['object'] = object
+    ctx['object'] = wf_obj
     ctx['workitem'] = workitem
     ctx['wf_history'] = instance.event_set.all().order_by('-created_on', '-pk')
     ctx['operators_display'] = instance.get_operators_display()
