@@ -11,11 +11,11 @@
     </tr>
     {% for e in wf_history %}
       <tr>
-        <td>{{e.date|date:"Y-m-d H:i"}}</td>
-        <td>{{e.user.profile.name}}</td>
-        <td>{{e.get_act_name}}</td>
-        <td>{{e.old_activity.name}}</td>
-        <td>{{e.new_activity.name}}</td>
+        <td>{{ e.created_on|date:"Y-m-d H:i" }}</td>
+        <td>{{ e.user }}</td>
+        <td>{{ e.get_act_name }}</td>
+        <td>{{ e.old_activity.name }}</td>
+        <td>{{ e.new_activity.name }}</td>
         <td>
           {{ e.comment|linebreaksbr }}
           {% for a in e.attachments.all %}

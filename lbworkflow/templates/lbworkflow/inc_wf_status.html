@@ -2,17 +2,17 @@
   <tr>
     <th class="w-mid">NO.</th>
     <td class="process-no">
-      {{process_instance.no}}
+      {{ process_instance.no }}
     </td>
     <th class="w-mid">Created by</th>
-    <td>{{process_instance.poster.profile.name}}</td>
+    <td>{{ process_instance.created_by }}</td>
   </tr>
   <tr>
     <th>Created on</th>
-    <td>{{process_instance.creation_time|date:"Y-m-d H:i"}}</td>
+    <td>{{ process_instance.created_on|date:"Y-m-d H:i" }}</td>
     <th>Current activity</th>
     <td>
-      {{process_instance.cur_activity.name}}
+      {{ process_instance.cur_activity.name }}
       {% if workitem.is_hold %}
         (hold)
       {% endif %}
@@ -20,10 +20,10 @@
   </tr>
   <tr>
     <th>Process name</th>
-    <td>{{ process_instance.process.name}}</td>
+    <td>{{ process.name }}</td>
     <th>Current operator</th>
     <td>
-      {{assignners}}
+      {{ operators_display }}
       {% if not process_instance.has_received %}
           [unreceived]
       {% endif %}
