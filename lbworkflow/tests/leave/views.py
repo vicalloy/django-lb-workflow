@@ -25,6 +25,7 @@ edit = LeaveUpdateView.as_view()
 
 
 class LeaveListView(WFListView):
+    wf_code = 'leave'
     model = Leave
 
 
