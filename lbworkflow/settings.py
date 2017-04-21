@@ -32,3 +32,7 @@ CAN_VIEW_WF_FUNC = getattr(
 
 DEBUG_WORKFLOW = getattr(django_settings, 'LBWF_DEBUG_WORKFLOW', False)
 WF_APPS = getattr(django_settings, 'LBWF_APPS', {})
+
+PROCESS_INSTANCE_GET_PERMIT_QUERY_PARAM_FUNC = getattr(
+    django_settings, 'LBWF_PROCESS_INSTANCE_GET_PERMIT_QUERY_PARAM_FUNC',
+    lambda user, query_param: query_param)

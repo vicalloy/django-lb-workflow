@@ -13,6 +13,7 @@ from lbworkflow.forms import BSQuickSearchForm
 from lbworkflow.forms import BSQuickSearchWithExportForm
 from lbworkflow.models import Process
 
+from .helper import get_base_wf_permit_query_param
 from .helper import user_wf_info_as_dict
 from .mixin import FormsView
 from .mixin import ModelFormsMixin
@@ -168,6 +169,7 @@ class ListView(MultipleObjectTemplateResponseMixin, BaseListView):
 class WFListView(WorkflowTemplateResponseMixin, BaseListView):
     search_form_class = BSQuickSearchWithExportForm
     model = None
+    wf_code = None
 
     def get_quick_query_fields(self):
         fields = [
@@ -179,7 +181,19 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
         fields.extend(self.quick_query_fields)
         return fields
 
+    def get_permit_query_param(self, user, q_param):
+        # override this function to add addition permit
+        return q_param
+
     def get_base_queryset(self):
-        # TODO only show have permission
-        # qs = get_can_view_wf(model, request.user, wf_code, ext_param_process=__ext_param_process)
-        return self.model.objects.all()
+        # only show have permission
+        user = self.request.user
+        qs = self.model.objects.all()
+        if self.wf_code:
+            qs = qs.filter(pinstance__process__code=self.wf_code)
+        if user.is_superuser:
+            return qs
+        q_param = get_base_wf_permit_query_param(user)
+        q_param = self.get_permit_query_param(user, q_param)
+        qs = qs.filter(q_param).distinct()
+        return qs

@@ -61,3 +61,25 @@ def user_wf_info_as_dict(wf_obj, user):
     ctx['other_transitions'] = [e for e in transitions if not e.is_agree]
     # TODO add reject,given up to other_transitions?
     return ctx
+
+
+def get_base_wf_permit_query_param(user, process_instance_field_prefix='pinstance__'):
+    def p(param_name, value):
+        return {process_instance_field_prefix + param_name: value}
+    q_param = Q()
+    # Submit
+    q_param = q_param | Q(
+        **p('created_by', user)
+    )
+    # share
+    q_param = q_param | Q(
+        **p('can_view_users', user)
+    )
+    # Can process
+    q_param = q_param | Q(
+        **p('workitem__user', user)
+    )
+    q_param = q_param | Q(
+        **p('workitem__agent_user', user)
+    )
+    return q_param
