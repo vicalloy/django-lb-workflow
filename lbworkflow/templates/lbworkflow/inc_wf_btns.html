@@ -1,0 +1,35 @@
+{% load lbworkflow_tags %}
+
+{% if workitem %}
+  {% for t in agree_transitions  %}
+    <a class="btn btn-primary" href="{{ t|app_url:workitem }}">{{ t.name }}</a>
+  {% endfor %}
+  {% for t in other_transitions  %}
+    <a class="btn btn-primary" href="{{ t|app_url:workitem }}">{{ t.name }}</a>
+  {% endfor %}
+  {% if can_reject  %}
+    <a class="btn btn-danger" href="{% url 'wf_reject' %}?wi_id={{ workitem.pk }}">Reject</a>
+  {% endif %}
+  {% if can_back_to %}
+    <a class="btn btn-danger" href="{% url 'wf_back_to' %}?wi_id={{ workitem.pk }}">Back to</a>
+  {% endif %}
+  {# TODO hold and add joint #}
+{% endif %}
+{% if can_rollback %}
+  <a class="btn btn-default"
+     onclick="return confirm('Do you want to rollback ({{can_rollback.get_act_name}})？')"
+     href="{% url 'wf_rollback' %}?pk={{ process_instance.pk }}">
+    Rollback
+  </a>
+{% endif %}
+{% if can_edit %}
+  <a class="btn btn-default" class="with-next" href="{% url 'wf_edit' process_instance.pk %}">Edit</a>
+{% endif %}
+{% if can_give_up %}
+  <a class="btn btn-default"
+     onclick="return confirm('Are you sure you want to give up this item?')"
+     href="{% url 'wf_give_up' %}?pk={{ process_instance.pk }}">Give up</a>
+{% endif %}
+{% if is_wf_admin %}
+  <a class="btn  btn-danger btn-del" href="{% url 'wf_delete' %}?pk={{ instance.pk }}">Delete</a>
+{% endif %}
