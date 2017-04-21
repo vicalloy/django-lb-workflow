@@ -4,6 +4,11 @@ register = template.Library()
 
 
 @register.filter
+def app_url(transition, workitem):
+    return transition.get_app_url(workitem)
+
+
+@register.filter
 def flow_status_css_class(pinstance):
     if not pinstance:
         return 'default'
