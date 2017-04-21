@@ -43,6 +43,14 @@ class ViewTests(BaseTests):
         resp = self.client.get(reverse('wf_list', args=('leave', )))
         self.assertEqual(resp.status_code, 200)
 
+    def test_wf_report_list(self):
+        resp = self.client.get(reverse('wf_report_list'))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_wf_list_export(self):
+        resp = self.client.get(reverse('wf_list', args=('leave', )), {'export': 1})
+        self.assertEqual(resp.status_code, 200)
+
     def test_detail(self):
         resp = self.client.get(reverse('wf_detail', args=('1', )))
         self.assertEqual(resp.status_code, 200)
