@@ -16,16 +16,19 @@ except ImportError:
 
 
 class BSSearchFormMixin(object):
+    def layout(self):
+        self.helper.layout = Layout(
+            'q_quick_search_kw',
+            StrictButton('Search', type="submit", css_class='btn-sm btn-default'),
+        )
+
     def init_form_helper(self):
         self.add_class2fields('input-sm')
         self.helper = helper = FormHelper()
         helper.form_class = 'form-inline'
         helper.form_method = 'get'
         helper.field_template = 'bootstrap3/layout/inline_field.html'
-        helper.layout = Layout(
-            'q_quick_search_kw',
-            StrictButton('Search', type="submit", css_class='btn-sm btn-default'),
-        )
+        self.layout()
 
 
 class QuickSearchFormMixin(forms.Form):
@@ -34,19 +37,9 @@ class QuickSearchFormMixin(forms.Form):
 
 class BSQuickSearchForm(BootstrapFormHelperMixin, BSSearchFormMixin, QuickSearchFormMixin, forms.Form):
 
-    def layout(self):
-        self.helper.layout = Layout(
-            'q_quick_search_kw',
-            StrictButton('Search', type="submit", css_class='btn-sm btn-default'),
-        )
-
     def __init__(self, *args, **kw):
         super(BSQuickSearchForm, self).__init__(*args, **kw)
-        self.helper = helper = FormHelper()
-        helper.form_class = 'form-inline'
-        helper.form_method = 'get'
-        helper.field_template = 'bootstrap3/layout/inline_field.html'
-        self.layout()
+        self.init_form_helper()
 
 
 class BSQuickSearchWithExportForm(BSQuickSearchForm):
