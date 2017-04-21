@@ -10,10 +10,6 @@
     {% block right_side_header %}
       <div class="right-btns">
         {% include "lbworkflow/inc_wf_btns.html" %}
-        {% if is_wf_admin %}
-          <a class="btn-del" href="{% url 'wf_delete' %}?pk={{ instance.pk }}">Delete</a>
-          <span>|</span>
-        {% endif %}
         {% block right_side_header_ext_btns %}
         {% endblock %}
       </div>
