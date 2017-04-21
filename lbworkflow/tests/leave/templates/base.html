@@ -1,1 +1,11 @@
 {% extends "lbadminlte/base.html" %}
+
+{% load staticfiles %}
+
+{% block head_ext %}
+  <link href="{% static '/css/lbworkflow.css' %}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block footer_ext %}
+  <script src="{% static 'js/lbworkflow.js' %}" type="text/javascript"></script>
+{% endblock %}

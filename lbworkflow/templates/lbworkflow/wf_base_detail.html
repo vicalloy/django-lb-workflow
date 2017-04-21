@@ -74,8 +74,10 @@
     </div>
     {% block wf_detail_ext %}
       {% with btn_css="1" %}
-        <div class="">
-          {% include "lbworkflow/inc_wf_btns.html" %}
+        <div class="bottom-btns">
+          {% with is_btn="1" %}
+            {% include "lbworkflow/inc_wf_btns.html" %}
+          {% endwith %}
         </div>
       {% endwith %}
     {% endblock %}
