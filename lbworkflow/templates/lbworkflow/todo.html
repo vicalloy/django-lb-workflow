@@ -28,9 +28,7 @@
       </div>
       {% endif %}
       <div class="box-body table-responsive no-padding">
-        <form id="id-list-form" action="{% url 'wf_do_batch_trans' %}" method="post">
-        <input type="hidden" name="transition-type" id="id-transition-type"/>
-        {% csrf_token %}
+        <form id="id-list-form" action="{% url 'wf_batch_agree' %}" method="get">
         <table class="table table-hover">
           <tbody>
             <tr>
@@ -71,8 +69,14 @@
       <div class="box-footer clearfix">
         {% show_pages %}
         <div style="float:right">
-          <button class="btn btn-sm btn-default" onclick="$('#id-transition-type').val('agree');$('#id-list-form').submit()">Agree</button>
-          <button class="btn btn-sm btn-danger" onclick="$('#id-transition-type').val('reject');$('#id-list-form').submit()">Reject</button>
+          <button class="btn btn-sm btn-default"
+                  onclick="$('#id-list-form').attr('action', '{% url 'wf_batch_agree' %}');$('#id-list-form').submit()">
+            Agree
+          </button>
+          <button class="btn btn-sm btn-danger"
+                  onclick="$('#id-list-form').attr('action', '{% url 'wf_batch_reject' %}');$('#id-list-form').submit()">
+            Reject
+          </button>
         </div>
       </div>
     </div>
