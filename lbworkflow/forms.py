@@ -35,7 +35,7 @@ class QuickSearchFormMixin(forms.Form):
     q_quick_search_kw = forms.CharField(label="Key word", required=False)
 
 
-class BSQuickSearchForm(BootstrapFormHelperMixin, BSSearchFormMixin, QuickSearchFormMixin, forms.Form):
+class BSQuickSearchForm(BSSearchFormMixin, QuickSearchFormMixin, forms.Form):
 
     def __init__(self, *args, **kw):
         super(BSQuickSearchForm, self).__init__(*args, **kw)
@@ -60,7 +60,7 @@ class WorkflowFormMixin(object):
         obj.create_pinstance(wf_code, submit)
         self.save_m2m()
         # Other action
-        messages.info(request, '成功%s: %s' % (act_name, obj, ))
+        messages.info(request, 'Success %s: %s' % (act_name, obj, ))
         return obj
 
     def update_process(self, request):
@@ -109,8 +109,20 @@ class WorkFlowForm(forms.Form):
         return self.instance
 
 
+class BSWorkFlowForm(BootstrapFormHelperMixin, WorkFlowForm):
+    def __init__(self, *args, **kw):
+        super(BSWorkFlowForm, self).__init__(*args, **kw)
+        self.init_crispy_helper()
+
+
 class BatchWorkFlowForm(WorkFlowForm):
     pass
+
+
+class BSBatchWorkFlowForm(BootstrapFormHelperMixin, BatchWorkFlowForm):
+    def __init__(self, *args, **kw):
+        super(BSBatchWorkFlowForm, self).__init__(*args, **kw)
+        self.init_crispy_helper()
 
 
 class BackToActivityForm(WorkFlowForm):
