@@ -148,15 +148,20 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
             return error.http_response
 
 
+from lbworkflow.forms import BSBatchWorkFlowForm
 class BatchExecuteTransitionView(FormView):
     template_name = 'lbworkflow/batch_transition_form.html'
-    form_class = BatchWorkFlowForm
+    form_class = BSBatchWorkFlowForm
 
     def get_success_url(self):
         return reverse("wf_todo")
 
+    def get_transition_name(self):
+        return 'Agree'
+
     def get_context_data(self, **kwargs):
         kwargs['workitem_list'] = self.workitem_list
+        kwargs['transition_name'] = self.get_transition_name()
         return super(BatchExecuteTransitionView, self).get_context_data(**kwargs)
 
     def get_transition(self, process_instance):
@@ -237,6 +242,9 @@ class BatchExecuteGiveUpTransitionView(BatchExecuteTransitionView):
     def get_success_url(self):
         return reverse("wf_my_wf")
 
+    def get_transition_name(self):
+        return 'Give up'
+
     def get_workitem_list(self, request):
         instance_pk_list = request.POST.getlist('pi')
         instance_list = ProcessInstance.objects.filter(
@@ -265,6 +273,9 @@ class ExecuteAgreeTransitionView(ExecuteTransitionView):
 
 
 class BatchExecuteAgreeTransitionView(BatchExecuteTransitionView):
+    def get_transition_name(self):
+        return 'Agree'
+
     def get_transition(self, process_instance):
         return process_instance.get_agree_transition(False)
 
@@ -276,6 +287,9 @@ class ExecuteRejectTransitionView(ExecuteTransitionView):
 
 
 class BatchExecuteRejectTransitionView(BatchExecuteTransitionView):
+    def get_transition_name(self):
+        return 'Reject'
+
     def get_transition(self, process_instance):
         return process_instance.get_reject_transition()
 
