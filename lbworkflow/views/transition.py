@@ -7,10 +7,13 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormView
 
+from lbworkflow import settings
 from lbworkflow.core.exceptions import HttpResponseException
+from lbworkflow.core.helper import as_class
 from lbworkflow.core.transition import TransitionExecutor
 from lbworkflow.forms import BackToActivityForm
 from lbworkflow.forms import BatchWorkFlowForm
+from lbworkflow.forms import BSBatchWorkFlowForm
 from lbworkflow.forms import WorkFlowForm
 from lbworkflow.models import Activity
 from lbworkflow.models import ProcessInstance
@@ -30,7 +33,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         pid: process instance pk (not used)
     """
     form_classes = {
-        'form': WorkFlowForm
+        'form': as_class(settings.WORK_FLOW_FORM)
     }
 
     def get_success_url(self):
@@ -148,10 +151,9 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
             return error.http_response
 
 
-from lbworkflow.forms import BSBatchWorkFlowForm
 class BatchExecuteTransitionView(FormView):
     template_name = 'lbworkflow/batch_transition_form.html'
-    form_class = BSBatchWorkFlowForm
+    form_class = as_class(settings.BATCH_WORK_FLOW_FORM)
 
     def get_success_url(self):
         return reverse("wf_todo")
@@ -200,7 +202,7 @@ class BatchExecuteTransitionView(FormView):
 
 class ExecuteBackToTransitionView(ExecuteTransitionView):
     form_classes = {
-        'form': BackToActivityForm
+        'form': as_class(settings.BACK_TO_ACTIVITY_FORM)
     }
 
     def has_permission(self, request, instance, workitem, transition):
