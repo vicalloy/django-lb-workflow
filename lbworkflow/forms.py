@@ -15,7 +15,7 @@ except ImportError:
     pass
 
 
-class BSSearchFormMixin(object):
+class BSSearchFormMixin(BootstrapFormHelperMixin):
     def layout(self):
         self.helper.layout = Layout(
             'q_quick_search_kw',
