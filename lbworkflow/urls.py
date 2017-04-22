@@ -28,8 +28,6 @@ urlpatterns = [
         r'^t/e/(?P<wf_code>\w+)/(?P<trans_func>\w+)/$', execute_transitions,
         name='wf_execute_transition'),
 
-    url(r'^t/reject/$', ExecuteRejectTransitionView.as_view(), name="wf_do_batch_trans"),
-
     url(r'^start_wf/$', processinstance.start_wf, name='wf_start_wf'),
     url(r'^report_list/$', processinstance.report_list, name='wf_report_list'),
 
