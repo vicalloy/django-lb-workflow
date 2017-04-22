@@ -132,3 +132,9 @@ class BackToActivityForm(WorkFlowForm):
         super(BackToActivityForm, self).__init__(*args, **kwargs)
         choices = [(e.pk, e.name) for e in process_instance.get_can_back_to_activities()]
         self.fields['back_to_activity'].choices = choices
+
+
+class BSBackToActivityForm(BootstrapFormHelperMixin, BackToActivityForm):
+    def __init__(self, *args, **kw):
+        super(BSBackToActivityForm, self).__init__(*args, **kw)
+        self.init_crispy_helper()
