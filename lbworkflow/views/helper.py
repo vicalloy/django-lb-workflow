@@ -5,7 +5,6 @@ from django.db.models import Q
 from django.utils import timezone
 
 from lbworkflow import settings
-from lbworkflow.models import WorkItem
 
 
 def import_wf_views(wf_code, view_module_name='views'):
