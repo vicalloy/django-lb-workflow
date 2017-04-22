@@ -36,3 +36,23 @@ WF_APPS = getattr(django_settings, 'LBWF_APPS', {})
 PROCESS_INSTANCE_GET_PERMIT_QUERY_PARAM_FUNC = getattr(
     django_settings, 'LBWF_PROCESS_INSTANCE_GET_PERMIT_QUERY_PARAM_FUNC',
     lambda user, query_param: query_param)
+
+QUICK_SEARCH_FORM = getattr(
+    django_settings, 'LBWF_QUICK_SEARCH_FORM',
+    'lbworkflow.forms.BSQuickSearchForm')
+
+QUICK_SEARCH_WITH_EXPORT_FORM = getattr(
+    django_settings, 'LBWF_QUICK_SEARCH_WITH_EXPORT_FORM',
+    'lbworkflow.forms.BSQuickSearchWithExportForm')
+
+WORK_FLOW_FORM = getattr(
+    django_settings, 'LBWF_WORK_FLOW_FORM',
+    'lbworkflow.forms.BSWorkFlowForm')
+
+BATCH_WORK_FLOW_FORM = getattr(
+    django_settings, 'LBWF_BATCH_WORK_FLOW_FORM',
+    'lbworkflow.forms.BSBatchWorkFlowForm')
+
+BACK_TO_ACTIVITY_FORM = getattr(
+    django_settings, 'LBWF_BACK_TO_ACTIVITY_FORM',
+    'lbworkflow.forms.BSBackToActivityForm')
