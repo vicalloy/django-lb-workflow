@@ -32,6 +32,7 @@
       <div class="box form-horizontal {% block form_class %}{% endblock %}">
         <div class="box-header">
         </div>
+        <div class="box-body">
           {% crispy form %}
           {% block submit_btns %}
             <div class="form-group">
@@ -58,7 +59,7 @@
   <script src="{% static 'blueimp-file-upload/js/jquery.iframe-transport.js' %}"></script>
   <script type="text/javascript">
     $(function(){
-      initUploader($('#id_attachs'));
+      initUploader($('#id_attachments'));
     });
   </script>
 {% endblock %}
