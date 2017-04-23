@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/wf/list/'), name='home'),
     url(r'^admin/', admin.site.urls),
     url(r'^wf/', include('lbworkflow.urls')),
+    url(r'^attachment/', include('lbattachment.urls')),
 ]
