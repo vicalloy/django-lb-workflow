@@ -162,6 +162,7 @@ BOWER_INSTALLED_APPS = (
     'html5shiv',
 
     'masonry#4.1.1',
+    'blueimp-file-upload#9.12.5',
 )
 
 # django-compressor
