@@ -191,7 +191,7 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
         qs = self.model.objects.all()
         if self.wf_code:
             qs = qs.filter(pinstance__process__code=self.wf_code)
-        if user.is_superuser:
+        if not user.is_superuser:
             return qs
         q_param = get_base_wf_permit_query_param(user)
         q_param = self.get_permit_query_param(user, q_param)
