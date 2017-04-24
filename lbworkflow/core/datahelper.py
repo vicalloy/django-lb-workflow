@@ -7,7 +7,6 @@ from lbworkflow.models import Process
 from lbworkflow.models import ProcessCategory
 from lbworkflow.models import Transition
 
-
 User = get_user_model()
 
 

@@ -70,6 +70,11 @@ class ViewTests(BaseTests):
         self.do_agree('tom', 'A3')
         self.do_agree('vicalloy', 'A4')
 
+    def test_execute_transition_customized_url(self):
+        self.do_agree('tom', 'A3')
+        self.do_agree('vicalloy', 'A4')
+        self.do_agree('hr', 'Completed')
+
     def goto_A2B1(self):
         leave = self.leave
         leave.leave_days = 10
@@ -142,9 +147,12 @@ class ViewTests(BaseTests):
         url = reverse('wf_batch_agree')
         ctx = user_wf_info_as_dict(self.leave, self.users['tom'])
         data = {
-            'submit': 'submit',
-            'wi': [ctx['workitem'].pk, 1, 2, 3]
+            'wi': [ctx['workitem'].pk, 1, 2, 3],
         }
+        resp = self.client.post(url, data)
+        self.assertEqual(resp.status_code, 200)
+
+        data['submit'] = 'submit'
         resp = self.client.post(url, data)
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
@@ -154,9 +162,12 @@ class ViewTests(BaseTests):
         url = reverse('wf_batch_reject')
         ctx = user_wf_info_as_dict(self.leave, self.users['tom'])
         data = {
-            'submit': 'submit',
-            'wi': [ctx['workitem'].pk, 1, 2, 3]
+            'wi': [ctx['workitem'].pk, 1, 2, 3],
         }
+        resp = self.client.post(url, data)
+        self.assertEqual(resp.status_code, 200)
+
+        data['submit'] = 'submit'
         resp = self.client.post(url, data)
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
@@ -166,9 +177,12 @@ class ViewTests(BaseTests):
         self.client.login(username='owner', password='password')
         url = reverse('wf_batch_give_up')
         data = {
-            'submit': 'submit',
-            'pi': [self.leave.pinstance.pk, 1, 2, 3]
+            'pi': [self.leave.pinstance.pk, 1, 2, 3],
         }
+        resp = self.client.post(url, data)
+        self.assertEqual(resp.status_code, 200)
+
+        data['submit'] = 'submit'
         resp = self.client.post(url, data)
         self.assertRedirects(resp, '/wf/my/')
         leave = Leave.objects.get(pk=self.leave.pk)
