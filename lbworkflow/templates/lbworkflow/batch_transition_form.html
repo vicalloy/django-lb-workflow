@@ -29,10 +29,23 @@
   </section>
   <section class="content">
     <form action="" method="post" id="id-wf-form" role="form">
+      <input type="hidden" name="submit" value="submit it">
       <div class="box form-horizontal {% block form_class %}{% endblock %}">
         <div class="box-header">
         </div>
         <div class="box-body">
+          <div class="form-group">
+            <label class="control-label col-md-2">
+              Process
+            </label>
+            <div class="controls col-md-4" style="padding-top:7px">
+              {% for o in workitem_list%}
+                <input type="hidden" name="wi" value="{{ wi.pk }}">
+                <input type="hidden" name="pi" value="{{ wi.instance.pk }}">
+                {{ o.instance.no }} : {{ o.instance.summary }} <br>
+              {% endfor %}
+            </div>
+          </div>
           {% crispy form %}
           {% block submit_btns %}
             <div class="form-group">
