@@ -1,8 +1,14 @@
+from django.contrib.auth import get_user_model
+from lbutils import as_callable
+
 from lbworkflow.models import Activity
 from lbworkflow.models import App
 from lbworkflow.models import Process
 from lbworkflow.models import ProcessCategory
 from lbworkflow.models import Transition
+
+
+User = get_user_model()
 
 
 def get_or_create(cls, uid, **kwargs):
@@ -15,6 +21,15 @@ def get_or_create(cls, uid, **kwargs):
         return obj
     kwargs[uid_field_name] = uid
     return cls.objects.create(**kwargs)
+
+
+def create_user(username, **kwargs):
+    password = kwargs.pop('password', 'password')
+    user = User.objects.filter(username=username).first()
+    if user:
+        user.set_password(password)
+        return user
+    return User.objects.create_user(username, "%s@v.cn" % username, password, **kwargs)
 
 
 def create_app(uuid, name, **kwargs):
@@ -72,3 +87,11 @@ def create_transition(uuid, process, from_activity, to_activity, app='Simple', *
     return get_or_create(
         Transition, uuid, process=process, input_activity=from_activity,
         output_activity=to_activity, app=app, **kwargs)
+
+
+def load_wf_data(app, wf_code=''):
+    if wf_code:
+        func = "%s.wfdata.load_%s" % (app, wf_code)
+    else:
+        func = "%s.wfdata.load_data" % app
+    as_callable(func)()

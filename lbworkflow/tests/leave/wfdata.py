@@ -1,15 +1,16 @@
 from lbworkflow.core.datahelper import create_activity
-from lbworkflow.core.datahelper import create_app
 from lbworkflow.core.datahelper import create_category
 from lbworkflow.core.datahelper import create_process
 from lbworkflow.core.datahelper import create_transition
 
 
-def load_data(wf_code):
-    create_app('5f31d065-00aa-0010-beea-641f0a670010', 'Simple', action='wf_execute_transition')
-    create_app('5f31d065-00aa-0010-beea-641f0a670020', 'Customized URL')
-    category = create_category('5f31d065-00cc-0010-beea-641f0a670010', 'HR')
+def load_data():
+    load_leave()
 
+
+def load_leave():
+    """ load_[wf_code] """
+    category = create_category('5f31d065-00cc-0010-beea-641f0a670010', 'HR')
     process = create_process('leave', 'Leave', category=category)
     create_activity('5f31d065-00a0-0010-beea-641f0a670010', process, 'Draft', status='draft')
     create_activity('5f31d065-00a0-0010-beea-641f0a670010', process, 'Draft', status='draft')  # test for update
@@ -18,10 +19,21 @@ def load_data(wf_code):
     create_activity('5f31d065-00a0-0010-beea-641f0a670040', process, 'Completed', status='completed')
     create_activity('5f31d065-00a0-0010-beea-641f0a670050', process, 'A1', operators='[owner]')
     create_activity('5f31d065-00a0-0010-beea-641f0a670060', process, 'A2', operators='[tom]')
+    create_activity('5f31d065-00a0-0010-beea-641f0a670065', process, 'A2B1', operators='[tom],[owner]')
     create_activity('5f31d065-00a0-0010-beea-641f0a670070', process, 'A3', operators='[vicalloy]')
+    create_activity('5f31d065-00a0-0010-beea-641f0a670080', process, 'A4', operators='[hr]')
     create_transition('5f31d065-00e0-0010-beea-641f0a670010', process, 'Draft,', 'A1')
     create_transition('5f31d065-00e0-0010-beea-641f0a670020', process, 'A1,', 'A2')
-    create_transition('5f31d065-00e0-0010-beea-641f0a670030', process, 'A2,', 'A3')
     create_transition(
-        '5f31d065-00e0-0010-beea-641f0a670040', process, 'A3,', 'Completed',
+        '5f31d065-00e0-0010-beea-641f0a670030', process, 'A2,', 'A3',
+        condition='o.leave_days<7  # days<7')
+    create_transition(
+        '5f31d065-00e0-0010-beea-641f0a670040', process, 'A2,', 'A2B1',
+        condition='o.leave_days>=7  # days>=7')
+    create_transition(
+        '5f31d065-00e0-0010-beea-641f0a670050', process, 'A2B1,', 'A3',
+        routing_rule='joint', can_auto_agree=False)
+    create_transition('5f31d065-00e0-0010-beea-641f0a670060', process, 'A3,', 'A4')
+    create_transition(
+        '5f31d065-00e0-0010-beea-641f0a670070', process, 'A4,', 'Completed',
         app='Customized URL', app_param='wf_execute_transition {{wf_code}} c')

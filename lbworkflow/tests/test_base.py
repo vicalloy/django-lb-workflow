@@ -3,8 +3,11 @@ from django.test import TestCase
 from django.utils import timezone
 from lbutils import get_or_none
 
+from lbworkflow.core.datahelper import create_user
+from lbworkflow.core.datahelper import load_wf_data
+
 from .leave.models import Leave
-from .leave.wfdata import load_data
+from .wfdata import init_users
 
 User = get_user_model()
 
@@ -15,17 +18,8 @@ class BaseTests(TestCase):
         self.init_data()
 
     def init_users(self):
-        def create_user(username, **kwargs):
-            return User.objects.create_user(username, "%s@v.cn" % username, 'password', **kwargs)
-
         super(BaseTests, self).setUp()
-        self.users = {
-            'owner': create_user('owner'),
-            'operator': create_user('operator'),
-            'vicalloy': create_user('vicalloy'),
-            'tom': create_user('tom'),
-            'admin': create_user('admin', is_superuser=True),
-        }
+        self.users = init_users()
 
     # TODO add a function to submit new leave
     def create_leave(self, reason, submit=True):
@@ -45,5 +39,6 @@ class BaseTests(TestCase):
 
     def init_data(self):
         self.init_users()
-        load_data('leave')
+        load_wf_data('lbworkflow')
+        load_wf_data('lbworkflow.tests.leave')
         self.init_leave()
