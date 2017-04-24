@@ -5,6 +5,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS += [
     'testproject',
     'stronghold',
+    'impersonate',
 ]
 
 DATABASES = {
@@ -23,5 +24,8 @@ MIDDLEWARE += [
     'testproject.middleware.LoginRequiredStrongholdMiddleware',
 ]
 
+ROOT_URLCONF = 'testproject.urls'
+
 LOGIN_URL ='/admin/login/'
 LOGOUT_URL = '/admin/logout/'
+IMPERSONATE_REDIRECT_URL = '/'
