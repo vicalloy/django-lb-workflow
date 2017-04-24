@@ -3,7 +3,6 @@ from django.test import TestCase
 from django.utils import timezone
 from lbutils import get_or_none
 
-from lbworkflow.core.datahelper import create_user
 from lbworkflow.core.datahelper import load_wf_data
 
 from .leave.models import Leave

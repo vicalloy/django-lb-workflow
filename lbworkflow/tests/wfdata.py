@@ -15,4 +15,3 @@ def init_users():
         'admin': create_user('admin', is_superuser=True, is_staff=True),
     }
     return users
-
