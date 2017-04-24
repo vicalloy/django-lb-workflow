@@ -112,7 +112,7 @@ class WorkFlowForm(forms.Form):
 class BSWorkFlowForm(BootstrapFormHelperMixin, WorkFlowForm):
     def __init__(self, *args, **kw):
         super(BSWorkFlowForm, self).__init__(*args, **kw)
-        self.init_crispy_helper()
+        self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')
 
 
 class BatchWorkFlowForm(WorkFlowForm):
@@ -122,7 +122,7 @@ class BatchWorkFlowForm(WorkFlowForm):
 class BSBatchWorkFlowForm(BootstrapFormHelperMixin, BatchWorkFlowForm):
     def __init__(self, *args, **kw):
         super(BSBatchWorkFlowForm, self).__init__(*args, **kw)
-        self.init_crispy_helper()
+        self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')
 
 
 class BackToActivityForm(WorkFlowForm):
@@ -137,4 +137,4 @@ class BackToActivityForm(WorkFlowForm):
 class BSBackToActivityForm(BootstrapFormHelperMixin, BackToActivityForm):
     def __init__(self, *args, **kw):
         super(BSBackToActivityForm, self).__init__(*args, **kw)
-        self.init_crispy_helper()
+        self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')
