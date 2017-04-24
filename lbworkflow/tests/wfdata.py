@@ -12,7 +12,7 @@ def init_users():
         'vicalloy': create_user('vicalloy'),
         'tom': create_user('tom'),
         'hr': create_user('hr'),
-        'admin': create_user('admin', is_superuser=True),
+        'admin': create_user('admin', is_superuser=True, is_staff=True),
     }
     return users
 
