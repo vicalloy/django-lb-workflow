@@ -28,42 +28,43 @@
       </div>
       {% endif %}
       <div class="box-body table-responsive no-padding">
-        <form id="id-list-form" action="{% url 'wf_batch_agree' %}" method="get">
-        <table class="table table-hover">
-          <tbody>
-            <tr>
-              <th>
-                <input type="checkbox" onclick="$('[name=sel_pi]').prop( 'checked', $(this).prop('checked'));"/>
-              </th>
-              <th>NO.</th>
-              <th>Process name</th>
-              <th>Summary</th>
-              <th>Created on</th>
-              <th>Created by</th>
-              <th>Current operator</th>
-              <th>Activity</th>
-            </tr>
-            {% paginate object_list %}
-            {% for o in object_list %}{% with pi=o.instance %}
+        <form id="id-list-form" action="{% url 'wf_batch_agree' %}" method="post">
+          {% csrf_token %}
+          <table class="table table-hover">
+            <tbody>
               <tr>
-                <td>
-                  <input type="checkbox" name="sel_pi" value="{{ pi.pk }}"/>
-                </td>
-                <td><a href="{% url 'wf_detail' pi.pk %}">{{ pi.no }}</a></td>
-                <td>{{ pi.process.name }}</td>
-                <td>{{ pi.summary }}</td>
-                <td>{{ pi.created_on|date:"Y-m-d H:i" }}</td>
-                <td>{{ pi.created_by }}</td>
-                <td>{{ pi.get_operators_display }}</td>
-                <td>
-                  <span class="label label-{{ pi|flow_status_css_class }}">
-                    {{ pi.cur_activity.name }}
-                  </span>
-                </td>
+                <th>
+                  <input type="checkbox" onclick="$('[name=wi]').prop( 'checked', $(this).prop('checked'));"/>
+                </th>
+                <th>NO.</th>
+                <th>Process name</th>
+                <th>Summary</th>
+                <th>Created on</th>
+                <th>Created by</th>
+                <th>Current operator</th>
+                <th>Activity</th>
               </tr>
-            {% endwith %}{% endfor %}
-          </tbody>
-        </table>
+              {% paginate object_list %}
+              {% for o in object_list %}{% with pi=o.instance %}
+                <tr>
+                  <td>
+                    <input type="checkbox" name="wi" value="{{ o.pk }}"/>
+                  </td>
+                  <td><a href="{% url 'wf_detail' pi.pk %}">{{ pi.no }}</a></td>
+                  <td>{{ pi.process.name }}</td>
+                  <td>{{ pi.summary }}</td>
+                  <td>{{ pi.created_on|date:"Y-m-d H:i" }}</td>
+                  <td>{{ pi.created_by }}</td>
+                  <td>{{ pi.get_operators_display }}</td>
+                  <td>
+                    <span class="label label-{{ pi|flow_status_css_class }}">
+                      {{ pi.cur_activity.name }}
+                    </span>
+                  </td>
+                </tr>
+              {% endwith %}{% endfor %}
+            </tbody>
+          </table>
         </form>
       </div>
       <div class="box-footer clearfix">
