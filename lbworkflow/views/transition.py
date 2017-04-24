@@ -6,10 +6,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormView
+from lbutils import as_callable
 
 from lbworkflow import settings
 from lbworkflow.core.exceptions import HttpResponseException
-from lbworkflow.core.helper import as_class
 from lbworkflow.core.transition import TransitionExecutor
 from lbworkflow.models import Activity
 from lbworkflow.models import ProcessInstance
@@ -18,6 +18,7 @@ from lbworkflow.models import WorkItem
 
 from .helper import add_processed_message
 from .helper import import_wf_views
+from .helper import user_wf_info_as_dict
 from .mixin import FormsView
 
 
@@ -29,7 +30,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         pid: process instance pk (not used)
     """
     form_classes = {
-        'form': as_class(settings.WORK_FLOW_FORM)
+        'form': as_callable(settings.WORK_FLOW_FORM)
     }
 
     def get_success_url(self):
@@ -135,6 +136,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         kwargs = super(ExecuteTransitionView, self).get_context_data(**kwargs)
         kwargs['workitem'] = self.workitem
         kwargs['transition'] = self.transition
+        kwargs.update(user_wf_info_as_dict(self.wf_obj, self.request.user))
         return kwargs
 
     def dispatch(self, request, *args, **kwargs):
@@ -149,7 +151,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
 
 class BatchExecuteTransitionView(FormView):
     template_name = 'lbworkflow/batch_transition_form.html'
-    form_class = as_class(settings.BATCH_WORK_FLOW_FORM)
+    form_class = as_callable(settings.BATCH_WORK_FLOW_FORM)
 
     def get_success_url(self):
         return reverse("wf_todo")
@@ -167,6 +169,11 @@ class BatchExecuteTransitionView(FormView):
 
     def add_processed_message(self, process_instance, act_descn='Processed'):
         add_processed_message(self.request, process_instance, act_descn)
+
+    def post(self, request, *args, **kwargs):
+        if not request.POST.get('submit'):
+            return self.get(request, *args, **kwargs)
+        return super(BatchExecuteTransitionView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         user = self.request.user
@@ -198,7 +205,7 @@ class BatchExecuteTransitionView(FormView):
 
 class ExecuteBackToTransitionView(ExecuteTransitionView):
     form_classes = {
-        'form': as_class(settings.BACK_TO_ACTIVITY_FORM)
+        'form': as_callable(settings.BACK_TO_ACTIVITY_FORM)
     }
 
     def has_permission(self, request, instance, workitem, transition):

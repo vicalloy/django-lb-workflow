@@ -4,9 +4,9 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
+from lbutils import as_callable
 
 from lbworkflow import settings
-from lbworkflow.core.helper import as_func
 from lbworkflow.models import Process
 from lbworkflow.models import ProcessCategory
 from lbworkflow.models import ProcessInstance
@@ -14,9 +14,9 @@ from lbworkflow.models import ProcessInstance
 from .helper import import_wf_views
 from .helper import user_wf_info_as_dict
 
-can_edit_wf = as_func(settings.CAN_EDIT_WF_FUNC)
-can_submit_wf = as_func(settings.CAN_SUBMIT_WF_FUNC)
-can_view_wf = as_func(settings.CAN_VIEW_WF_FUNC)
+can_edit_wf = as_callable(settings.CAN_EDIT_WF_FUNC)
+can_submit_wf = as_callable(settings.CAN_SUBMIT_WF_FUNC)
+can_view_wf = as_callable(settings.CAN_VIEW_WF_FUNC)
 
 
 def new(request, wf_code):

@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.utils import timezone
+from lbutils import as_callable
 
-from lbworkflow.core.helper import as_func
 from lbworkflow.models import ProcessInstance
 from lbworkflow.models import WorkItem
 from lbworkflow.settings import PROCESS_INSTANCE_GET_PERMIT_QUERY_PARAM_FUNC
@@ -23,12 +23,12 @@ class ListWF(ListView):
 
     def get_permit_query_param(self, user, q_param):
         # override this function to add addition permit
-        get_permit_query_param = as_func(PROCESS_INSTANCE_GET_PERMIT_QUERY_PARAM_FUNC)
+        get_permit_query_param = as_callable(PROCESS_INSTANCE_GET_PERMIT_QUERY_PARAM_FUNC)
         return get_permit_query_param(user, q_param)
 
     def get_base_queryset(self):
         user = self.request.user
-        qs = ProcessInstance.objects.filter(cur_activity__status__in=['draft', 'given up'])
+        qs = ProcessInstance.objects.exclude(cur_activity__status__in=['draft', 'given up'])
         if not user.is_superuser:
             q_param = get_base_wf_permit_query_param(user, '')
             q_param = self.get_permit_query_param(user, q_param)

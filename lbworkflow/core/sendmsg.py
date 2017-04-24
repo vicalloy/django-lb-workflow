@@ -1,6 +1,6 @@
-from lbworkflow import settings
+from lbutils import as_callable
 
-from .helper import as_func
+from lbworkflow import settings
 
 
 # wf_send_sms(users, mail_type, event, ext_ctx)
@@ -16,7 +16,7 @@ def wf_send_msg(users, msg_type, event=None, ext_ctx=None):
             users = users.remove(event.user)
 
     for send_msg in settings.WF_SEND_MSG_FUNCS:
-        as_func(send_msg)(users, msg_type, event, ext_ctx)
+        as_callable(send_msg)(users, msg_type, event, ext_ctx)
 
 
 def wf_print(users, msg_type, event=None, ext_ctx=None):
