@@ -22,7 +22,7 @@ class Leave(BaseWFObj):
         )
 
     def __str__(self):
-        return '%s days' % (self.leave_days, )
+        return '%s %s days' % (self.created_by, self.leave_days, )
 
     def init_actual_info(self):
         self.actual_start_on = self.start_on
