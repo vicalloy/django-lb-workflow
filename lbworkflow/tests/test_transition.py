@@ -53,18 +53,37 @@ class ViewTests(BaseTests):
 
         self.client.login(username='tom', password='password')
 
-    def test_execute_transition(self):
-        resp = self.client.post(self.transition_url)
-        self.assertRedirects(resp, '/wf/todo/')
-        leave = Leave.objects.get(pk=self.leave.pk)
-        self.assertEqual('A3', leave.pinstance.cur_activity.name)
+    def do_agree(self, username, activity_name, leave=None):
+        if not leave:
+            leave = self.leave
+        leave = Leave.objects.get(pk=leave.pk)
 
-        self.client.login(username='vicalloy', password='password')
-        transition_url = self.get_transition_url(leave, self.users['vicalloy'])
+        self.client.login(username=username, password='password')
+
+        transition_url = self.get_transition_url(leave, self.users[username])
         resp = self.client.post(transition_url)
         self.assertRedirects(resp, '/wf/todo/')
-        leave = Leave.objects.get(pk=self.leave.pk)
-        self.assertEqual('Completed', leave.pinstance.cur_activity.name)
+        leave = Leave.objects.get(pk=leave.pk)
+        self.assertEqual(activity_name, leave.pinstance.cur_activity.name)
+
+    def test_execute_transition(self):
+        self.do_agree('tom', 'A3')
+        self.do_agree('vicalloy', 'A4')
+
+    def goto_A2B1(self):
+        leave = self.leave
+        leave.leave_days = 10
+        leave.save()
+
+        self.do_agree('tom', 'A2B1')
+
+    def test_execute_transition_with_condition(self):
+        self.goto_A2B1()
+
+    def test_execute_transition_joint(self):
+        self.goto_A2B1()
+        self.do_agree('tom', 'A2B1')
+        self.do_agree('owner', 'A3')
 
     def test_execute_transition_no_permission(self):
         self.client.login(username='vicalloy', password='password')
@@ -123,6 +142,7 @@ class ViewTests(BaseTests):
         url = reverse('wf_batch_agree')
         ctx = user_wf_info_as_dict(self.leave, self.users['tom'])
         data = {
+            'submit': 'submit',
             'wi': [ctx['workitem'].pk, 1, 2, 3]
         }
         resp = self.client.post(url, data)
@@ -134,6 +154,7 @@ class ViewTests(BaseTests):
         url = reverse('wf_batch_reject')
         ctx = user_wf_info_as_dict(self.leave, self.users['tom'])
         data = {
+            'submit': 'submit',
             'wi': [ctx['workitem'].pk, 1, 2, 3]
         }
         resp = self.client.post(url, data)
@@ -145,6 +166,7 @@ class ViewTests(BaseTests):
         self.client.login(username='owner', password='password')
         url = reverse('wf_batch_give_up')
         data = {
+            'submit': 'submit',
             'pi': [self.leave.pinstance.pk, 1, 2, 3]
         }
         resp = self.client.post(url, data)
