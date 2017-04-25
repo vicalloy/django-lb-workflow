@@ -29,7 +29,7 @@
   </section>
   <section class="content">
     <form action="" method="post" id="id-wf-form" role="form">
-      <input type="hidden" name="submit" value="submit it">
+      <input type="hidden" name="do_submit" value="submit it">
       <div class="box form-horizontal {% block form_class %}{% endblock %}">
         <div class="box-header">
         </div>
@@ -40,8 +40,8 @@
             </label>
             <div class="controls col-md-4" style="padding-top:7px">
               {% for o in workitem_list%}
-                <input type="hidden" name="wi" value="{{ wi.pk }}">
-                <input type="hidden" name="pi" value="{{ wi.instance.pk }}">
+                <input type="hidden" name="wi" value="{{ o.pk }}">
+                <input type="hidden" name="pi" value="{{ o.instance.pk }}">
                 {{ o.instance.no }} : {{ o.instance.summary }} <br>
               {% endfor %}
             </div>

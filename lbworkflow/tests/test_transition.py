@@ -152,7 +152,7 @@ class ViewTests(BaseTests):
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 200)
 
-        data['submit'] = 'submit'
+        data['do_submit'] = 'submit'
         resp = self.client.post(url, data)
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
@@ -167,7 +167,7 @@ class ViewTests(BaseTests):
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 200)
 
-        data['submit'] = 'submit'
+        data['do_submit'] = 'submit'
         resp = self.client.post(url, data)
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
@@ -182,7 +182,7 @@ class ViewTests(BaseTests):
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 200)
 
-        data['submit'] = 'submit'
+        data['do_submit'] = 'submit'
         resp = self.client.post(url, data)
         self.assertRedirects(resp, '/wf/my/')
         leave = Leave.objects.get(pk=self.leave.pk)

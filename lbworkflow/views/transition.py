@@ -171,7 +171,7 @@ class BatchExecuteTransitionView(FormView):
         add_processed_message(self.request, process_instance, act_descn)
 
     def post(self, request, *args, **kwargs):
-        if not request.POST.get('submit'):
+        if not request.POST.get('do_submit'):
             return self.get(request, *args, **kwargs)
         return super(BatchExecuteTransitionView, self).post(request, *args, **kwargs)
 
