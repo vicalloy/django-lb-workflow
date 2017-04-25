@@ -1,4 +1,5 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.forms import ModelForm
 from django.http import HttpResponseRedirect
 from django.views.generic.base import ContextMixin
 from django.views.generic.base import View
@@ -77,6 +78,9 @@ class ModelFormsMixin(object):
 
     def get_form_kwargs(self, form_class_key):
         kwargs = super().get_form_kwargs(form_class_key)
+        form_class = self.form_classes.get(form_class_key)
+        if not issubclass(form_class, ModelForm):
+            return kwargs
         instance = getattr(self, 'object', None)
         form = self.forms.get('form')
         if form:
