@@ -72,6 +72,8 @@
 
 {% block footer_ext %}
   {{ block.super }}
+  <link href="{% static 'flatpickr/dist/flatpickr.min.css' %}" rel="stylesheet" type="text/css" />
+  <script src="{% static 'flatpickr/dist/flatpickr.min.js' %}"></script>
   <script src="{% static 'blueimp-file-upload/js/vendor/jquery.ui.widget.js' %}"></script>
   <script src="{% static 'blueimp-file-upload/js/jquery.fileupload.js' %}"></script>
   <script src="{% static 'blueimp-file-upload/js/jquery.iframe-transport.js' %}"></script>
