@@ -17,10 +17,12 @@
         <td>{{ e.old_activity.name }}</td>
         <td>{{ e.new_activity.name }}</td>
         <td>
-          {{ e.comment|linebreaksbr }}
+          {% if e.comment %}
+            {{ e.comment|linebreaksbr }}
+          {% endif %}
           {% for a in e.attachments.all %}
+            <a href="{% url 'lbattachment_download' %}?pk={{ a.pk }}">{{ a.filename }}</a>
             <br>
-            <a href="{% url 'attachment_download' %}?pk={{ o.pk }}">{{ a }}</a>
           {% endfor %}
         </td>
         <td>
