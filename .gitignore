@@ -2,6 +2,7 @@
 vendor/
 bower_components/
 py3env/
+lbattachments/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
