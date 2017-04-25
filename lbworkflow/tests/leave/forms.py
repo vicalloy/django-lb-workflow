@@ -42,9 +42,10 @@ class HRForm(BootstrapFormHelperMixin, WorkflowFormMixin, forms.ModelForm):
         self.layout_fields([
             ['actual_start_on', ],
             ['actual_end_on', ],
+            ['actual_leave_days', ],
             ['comment', ],
         ])
 
     class Meta:
         model = Leave
-        fields = ['actual_start_on', 'actual_end_on', ]
+        fields = ['actual_start_on', 'actual_end_on', 'actual_leave_days', ]
