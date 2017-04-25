@@ -80,7 +80,6 @@ class ViewTests(BaseTests):
         }
         self.do_agree('hr', 'Completed', data=data)
 
-
     def goto_A2B1(self):
         leave = self.leave
         leave.leave_days = 10
