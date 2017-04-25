@@ -90,7 +90,8 @@ class TransitionExecutor(object):
             old_activity=workitem.activity, new_activity=to_activity,
             workitem=workitem)
 
-        event.attachments.add(*self.attachments)
+        if self.attachments:
+            event.attachments.add(*self.attachments)
 
         self.last_event = event
 
