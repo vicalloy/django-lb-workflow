@@ -129,6 +129,8 @@ class ExecuteTransitionView(ModelFormsMixin, TemplateResponseMixin, FormsView):
             # update cache for wf_obj
             self.object = wf_obj
             self.process_instance = wf_obj.pinstance
+        for other_form in forms:
+            self.save_form(other_form)
         self.do_transition(form.cleaned_data)
         self.add_processed_message(self.process_instance)
         return HttpResponseRedirect(self.get_success_url())
