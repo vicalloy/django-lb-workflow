@@ -53,7 +53,7 @@ class ViewTests(BaseTests):
 
         self.client.login(username='tom', password='password')
 
-    def do_agree(self, username, activity_name, leave=None):
+    def do_agree(self, username, activity_name, leave=None, data={}):
         if not leave:
             leave = self.leave
         leave = Leave.objects.get(pk=leave.pk)
@@ -61,7 +61,7 @@ class ViewTests(BaseTests):
         self.client.login(username=username, password='password')
 
         transition_url = self.get_transition_url(leave, self.users[username])
-        resp = self.client.post(transition_url)
+        resp = self.client.post(transition_url, data=data)
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=leave.pk)
         self.assertEqual(activity_name, leave.pinstance.cur_activity.name)
@@ -73,7 +73,13 @@ class ViewTests(BaseTests):
     def test_execute_transition_customized_url(self):
         self.do_agree('tom', 'A3')
         self.do_agree('vicalloy', 'A4')
-        self.do_agree('hr', 'Completed')
+        data = {
+            'actual_start_on': '2017-04-25 08:00',
+            'actual_end_on': '2017-04-26 08:00',
+            'actual_leave_days': '2',
+        }
+        self.do_agree('hr', 'Completed', data=data)
+
 
     def goto_A2B1(self):
         leave = self.leave
