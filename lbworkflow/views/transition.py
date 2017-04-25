@@ -20,9 +20,10 @@ from .helper import add_processed_message
 from .helper import import_wf_views
 from .helper import user_wf_info_as_dict
 from .mixin import FormsView
+from .mixin import ModelFormsMixin
 
 
-class ExecuteTransitionView(TemplateResponseMixin, FormsView):
+class ExecuteTransitionView(ModelFormsMixin, TemplateResponseMixin, FormsView):
     """
     request.GET:
         ts_id: transition pk
@@ -41,7 +42,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
             return super(ExecuteTransitionView, self).get_template_names()
         except ImproperlyConfigured:
             base_tmpl = 'lbworkflow/do_transition_form.html'
-            _meta = self.wf_obj._meta
+            _meta = self.object._meta
             app_label = _meta.app_label
             object_name = _meta.object_name.lower()
             return ["%s/%s/%s" % (app_label, object_name, base_tmpl,),
@@ -64,7 +65,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         self.transition = self.get_init_transition(instance, request)
         self.workitem = workitem
         self.process_instance = instance
-        self.wf_obj = instance.content_object
+        self.object = instance.content_object
 
     def raise_no_permission_exception(self, instance):
         from django.template import Context, Template
@@ -126,7 +127,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         if isinstance(form, ModelForm):
             wf_obj = self.save_form(form)
             # update cache for wf_obj
-            self.wf_obj = wf_obj
+            self.object = wf_obj
             self.process_instance = wf_obj.pinstance
         self.do_transition(form.cleaned_data)
         self.add_processed_message(self.process_instance)
@@ -136,7 +137,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         kwargs = super(ExecuteTransitionView, self).get_context_data(**kwargs)
         kwargs['workitem'] = self.workitem
         kwargs['transition'] = self.transition
-        kwargs.update(user_wf_info_as_dict(self.wf_obj, self.request.user))
+        kwargs.update(user_wf_info_as_dict(self.object, self.request.user))
         return kwargs
 
     def dispatch(self, request, *args, **kwargs):
