@@ -123,10 +123,10 @@ class ViewTests(BaseTests):
     def test_give_up(self):
         self.client.login(username='owner', password='password')
         url = reverse('wf_give_up')
-        resp = self.client.get('%s?wi_id=%s' % (url, self.workitem.pk))
+        resp = self.client.get('%s?pk=%s' % (url, self.leave.pinstance.pk))
         self.assertEqual(resp.status_code, 200)
 
-        resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
+        resp = self.client.post('%s?pk=%s' % (url, self.leave.pinstance.pk))
         self.assertRedirects(resp, '/wf/my/')
         leave = Leave.objects.get(pk=self.leave.pk)
         self.assertEqual('Given up', leave.pinstance.cur_activity.name)

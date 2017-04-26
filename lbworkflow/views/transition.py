@@ -1,5 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.forms import ModelForm
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -8,6 +9,7 @@ from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormView
 from lbutils import as_callable
 
+from lbutils import get_or_none
 from lbworkflow import settings
 from lbworkflow.core.exceptions import HttpResponseException
 from lbworkflow.core.transition import TransitionExecutor
@@ -56,10 +58,13 @@ class ExecuteTransitionView(ModelFormsMixin, TemplateResponseMixin, FormsView):
     def get_workitem(self, request):
         # TODO admin may don't have workitem, need auto create a work item for admin
         wi_id = request.GET.get('wi_id')
-        return get_object_or_404(WorkItem, id=wi_id)
+        user = request.user
+        return get_or_none(WorkItem, Q(user=user) | Q(agent_user=user), id=wi_id)
 
     def init_process_data(self, request):
         workitem = self.get_workitem(request)
+        if not workitem:
+            self.raise_no_permission_exception()
         instance = workitem.instance
 
         self.transition = self.get_init_transition(instance, request)
@@ -67,7 +72,7 @@ class ExecuteTransitionView(ModelFormsMixin, TemplateResponseMixin, FormsView):
         self.process_instance = instance
         self.object = instance.content_object
 
-    def raise_no_permission_exception(self, instance):
+    def raise_no_permission_exception(self, instance=None):
         from django.template import Context, Template
         t = Template("""
             <!DOCTYPE HTML>
@@ -78,8 +83,10 @@ class ExecuteTransitionView(ModelFormsMixin, TemplateResponseMixin, FormsView):
             </head>
             <body>
                 No permission to perform this action
-                <br/>
-                <a href="{% url 'wf_detail' instance.pk %}"> View this process </a>
+                {% if instance %}
+                    <br/>
+                    <a href="{% url 'wf_detail' instance.pk %}"> View this process </a>
+                {% endif %}
             </body>
             </html>
             """)
@@ -237,6 +244,16 @@ class ExecuteGiveUpTransitionView(ExecuteTransitionView):
 
     def get_success_url(self):
         return reverse("wf_my_wf")
+
+    def get_workitem(self, request):
+        pk = request.GET.get('pk')
+        process_instance = get_or_none(ProcessInstance, pk=pk)
+        if not process_instance:
+            return None
+        return WorkItem(
+            instance=process_instance,
+            activity=process_instance.cur_activity,
+            user=request.user)
 
     def has_permission(self, request, instance, workitem, transition):
         return instance.can_give_up(request.user)

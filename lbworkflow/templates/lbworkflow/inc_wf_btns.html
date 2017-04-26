@@ -20,7 +20,6 @@
 {% comment %}
   {% if can_rollback %}
     <a class="{% if is_btn %}btn btn-default{% endif %}"
-       onclick="return confirm('Do you want to rollback ({{can_rollback.get_act_name}})？')"
        href="{% url 'wf_rollback' %}?pk={{ process_instance.pk }}">
       Rollback
     </a>
@@ -29,7 +28,6 @@
 {% endcomment %}
 {% if can_give_up %}
   <a class="{% if is_btn %}btn btn-default{% endif %}"
-     onclick="return confirm('Are you sure you want to give up this item?')"
      href="{% url 'wf_give_up' %}?pk={{ process_instance.pk }}">Give up</a>
   <span>|</span>
 {% endif %}
