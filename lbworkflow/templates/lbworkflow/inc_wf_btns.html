@@ -38,7 +38,7 @@
     <span>|</span>
   {% endif %}
   {% if is_wf_admin %}
-    <a class="{% if is_btn %}btn btn-danger{% endif %} btn-del" href="{% url 'wf_delete' %}?pk={{ instance.pk }}">Delete</a>
+    <a class="{% if is_btn %}btn btn-danger{% endif %} btn-del" href="{% url 'wf_delete' %}?pk={{ process_instance.pk }}">Delete</a>
     <span>|</span>
   {% endif %}
 {% endif %}
