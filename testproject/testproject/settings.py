@@ -29,3 +29,7 @@ ROOT_URLCONF = 'testproject.urls'
 LOGIN_URL ='/admin/login/'
 LOGOUT_URL = '/admin/logout/'
 IMPERSONATE_REDIRECT_URL = '/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL_ = '/media/'
+MEDIA_URL = MEDIA_URL_
