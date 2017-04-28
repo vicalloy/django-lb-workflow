@@ -43,8 +43,12 @@ def edit(request, pk):
 
 
 def _default_detail(request, instance, ext_ctx={}, template_name=None):
+    is_print = ext_ctx.get('is_print')
     if not template_name:
-        template_name = '%s/detail.html' % instance.process.code
+        template_name = 'detail.html'
+        if is_print:
+            template_name = 'print.html'
+        template_name = '%s/%s' % (instance.process.code, template_name)
     ctx = {}
     ctx.update(ext_ctx)
     return render(request, template_name, ctx)
