@@ -76,6 +76,8 @@ class FlowAppGenerator(object):
             for filename in files:
                 if filename.endswith('.pyc') or filename.startswith('.'):
                     continue
+                if filename.endswith('-tpl'):
+                    filename = filename[:-4]
                 src_file_path = os.path.join(path, filename)
                 src_file_path = src_file_path[len(src):].strip('/')
                 dest_file_path = os.path.join(dest, relative_path, filename)
