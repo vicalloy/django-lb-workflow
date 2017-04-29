@@ -10,5 +10,5 @@
 {% endblock %}
 
 {% block right_side_tab_base_ctx %}
-  {% include "leave/inc_detail_info.html" %}
+  {% include "[[ app_name ]]/inc_detail_info.html" %}
 {% endblock %}

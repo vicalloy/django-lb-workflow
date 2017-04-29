@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-  {% include "leave/inc_detail_info.html" %}
+  {% include "[[ app_name ]]/inc_detail_info.html" %}
   <br/>
   {% include "lbworkflow/inc_wf_history.html" %}
 {% endblock %}
