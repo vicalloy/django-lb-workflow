@@ -1,0 +1,10 @@
+from django.contrib import admin
+
+from .models import [[ class_name ]]
+
+
+class [[ class_name ]]Admin(admin.ModelAdmin):
+    list_display = ([[ field_names ]])
+
+
+admin.site.register([[ class_name ]], [[ class_name ]]Admin)

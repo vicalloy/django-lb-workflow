@@ -1,0 +1,36 @@
+from lbworkflow.views.generics import CreateView
+from lbworkflow.views.generics import UpdateView
+from lbworkflow.views.generics import WFListView
+
+from .forms import [[ class_name ]]Form
+from .models import [[ class_name ]]
+
+
+class [[ class_name ]]CreateView(CreateView):
+    form_classes = {
+        'form': [[ class_name ]]Form,
+    }
+
+
+new = [[ class_name ]]CreateView.as_view()
+
+
+class [[ class_name ]]UpdateView(UpdateView):
+    form_classes = {
+        'form': [[ class_name ]]Form,
+    }
+
+
+edit = [[ class_name ]]UpdateView.as_view()
+
+
+class [[ class_name ]]ListView(WFListView):
+    wf_code = '[[ wf_code ]]'
+    model = [[ class_name ]]
+
+
+show_list = [[ class_name ]]ListView.as_view()
+
+
+def detail(request, instance, ext_ctx, *args, **kwargs):
+    return {}
