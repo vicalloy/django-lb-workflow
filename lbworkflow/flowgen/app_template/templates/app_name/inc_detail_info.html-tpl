@@ -4,7 +4,7 @@
   <tr>
     <th>[[ f1.verbose_name ]]</th>
     <td>{{ object.[[ f1.name ]] }}</td>
-    <th>[[ f1.verbose_name ]]</th>
+    <th>[[ f2.verbose_name ]]</th>
     <td>{{ object.[[ f2.name ]] }}</td>
   </tr>
   [% endfor %]
