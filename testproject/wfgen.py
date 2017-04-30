@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-import inspect
 import os
 import sys
-import shutil
 
 import django
 from django.core.management import call_command
@@ -15,17 +13,9 @@ def gen():
 
 
 def clean():
-    from lbworkflow.tests.issue.models import Issue as wf_class
-    folder_path = os.path.dirname(inspect.getfile(wf_class))
-    for path, dirs, files in os.walk(folder_path):
-        if not path.endswith('issue'):
-            shutil.rmtree(path)
-        for file in files:
-            if file not in ['models.py', 'wfdata.py', '__init__.py']:
-                try:
-                    os.remove(os.path.join(path, file))
-                except:  # NOQA
-                    pass
+    from lbworkflow.flowgen import clean_generated_files
+    from lbworkflow.tests.issue.models import Issue
+    clean_generated_files(Issue)
 
 
 def load_data():

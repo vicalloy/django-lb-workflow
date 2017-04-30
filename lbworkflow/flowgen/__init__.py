@@ -1,9 +1,28 @@
 import inspect
 import os
 import stat
+import shutil
 
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
+
+
+__all__ = (
+    'FlowAppGenerator', 'clean_generated_files'
+)
+
+
+def clean_generated_files(model_class):
+    folder_path = os.path.dirname(inspect.getfile(model_class))
+    for path, dirs, files in os.walk(folder_path):
+        if not path.endswith('issue'):
+            shutil.rmtree(path)
+        for file in files:
+            if file not in ['models.py', 'wfdata.py', '__init__.py']:
+                try:
+                    os.remove(os.path.join(path, file))
+                except:  # NOQA
+                    pass
 
 
 def get_fields(model_class):
