@@ -8,7 +8,7 @@ from jinja2 import FileSystemLoader
 
 def get_fields(model_class):
     fields = []
-    ignore_fields = ['id', 'process_instance', 'created_on', 'created_by']
+    ignore_fields = ['id', 'pinstance', 'created_on', 'created_by']
     for f in model_class._meta.fields:
         if f.name not in ignore_fields:
             fields.append(f)
@@ -24,7 +24,7 @@ def group(flat_list):
     for i in range(len(flat_list) % 2):
         flat_list.append(None)
         pass
-    return zip(flat_list[0::2], flat_list[1::2])
+    return list(zip(flat_list[0::2], flat_list[1::2]))
 
 
 class FlowAppGenerator(object):
@@ -85,12 +85,12 @@ class FlowAppGenerator(object):
             for filename in files:
                 if filename.endswith('.pyc') or filename.startswith('.'):
                     continue
-                if filename.endswith('-tpl'):
-                    filename = filename[:-4]
                 src_file_path = os.path.join(path, filename)
                 src_file_path = src_file_path[len(src):].strip('/')
                 dest_file_path = os.path.join(dest, relative_path, filename)
                 dest_file_path = dest_file_path.replace('app_name', ctx.get('app_name', 'app_name'))
+                if dest_file_path.endswith('-tpl'):
+                    dest_file_path = dest_file_path[:-4]
                 self.copy_template_file(src_file_path, dest_file_path, ctx)
 
     def copy_template_file(self, src, dest, ctx={}):
