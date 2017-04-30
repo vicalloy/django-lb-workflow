@@ -6,6 +6,8 @@ INSTALLED_APPS += [
     'testproject',
     'stronghold',
     'impersonate',
+
+    'lbworkflow.tests.issue',
 ]
 
 DATABASES = {
@@ -33,3 +35,7 @@ IMPERSONATE_REDIRECT_URL = '/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL_ = '/media/'
 MEDIA_URL = MEDIA_URL_
+
+LBWF_APPS.update({
+    'issue': 'lbworkflow.tests.issue',
+})
