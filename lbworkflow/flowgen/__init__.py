@@ -1,11 +1,10 @@
 import inspect
 import os
-import stat
 import shutil
+import stat
 
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
-
 
 __all__ = (
     'FlowAppGenerator', 'clean_generated_files'

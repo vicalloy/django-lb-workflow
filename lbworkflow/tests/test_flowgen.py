@@ -10,4 +10,3 @@ class ViewTests(BaseTests):
     def test_gen(self):
         FlowAppGenerator().gen(Issue)
         clean_generated_files(Issue)
-
