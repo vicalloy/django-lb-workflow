@@ -6,8 +6,6 @@ INSTALLED_APPS += [
     'testproject',
     'stronghold',
     'impersonate',
-
-    'lbworkflow.tests.issue',
 ]
 
 DATABASES = {

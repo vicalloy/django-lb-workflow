@@ -47,6 +47,8 @@ INSTALLED_APPS = [
 
     'lbworkflow',
     'lbworkflow.tests.leave',
+
+    'lbworkflow.tests.issue',
 ]
 
 MIDDLEWARE = [
