@@ -31,7 +31,7 @@
               <th>NO.</th>
               <th>Created by</th>
               [% for f in fields %]
-              <td>{{ o.[[ f.verbose_name ]] }}</td>
+              <th>[[ f.verbose_name ]]</th>
               [% endfor %]
               <th>Created on</th>
               <th>Current operator</th>

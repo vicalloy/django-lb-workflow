@@ -1,33 +1,19 @@
 {% include "lbworkflow/inc_wf_status.html" %}
 <table class="table table-bordered tb-detail no-margin">
+  [% for f1, f2 in grouped_fields %]
   <tr>
-    <th>Start on</th>
-    <td>{{ object.start_on }}</td>
-    <th>End on</th>
-    <td>{{ object.end_on }}</td>
+    <th>[[ f1.verbose_name ]]</th>
+    <td>{{ object.[[ f1.name ]] }}</td>
+    <th>[[ f1.verbose_name ]]</th>
+    <td>{{ object.[[ f2.name ]] }}</td>
   </tr>
-  <tr>
-    <th>Days</th>
-    <td>{{ object.leave_days }}</td>
-    <th></th>
-    <td></td>
-  </tr>
-  <tr>
-    <th>Actual start on</th>
-    <td>{{ object.actual_start_on }}</td>
-    <th>Actual end on</th>
-    <td>{{ object.actual_end_on }}</td>
-  </tr>
-  <tr>
-    <th>Days</th>
-    <td>{{ object.actual_leave_days }}</td>
-    <th></th>
-    <td></td>
-  </tr>
+  [% endfor %]
+  {% comment %}
   <tr>
     <th>Reason</th>
     <td colspan="3">
       {{ object.reason|linebreaks }}
     </td>
   </tr>
+  {% endcomment %}
 </table>
