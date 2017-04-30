@@ -2,8 +2,10 @@
 import inspect
 import os
 import sys
+import shutil
 
 import django
+from django.core.management import call_command
 
 
 def gen():
@@ -16,8 +18,14 @@ def clean():
     from lbworkflow.tests.issue.models import Issue as wf_class
     folder_path = os.path.dirname(inspect.getfile(wf_class))
     for path, dirs, files in os.walk(folder_path):
-        print(path, dirs, files)
-        pass
+        if not path.endswith('issue'):
+            shutil.rmtree(path)
+        for file in files:
+            if file not in ['models.py', 'wfdata.py', '__init__.py']:
+                try:
+                    os.remove(os.path.join(path, file))
+                except:  # NOQA
+                    pass
 
 
 def load_data():
@@ -39,4 +47,6 @@ if __name__ == "__main__":
             clean()
         sys.exit(0)
     gen()
+    call_command('makemigrations', 'issue')
+    call_command('migrate')
     load_data()
