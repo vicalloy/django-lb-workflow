@@ -11,6 +11,17 @@ Reusable workflow library for Django.
 
 ``django-lb-workflow`` supports Django 1.10+ on Python 3.4+.
 
+Demo site
+=========
+
+Demo site: http://wf.haoluobo.com/
+
+username: ``admin`` password: ``password``
+
+Switch to another user: http://wf.haoluobo.com/impersonate/search
+
+Stop switch: http://wf.haoluobo.com/impersonate/stop
+
 
 Installation
 ============
