@@ -9,7 +9,7 @@ django-lb-workflow
 
 Reusable workflow library for Django.
 
-`django-lb-workflow` supports Django 1.10+ on Python 3.4+.
+``django-lb-workflow`` supports Django 1.10+ on Python 3.4+.
 
 
 Installation
@@ -38,6 +38,6 @@ Running the test suite is as simple as: ::
 Demo for create a new flow
 ==========================
 
-You can find demo code in `lbworkflow/tests/leave`.
+You can find demo code in ``lbworkflow/tests/leave``.
 
-`testproject/wfgen.py` is a demo for how to generate base code for a flow. The model for this flow is in `/lbworkflow/tests/issue`.
+``testproject/wfgen.py`` is a demo for how to generate base code for a flow. The model for this flow is in ``/lbworkflow/tests/issue``.
