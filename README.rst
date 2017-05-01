@@ -1,5 +1,5 @@
 django-lb-workflow
-===========
+==================
 
 .. image:: https://secure.travis-ci.org/vicalloy/django-lb-workflow.svg?branch=master
    :target: http://travis-ci.org/vicalloy/django-lb-workflow
@@ -7,4 +7,37 @@ django-lb-workflow
 .. image:: https://coveralls.io/repos/github/vicalloy/django-lb-workflow/badge.svg?branch=master
    :target: https://coveralls.io/github/vicalloy/django-lb-workflow?branch=master
 
-Reusable workflow library for Django
+Reusable workflow library for Django.
+
+`django-lb-workflow` supports Django 1.10+ on Python 3.4+.
+
+
+Installation
+============
+
+Workflow is on PyPI so all you need is: ::
+
+    pip install django-lb-workflow
+
+Testing
+=======
+
+Running the test suite is as simple as: ::
+
+    make test
+
+Run test project
+================
+
+Running the test suite is as simple as: ::
+
+    pip install -r testproject/requirements.txt
+    python testproject/wfgen.py
+    make run
+
+Demo for create a new flow
+==========================
+
+You can find demo code in `lbworkflow/tests/leave`.
+
+`testproject/wfgen.py` is a demo for how to generate base code for a flow. The model for this flow is in `/lbworkflow/tests/issue`.
