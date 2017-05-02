@@ -22,6 +22,11 @@ Switch to another user: http://wf.haoluobo.com/impersonate/search
 
 Stop switch: http://wf.haoluobo.com/impersonate/stop
 
+Documentation
+-------------
+
+Read the official docs here: http://django-lb-workflow.readthedocs.io/en/latest/
+
 
 Installation
 ------------
