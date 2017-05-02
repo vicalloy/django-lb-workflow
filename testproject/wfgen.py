@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+import inspect
 import os
+import shutil
 import sys
 
 import django
@@ -16,6 +18,11 @@ def clean():
     from lbworkflow.flowgen import clean_generated_files
     from lbworkflow.tests.issue.models import Issue
     clean_generated_files(Issue)
+    # remove migrations for leave
+    from lbworkflow.tests.leave.models import Leave
+    folder_path = os.path.dirname(inspect.getfile(Leave))
+    path = os.path.join(folder_path, 'migrations')
+    shutil.rmtree(path)
 
 
 def load_data():
@@ -38,5 +45,6 @@ if __name__ == "__main__":
         sys.exit(0)
     gen()
     call_command('makemigrations', 'issue')
+    call_command('makemigrations', 'leave')
     call_command('migrate')
     load_data()
