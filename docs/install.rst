@@ -15,6 +15,7 @@ Requirements
 * jinja2>=2.9.6
 * django-lbutils>=1.0.3
 * django-lbattachment>=1.0.2
+* django-stronghold
 
 The following packages are optional:
 
@@ -23,6 +24,7 @@ The following packages are optional:
 * django-crispy-forms>=1.6
 * django-lb-adminlte>=0.9.4
 * django-el-pagination>=3.0.1
+* django-impersonate
 
 Installing django-lb-workflow
 ------------------------------
@@ -30,6 +32,10 @@ Installing django-lb-workflow
 Install latest stable version into your python path using pip or easy_install::
 
     pip install --upgrade django-lb-workflow
+
+If you want to install ``django-lb-workflow`` with all option requires
+
+    pip install --upgrade django-lb-workflow[options]
 
 If you want to install development version (unstable), you can do so doing::
 
@@ -55,3 +61,10 @@ Add ``lbworkflow.urls`` to you ``url``::
         url(r'^wf/', include('lbworkflow.urls')),  # url for lbworkflow
         url(r'^attachment/', include('lbattachment.urls')),  # url for lbattachment
     ]
+
+**Others**: You should also config other required APPS, ex: ``django-el-pagination``.
+
+Sample code of using django-lb-workflow
+----------------------------------------
+
+You can find sample code of using django-lb-workflow in ``testproject/`` and ``lbworkflow/tests/``.
