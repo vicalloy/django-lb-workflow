@@ -48,6 +48,7 @@ Run test project
 Running the test suite is as simple as: ::
 
     pip install -r testproject/requirements.txt
+    python testproject/manager.py bower_install
     python testproject/wfgen.py
     make run
 
