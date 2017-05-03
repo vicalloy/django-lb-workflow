@@ -42,20 +42,24 @@ class WorkflowTemplateResponseMixin(TemplateResponseMixin):
 
 
 class ExcelResponseMixin(object):
-    titles = [
-    ]
-    file_name = ''
+    excel_titles = []
+    excel_file_name = 'flow'
 
-    def get_data(self, o):
+    def get_excel_data(self, o):
         return []
 
-    def get_file_name(self):
-        return self.file_name
+    def get_formated_excel_data(self, o):
+        data = []
+        for d in self.get_excel_data(o):
+            # TODO date
+            d = "%s" % d
+            data.append(d)
+        return data
 
     def render_to_excel(self, object_list, **kwargs):
         return simple_export2xlsx(
-            self.get_file_name(), self.titles,
-            object_list, lambda o: self.get_data(o))
+            self.excel_file_name, self.excel_titles,
+            object_list, lambda o: self.get_formated_excel_data(o))
 
 
 class CreateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
@@ -151,7 +155,7 @@ class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
             queryset,
             search_form.cleaned_data if search_form else {})
 
-        if request.GET.get('export'):
+        if 'export' in request.GET:
             return self.render_to_excel(self.object_list)
 
         process = None
