@@ -27,6 +27,19 @@ edit = [[ class_name ]]UpdateView.as_view()
 class [[ class_name ]]ListView(WFListView):
     wf_code = '[[ wf_code ]]'
     model = [[ class_name ]]
+    excel_file_name = '[[ wf_code ]]'
+    excel_titles = [
+        'Created on', 'Created by',
+        [% for f in fields %]'[[ f.verbose_name ]]', [% endfor %]
+        'Status',
+    ]
+
+    def get_excel_data(self, o):
+        return [
+            o.created_by.username, o.created_on,
+            [% for f in fields %]o.[[ f.name ]], [% endfor %]
+            o.pinstance.cur_activity.name,
+        ]
 
 
 show_list = [[ class_name ]]ListView.as_view()
