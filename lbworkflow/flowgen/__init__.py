@@ -66,7 +66,7 @@ class FlowAppGenerator(object):
             loader=loader,
         )
 
-    def gen(self, model_class, detail_model_class=None, wf_code=None):
+    def gen(self, model_class, detail_model_class=None, wf_code=None, replace=False, ignores=['wfdata.py']):
         dest = os.path.dirname(inspect.getfile(model_class))
         app_name = model_class.__module__.split('.')[-2]
         if not wf_code:
@@ -87,9 +87,9 @@ class FlowAppGenerator(object):
                 'dm__fields': get_fields(detail_model_class),
                 'dm__grouped__fields': group(get_fields(detail_model_class)),
             })
-        self.copy_template(self.app_template_path, dest, ctx)
+        self.copy_template(self.app_template_path, dest, ctx, replace, ignores)
 
-    def copy_template(self, src, dest, ctx={}):
+    def copy_template(self, src, dest, ctx={}, replace=False, ignores=[]):
         self.init_env(src)
         for path, dirs, files in os.walk(src):
             relative_path = path[len(src):].lstrip(os.sep)
@@ -109,6 +109,13 @@ class FlowAppGenerator(object):
                 dest_file_path = dest_file_path.replace('app_name', ctx.get('app_name', 'app_name'))
                 if dest_file_path.endswith('-tpl'):
                     dest_file_path = dest_file_path[:-4]
+
+                is_exists = os.path.isfile(dest_file_path)
+                for ignore in ignores:
+                    if dest_file_path.endswith(ignore):
+                        replace = False
+                if is_exists and not replace:
+                    continue
                 self.copy_template_file(src_file_path, dest_file_path, ctx)
 
     def copy_template_file(self, src, dest, ctx={}):
