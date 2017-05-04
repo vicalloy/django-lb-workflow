@@ -8,7 +8,9 @@
 What is django-lb-workflow
 ==========================
 
-django-lb-workflow is a reusable workflow library for Django.
+``django-lb-workflow`` is a reusable workflow library for Django.
+
+django-lb-workflow's source code hosted on `GitHub <https://github.com/vicalloy/django-lb-workflow>`_.
 
 Demo site
 ---------
