@@ -4,7 +4,7 @@ Example
 
 .. _`example`:
 
-Throughout this tutorial, we’ll walk you through the creation of a basic project and a leave process using default template.
+Throughout this tutorial, we’ll walk you through the creation of a basic project and a issue process using default template.
 
 Sample project
 --------------
@@ -14,14 +14,29 @@ You can find sample code of using ``django-lb-workflow`` in ``testproject/`` and
 Start a new project and config it
 ---------------------------------
 
+Install ``django-lb-workflow`` with all option requires::
+
+    pip install --upgrade django-lb-workflow[options]
+
 Creating a project::
 
-    django-admin.py startproject helloword
+    $ django-admin.py startproject helloword
 
-Add the following code in the file settings.py::
+Creating ``helloword/middleware.py`` to compatible stronghold to django 1.10+::
+
+    from django.utils.deprecation import MiddlewareMixin
+    from stronghold.middleware import LoginRequiredMiddleware
+
+
+    class LoginRequiredStrongholdMiddleware(MiddlewareMixin, LoginRequiredMiddleware):
+        pass
+
+Add the following code in the file ``settings.py``::
 
     INSTALLED_APPS = [
         ...
+        'helloword',
+
         'crispy_forms',
         'lbattachment',
         'lbadminlte',
@@ -35,10 +50,19 @@ Add the following code in the file settings.py::
         'lbworkflow',
     ]
 
+    MIDDLEWARE += [
+        'testproject.middleware.LoginRequiredStrongholdMiddleware',
+    ]
+
     CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
     LBWF_APPS = {
     }
+
+    STATICFILES_FINDERS = [
+        'django.contrib.staticfiles.finders.FileSystemFinder',
+        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    ]
 
     # bower
     STATICFILES_FINDERS += (('djangobower.finders.BowerFinder'),)
@@ -76,26 +100,127 @@ Add the following code in the file settings.py::
 
     PROJECT_TITLE = 'LB-Workflow'
 
-Add the following code in the file urls.py::
+    LOGIN_URL = '/admin/login/'
+    LOGOUT_URL = '/admin/logout/'
+
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    MEDIA_URL_ = '/media/'
+    MEDIA_URL = MEDIA_URL_
+
+    STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
+
+    STRONGHOLD_PUBLIC_URLS = [
+        r'^/admin/',
+    ]
+
+Edit the file urls.py::
+
+    from django.conf.urls import include
+    from django.conf.urls import url
+    from django.contrib import admin
+    from django.views.generic import RedirectView
 
     urlpatterns = [
+        url(r'^$', RedirectView.as_view(url='/wf/list/'), name='home'),
         url(r'^admin/', admin.site.urls),
-        url(r'^$', RedirectView.as_view(url='/wf/todo/'), name='home'),
         url(r'^wf/', include('lbworkflow.urls')),
         url(r'^attachment/', include('lbattachment.urls')),
     ]
 
+Create base templates for project.
+
+``helloword/templates/base.html``::
+
+    {% extends "lbadminlte/base.html" %}
+
+    {% load staticfiles %}
+
+    {% block head_ext %}
+      <link href="{% static '/css/lbworkflow.css' %}" rel="stylesheet" type="text/css" />
+    {% endblock %}
+
+    {% block footer_ext %}
+      <script src="{% static 'js/lbworkflow.js' %}" type="text/javascript"></script>
+      <script type="text/javascript">
+        URL_UPLOAD_ATTACH = "{% url 'lbattachment_upload__' %}";
+      </script>
+    {% endblock %}
+
+``helloword/templates/base_ext.html``::
+
+    {% extends "lbadminlte/base_ext.html" %}
+
+    {% block left_side %}
+      <section class="sidebar">
+        <ul class="sidebar-menu">
+          <li id="id-nav-todo">
+            <a href="{% url 'wf_todo' %}">
+              <i class="fa fa-th"></i> Todo
+              <small class="badge pull-right bg-red todo-count hide"></small>
+            </a>
+          </li>
+          <li id="id-nav-mywf">
+            <a href="{% url 'wf_my_wf' %}">
+              <i class="fa fa-th"></i> My
+            </a>
+          </li>
+          <li id="id-nav-start-wf">
+            <a href="{% url 'wf_start_wf' %}">
+              <i class="fa fa-th"></i> Submit
+            </a>
+          </li>
+          <li id="id-nav-list-wf">
+            <a href="{% url 'wf_list_wf' %}">
+              <i class="fa fa-th"></i> All
+            </a>
+          </li>
+          <li id="id-nav-report-list">
+            <a href="{% url 'wf_report_list' %}">
+              <i class="fa fa-th"></i> Report list
+            </a>
+          </li>
+        </ul>
+      </section>
+    {% endblock %}
+
+``helloword/templates/base_form.html``::
+
+    {% extends "lbadminlte/base_form.html" %}
+
 Install required static package::
 
-    cd helloword
-    python manager bower install
+    $ cd helloword
+    $ python manager bower install
+
+run the following command to create database and create two superuser ``admin`` and ``vicalloy``::
+
+    $ python manage.py migrate
+    $ python manage.py createsuperuser
+    $ python manage.py createsuperuser
+
+Start the development server::
+
+    $ python manage.py runserver
+
+Now, open a Web browser and go to "/" on your local domain – e.g., http://127.0.0.1:8000/ .
+You should see the admin’s login screen. After login you can see the home page of this project.
 
 Start a new flow
 ----------------
 
+Create app and generate base code
+#################################
+
 Creating the issue app::
 
-    python manage.py startapp issue
+    $ python manage.py startapp issue
+
+Add ``issue`` to ``INSTALLED_APPS`` in ``settings.py``::
+
+    INSTALLED_APPS = [
+        ...
+        'issue',
+    ]
 
 Creating models::
 
@@ -112,23 +237,19 @@ Creating models::
         def __str__(self):
             return self.title
 
-Generate flow code::
+``python manager.py shell`` to open django shell, and run the following code to generate flow code::
 
-    import os
+    >>> from lbworkflow.flowgen import FlowAppGenerator
+    >>> from issue.models import Issue as wf_class
+    >>> FlowAppGenerator().gen(wf_class)
 
-    import django
+run the following command to update database::
 
+    $ python manage.py makemigrations issue
+    $ python manage.py migrate
 
-    def gen():
-        from lbworkflow.flowgen import FlowAppGenerator
-        from issue.models import Issue as wf_class
-        FlowAppGenerator().gen(wf_class)
-
-    if __name__ == "__main__":
-        os.environ['DJANGO_SETTINGS_MODULE'] = "helloword.settings"
-        django.setup()
-        gen()
-
+Config flow
+###########
 
 You can config flow in django admin or create a python file and execute it.
 Config the flow by code ``issue/wfdata.py``::
@@ -157,21 +278,27 @@ Config the flow by code ``issue/wfdata.py``::
 
 Add the following code in the file settings.py::
 
-    INSTALLED_APPS = [
-        ...
-        'issue',
-    ]
-
     LBWF_APPS = {
-        'leave': 'lbworkflow.tests.leave',
+        'issue': 'issue',
     }
 
+run the following command to load flow config to database::
 
-TODO import data,migrate
+    $ python manage.py callfunc lbworkflow.wfdata.load_data
+    $ python manage.py callfunc issue.wfdata.load_data
 
-TODO Create test users
+Submit and audit issue
+----------------------
 
-Run it
-------
+Now we can start the server and submit a issue. We also can audit the issue.
 
-pass
+Start the development server::
+
+    $ python manage.py runserver
+
+- Left menu
+    - ``Todo`` All task need you todo
+    - ``My`` All process you submitted
+    - ``Submit`` Submit a new process
+    - ``All`` You process that you can see
+    - ``Report list`` Report list
