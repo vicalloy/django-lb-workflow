@@ -11,7 +11,7 @@ from django.core.management import call_command
 def gen():
     from lbworkflow.flowgen import FlowAppGenerator
     from lbworkflow.tests.issue.models import Issue as wf_class
-    FlowAppGenerator().gen(wf_class)
+    FlowAppGenerator().gen(wf_class, replace=True)
 
 
 def clean():
@@ -33,7 +33,7 @@ def load_data():
 
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    sys.path.append(BASE_DIR)
+    sys.path.insert(0, BASE_DIR)
     os.environ['DJANGO_SETTINGS_MODULE'] = "testproject.settings"
     django.setup()
     if (len(sys.argv)) == 2:
