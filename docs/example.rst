@@ -287,8 +287,8 @@ run the following command to load flow config to database::
     $ python manage.py callfunc lbworkflow.wfdata.load_data
     $ python manage.py callfunc issue.wfdata.load_data
 
-Submit and audit issue
-----------------------
+Submit and audit
+----------------
 
 Now we can start the server and submit a issue. We also can audit the issue.
 
