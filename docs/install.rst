@@ -33,7 +33,7 @@ Install latest stable version into your python path using pip or easy_install::
 
     pip install --upgrade django-lb-workflow
 
-If you want to install ``django-lb-workflow`` with all option requires
+If you want to install ``django-lb-workflow`` with all option requires::
 
     pip install --upgrade django-lb-workflow[options]
 
