@@ -26,7 +26,7 @@ MIDDLEWARE += [
 
 ROOT_URLCONF = 'testproject.urls'
 
-LOGIN_URL ='/admin/login/'
+LOGIN_URL = '/admin/login/'
 LOGOUT_URL = '/admin/logout/'
 IMPERSONATE_REDIRECT_URL = '/'
 
