@@ -21,3 +21,9 @@ reload_test_data:
 	cd testproject;python manage.py callfunc lbworkflow.tests.wfdata.load_data
 	cd testproject;python manage.py callfunc lbworkflow.tests.leave.wfdata.load_data
 	cd testproject;python manage.py callfunc lbworkflow.tests.issue.wfdata.load_data
+
+build_docker_image:
+	docker build -t lbworkflow:0.9 .
+
+create_docker_container:
+	docker run -d -p 9000:9000 --name lbworkflow lbworkflow:0.9
