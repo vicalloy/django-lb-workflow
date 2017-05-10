@@ -278,17 +278,6 @@ class WorkItem(models.Model):
             self.save()
 
 
-class Comment(models.Model):
-    instance = models.ForeignKey(ProcessInstance)
-    content = models.TextField()
-    ext_data = JSONField(null=True, blank=True)
-    attachments = models.ManyToManyField(
-        LBAttachment, verbose_name='Attachment', blank=True)
-
-    def __str__(self):
-        return '%s - %s' % (self.instance.summary, self.comment)
-
-
 class Event(models.Model):
     EVENT_ACT_CHOICES = (
         ('transition', 'Transition'),
