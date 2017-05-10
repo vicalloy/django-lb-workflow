@@ -3,7 +3,7 @@ from django.utils import timezone
 from lbutils import as_callable
 
 from lbworkflow.models import ProcessInstance
-from lbworkflow.models import WorkItem
+from lbworkflow.models import Task
 from lbworkflow.settings import PROCESS_INSTANCE_GET_PERMIT_QUERY_PARAM_FUNC
 from lbworkflow.views.generics import ListView
 
@@ -66,7 +66,7 @@ class Todo(ListView):
 
     def get_base_queryset(self):
         user = self.request.user
-        qs = WorkItem.objects.filter(
+        qs = Task.objects.filter(
             Q(user=user) | Q(agent_user=user),
             status='in progress')
         qs = qs.select_related(

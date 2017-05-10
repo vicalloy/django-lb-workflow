@@ -9,7 +9,7 @@ from .models import ProcessCategory
 from .models import ProcessInstance
 from .models import ProcessReportLink
 from .models import Transition
-from .models import WorkItem
+from .models import Task
 
 
 class ProcessCategoryAdmin(admin.ModelAdmin):
@@ -72,7 +72,7 @@ class ProcessInstanceAdmin(admin.ModelAdmin):
         'cur_node')
 
 
-class WorkItemAdmin(admin.ModelAdmin):
+class TaskAdmin(admin.ModelAdmin):
     search_fields = (
         'instance__no', 'node__name', 'user__username',
         'agent__username')
@@ -91,7 +91,7 @@ class EventAdmin(admin.ModelAdmin):
         'instance', 'user', 'get_act_name', 'old_node',
         'new_node', 'created_on')
     raw_id_fields = (
-        'instance', 'user', 'workitem', 'next_operators',
+        'instance', 'user', 'task', 'next_operators',
         'notice_users')
 
 
@@ -107,7 +107,7 @@ admin.site.register(Node, NodeAdmin)
 admin.site.register(Transition, TransitionAdmin)
 admin.site.register(App, AppAdmin)
 admin.site.register(ProcessInstance, ProcessInstanceAdmin)
-admin.site.register(WorkItem, WorkItemAdmin)
+admin.site.register(Task, TaskAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Authorization, AuthorizationAdmin)
 admin.site.register(ProcessReportLink, ProcessReportLinkAdmin)

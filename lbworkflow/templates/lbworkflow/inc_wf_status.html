@@ -13,7 +13,7 @@
     <th>Current activity</th>
     <td>
       {{ process_instance.cur_activity.name }}
-      {% if workitem.is_hold %}
+      {% if task.is_hold %}
         (hold)
       {% endif %}
     </td>

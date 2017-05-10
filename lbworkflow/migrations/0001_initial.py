@@ -169,7 +169,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='WorkItem',
+            name='Task',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('status', models.CharField(choices=[('in progress', 'In Progress'), ('completed', 'Completed')], default='in progress', max_length=255)),
@@ -177,7 +177,7 @@ class Migration(migrations.Migration):
                 ('is_hold', models.BooleanField(default=False, verbose_name='Is hold')),
                 ('created_on', models.DateTimeField(auto_now=True)),
                 ('node', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lbworkflow.Node')),
-                ('agent_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='agent_user_workitems', to=settings.AUTH_USER_MODEL, verbose_name='Agent user')),
+                ('agent_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='agent_user_tasks', to=settings.AUTH_USER_MODEL, verbose_name='Agent user')),
                 ('authorization', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='lbworkflow.Authorization', verbose_name='Authorization')),
                 ('instance', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lbworkflow.ProcessInstance')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User')),
@@ -225,8 +225,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='event',
-            name='workitem',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='events', to='lbworkflow.WorkItem'),
+            name='task',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='events', to='lbworkflow.Task'),
         ),
         migrations.AddField(
             model_name='comment',

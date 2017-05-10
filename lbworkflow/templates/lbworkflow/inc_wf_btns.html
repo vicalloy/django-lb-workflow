@@ -1,19 +1,19 @@
 {% load lbworkflow_tags %}
 
 {% for t in agree_transitions  %}
-  <a class="{% if is_btn %}btn btn-primary{% endif %}" href="{{ t|app_url:workitem }}">{{ t.name }}</a>
+  <a class="{% if is_btn %}btn btn-primary{% endif %}" href="{{ t|app_url:task }}">{{ t.name }}</a>
   <span>|</span>
 {% endfor %}
 {% for t in other_transitions  %}
-  <a class="{% if is_btn %}btn btn-primary{% endif %}" href="{{ t|app_url:workitem }}">{{ t.name }}</a>
+  <a class="{% if is_btn %}btn btn-primary{% endif %}" href="{{ t|app_url:task }}">{{ t.name }}</a>
   <span>|</span>
 {% endfor %}
 {% if can_reject  %}
-  <a class="{% if is_btn %}btn btn-danger{% endif %}" href="{% url 'wf_reject' %}?wi_id={{ workitem.pk }}">Reject</a>
+  <a class="{% if is_btn %}btn btn-danger{% endif %}" href="{% url 'wf_reject' %}?wi_id={{ task.pk }}">Reject</a>
   <span>|</span>
 {% endif %}
 {% if can_back_to %}
-  <a class="{% if is_btn %}btn btn-danger{% endif %}" href="{% url 'wf_back_to' %}?wi_id={{ workitem.pk }}">Back to</a>
+  <a class="{% if is_btn %}btn btn-danger{% endif %}" href="{% url 'wf_back_to' %}?wi_id={{ task.pk }}">Back to</a>
   <span>|</span>
 {% endif %}
 {# TODO hold and add joint #}

@@ -22,9 +22,9 @@ class TransitionExecutorTests(BaseTests):
         self.assertEqual(leave.pinstance.get_operators_display(), 'tom')
 
         # A3 not auto agree
-        workitem = instance.get_todo_workitem()
+        task = instance.get_todo_task()
         transition = instance.get_agree_transition()
-        TransitionExecutor(self.users['tom'], instance, workitem, transition).execute()
+        TransitionExecutor(self.users['tom'], instance, task, transition).execute()
         self.assertEqual(leave.pinstance.cur_node.name, 'A3')
 
 
@@ -35,7 +35,7 @@ class ViewTests(BaseTests):
 
         transitions = ctx['transitions']
         transition = transitions[0]
-        transition_url = transition.get_app_url(ctx['workitem'])
+        transition_url = transition.get_app_url(ctx['task'])
         return transition_url
 
     def setUp(self):
@@ -47,9 +47,9 @@ class ViewTests(BaseTests):
 
         transitions = ctx['transitions']
         transition = transitions[0]
-        self.transition_url = transition.get_app_url(ctx['workitem'])
+        self.transition_url = transition.get_app_url(ctx['task'])
 
-        self.workitem = ctx['workitem']
+        self.task = ctx['task']
 
         self.client.login(username='tom', password='password')
 
@@ -102,20 +102,20 @@ class ViewTests(BaseTests):
 
     def test_simple_agree(self):
         url = reverse('wf_agree')
-        resp = self.client.get('%s?wi_id=%s' % (url, self.workitem.pk))
+        resp = self.client.get('%s?wi_id=%s' % (url, self.task.pk))
         self.assertEqual(resp.status_code, 200)
 
-        resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
+        resp = self.client.post('%s?wi_id=%s' % (url, self.task.pk))
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
         self.assertEqual('A3', leave.pinstance.cur_node.name)
 
     def test_reject(self):
         url = reverse('wf_reject')
-        resp = self.client.get('%s?wi_id=%s' % (url, self.workitem.pk))
+        resp = self.client.get('%s?wi_id=%s' % (url, self.task.pk))
         self.assertEqual(resp.status_code, 200)
 
-        resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
+        resp = self.client.post('%s?wi_id=%s' % (url, self.task.pk))
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
         self.assertEqual('Rejected', leave.pinstance.cur_node.name)
@@ -136,12 +136,12 @@ class ViewTests(BaseTests):
         leave = Leave.objects.get(pk=self.leave.pk)
 
         url = reverse('wf_back_to')
-        resp = self.client.get('%s?wi_id=%s' % (url, self.workitem.pk))
+        resp = self.client.get('%s?wi_id=%s' % (url, self.task.pk))
         self.assertEqual(resp.status_code, 200)
         back_to_node = leave.pinstance.get_can_back_to_activities()[0]
 
         resp = self.client.post(
-            '%s?wi_id=%s' % (url, self.workitem.pk),
+            '%s?wi_id=%s' % (url, self.task.pk),
             {'back_to_node': back_to_node.pk}
         )
         self.assertRedirects(resp, '/wf/todo/')
@@ -152,7 +152,7 @@ class ViewTests(BaseTests):
         url = reverse('wf_batch_agree')
         ctx = user_wf_info_as_dict(self.leave, self.users['tom'])
         data = {
-            'wi': [ctx['workitem'].pk, 1, 2, 3],
+            'wi': [ctx['task'].pk, 1, 2, 3],
         }
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 200)
@@ -167,7 +167,7 @@ class ViewTests(BaseTests):
         url = reverse('wf_batch_reject')
         ctx = user_wf_info_as_dict(self.leave, self.users['tom'])
         data = {
-            'wi': [ctx['workitem'].pk, 1, 2, 3],
+            'wi': [ctx['task'].pk, 1, 2, 3],
         }
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 200)

@@ -30,29 +30,29 @@ def user_wf_info_as_dict(wf_obj, user):
     instance = wf_obj.pinstance
     is_wf_admin = instance.is_wf_admin(user)
     in_process = instance.cur_node.status == 'in progress'
-    workitem = instance.get_todo_workitem(user)
+    task = instance.get_todo_task(user)
     ctx['wf_code'] = instance.process.code
     ctx['process'] = instance.process
     ctx['process_instance'] = instance
     ctx['object'] = wf_obj
-    ctx['workitem'] = workitem
+    ctx['task'] = task
     ctx['wf_history'] = instance.event_set.all().order_by('-created_on', '-pk')
     ctx['operators_display'] = instance.get_operators_display()
     ctx['is_wf_admin'] = is_wf_admin
 
     can_edit = not instance.cur_node.is_submitted() and instance.created_by == user
-    can_edit = can_edit or (instance.cur_node.can_edit and workitem)
+    can_edit = can_edit or (instance.cur_node.can_edit and task)
     can_edit = can_edit or is_wf_admin
     ctx['can_edit'] = can_edit
     ctx['can_rollback'] = instance.can_rollback(user)
 
     if in_process:
-        ctx['can_assign'] = workitem or is_wf_admin or user.is_superuser
+        ctx['can_assign'] = task or is_wf_admin or user.is_superuser
         ctx['can_remind'] = instance.created_by == user or is_wf_admin
         ctx['can_give_up'] = instance.can_give_up(user)
 
-    if workitem:
-        instance.get_todo_workitems(user).filter(
+    if task:
+        instance.get_todo_tasks(user).filter(
             receive_on=None
         ).update(receive_on=timezone.now())
         transitions = instance.get_transitions()
@@ -79,9 +79,9 @@ def get_base_wf_permit_query_param(user, process_instance_field_prefix='pinstanc
     )
     # Can process
     q_param = q_param | Q(
-        **p('workitem__user', user)
+        **p('task__user', user)
     )
     q_param = q_param | Q(
-        **p('workitem__agent_user', user)
+        **p('task__agent_user', user)
     )
     return q_param

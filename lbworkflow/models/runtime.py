@@ -82,7 +82,7 @@ class ProcessInstance(models.Model):
 
     def get_operators(self):
         # TODO select_related
-        qs = self.workitem_set.filter(status='in progress')
+        qs = self.task_set.filter(status='in progress')
         users = []
         for e in qs:
             users.extend([e.user, e.agent_user])
@@ -103,9 +103,9 @@ class ProcessInstance(models.Model):
     def get_give_up_transition(self):
         return self.process.get_give_up_transition(self.cur_node)
 
-    def create_workitem(self, operator):
-        """ create workitem for submit/give up/rollback """
-        return WorkItem.objects.create(
+    def create_task(self, operator):
+        """ create task for submit/give up/rollback """
+        return Task.objects.create(
             instance=self,
             node=self.cur_node,
             user=operator,
@@ -146,11 +146,11 @@ class ProcessInstance(models.Model):
 
         return merged_transitions
 
-    def get_todo_workitem(self, user=None):
-        return self.get_todo_workitems(user).first()
+    def get_todo_task(self, user=None):
+        return self.get_todo_tasks(user).first()
 
-    def get_todo_workitems(self, user=None):
-        qs = WorkItem.objects.filter(
+    def get_todo_tasks(self, user=None):
+        qs = Task.objects.filter(
             instance=self, node=self.cur_node,
             status='in progress').filter(Q(agent_user=user) | Q(user=user))
         if user:
@@ -186,7 +186,7 @@ class ProcessInstance(models.Model):
     def has_received(self):
         if self.cur_node.status != 'in progress':
             return True
-        return self.workitem_set.filter(status='in progress', receive_on__isnull=False).exists()
+        return self.task_set.filter(status='in progress', receive_on__isnull=False).exists()
 
     def save(self, *args, **kwargs):
         super(ProcessInstance, self).save(*args, **kwargs)
@@ -214,11 +214,11 @@ class Authorization(models.Model):
     def __str__(self):
         return '%s %s %s %s' % (self.user, self.agent_user, self.start_on, self.end_on)
 
-    def update_agent_for_workitem(self):
-        WorkItem.objects.filter(
+    def update_agent_for_task(self):
+        Task.objects.filter(
             authorization=self, status='in progress'
         ).update(agent_user=None)
-        WorkItem.objects.filter(
+        Task.objects.filter(
             user=self.authorized_user, status='in progress',
             instance__process__in=self.processes.all(),
         ).update(agent_user=self.agent_user, authorization=self)
@@ -234,10 +234,10 @@ class Authorization(models.Model):
     def save(self, *args, **kwargs):
         # TODO on delete
         super(Authorization, self).save(*args, **kwargs)
-        self.update_agent_for_workitem()
+        self.update_agent_for_task()
 
 
-class WorkItem(models.Model):
+class Task(models.Model):
     STATUS_CHOICES = (
         ('in progress', 'In Progress'),
         ('completed', 'Completed'),
@@ -248,7 +248,7 @@ class WorkItem(models.Model):
     user = models.ForeignKey(AUTH_USER_MODEL, verbose_name='User', null=True, blank=True)
     agent_user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name='Agent user',
-        related_name='agent_user_workitems',
+        related_name='agent_user_tasks',
         null=True, blank=True)
     authorization = models.ForeignKey(
         Authorization, verbose_name='Authorization',
@@ -302,8 +302,8 @@ class Event(models.Model):
     new_node = models.ForeignKey(
         Node, related_name='in_events',
         null=True, blank=True)
-    workitem = models.ForeignKey(
-        WorkItem, related_name='events',
+    task = models.ForeignKey(
+        Task, related_name='events',
         null=True, blank=True)
     transition = models.ForeignKey(
         Transition, blank=True,
@@ -419,6 +419,6 @@ class BaseWFObj(models.Model):
         if instance.cur_node.is_submitted():
             return
         user = user or self.created_by
-        workitem = instance.create_workitem(user)
+        task = instance.create_task(user)
         transition = instance.get_transitions()[0]
-        TransitionExecutor(user, instance, workitem, transition).execute()
+        TransitionExecutor(user, instance, task, transition).execute()

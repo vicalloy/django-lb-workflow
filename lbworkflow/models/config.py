@@ -366,8 +366,8 @@ class Transition(models.Model):
         if not self.code:
             self.code = 'agree'
 
-    def get_app_url(self, workitem):
-        return self.app.get_url(workitem, self)
+    def get_app_url(self, task):
+        return self.app.get_url(task, self)
 
 
 class AppManager(models.Manager):
@@ -397,22 +397,22 @@ class App(models.Model):
             self.uuid,
         )
 
-    def get_url(self, workitem, transition):
+    def get_url(self, task, transition):
         def render(templ_str, ctx):
             return Template(templ_str).render(Context(ctx))
         if transition == 'reject':
-            transition = workitem.instance.process.get_reject_transition()
+            transition = task.instance.process.get_reject_transition()
         if transition == 'back to':
-            transition = workitem.instance.process.get_back_to_transition()
+            transition = task.instance.process.get_back_to_transition()
         ts_id = transition.pk or transition.code
 
         ctx = {
-            "wi": workitem,
+            "wi": task,
             "wf_code": transition.process.code,
             "ts": transition,
             "ts_id": ts_id,
-            "in": workitem.instance,
-            "o": workitem.instance.content_object,
+            "in": task.instance,
+            "o": task.instance.content_object,
         }
 
         url = 'wf_process'

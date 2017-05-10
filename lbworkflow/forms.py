@@ -5,7 +5,7 @@ from lbutils import BootstrapFormHelperMixin
 from lbutils import JustSelectedSelectMultiple
 
 from lbworkflow.models import Event
-from lbworkflow.models import WorkItem
+from lbworkflow.models import Task
 
 try:
     from crispy_forms.helper import FormHelper
@@ -70,7 +70,7 @@ class WorkflowFormMixin(object):
         # add a edit event, change resolution to draft
         instance = obj.pinstance
         if instance.cur_node.status in ['rejected', 'draft']:
-            WorkItem.objects.filter(instance=instance, status='running').delete()
+            Task.objects.filter(instance=instance, status='running').delete()
             Event.objects.create(
                 instance=instance, old_node=instance.cur_node,
                 new_node=instance.process.get_draft_active(),

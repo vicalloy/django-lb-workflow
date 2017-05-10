@@ -16,17 +16,17 @@ class HelperTests(BaseTests):
         leave.submit_process()
 
         info = user_wf_info_as_dict(leave, self.users['tom'])
-        self.assertIsNotNone(info['workitem'])
+        self.assertIsNotNone(info['task'])
         self.assertIsNotNone(info['object'])
         self.assertFalse(info['can_give_up'])
         self.assertEqual(info['wf_code'], 'leave')
 
         info = user_wf_info_as_dict(leave, self.users['owner'])
-        self.assertIsNone(info['workitem'])
+        self.assertIsNone(info['task'])
         self.assertTrue(info['can_give_up'])
 
         info = user_wf_info_as_dict(leave, self.users['vicalloy'])
-        self.assertIsNone(info['workitem'])
+        self.assertIsNone(info['task'])
 
 
 class ViewTests(BaseTests):

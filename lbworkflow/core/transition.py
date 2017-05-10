@@ -1,7 +1,7 @@
 from django.utils import timezone
 
 from lbworkflow.models import Event
-from lbworkflow.models import WorkItem
+from lbworkflow.models import Task
 
 from .sendmsg import wf_send_msg
 
@@ -17,12 +17,12 @@ def create_event(instance, transition, **kwargs):
 
 class TransitionExecutor(object):
     def __init__(
-            self, operator, instance, workitem, transition=None,
+            self, operator, instance, task, transition=None,
             comment='', attachments=[]):
         self.wf_obj = instance.content_object
         self.instance = instance
         self.operator = operator
-        self.workitem = workitem
+        self.task = task
         self.transition = transition
 
         self.comment = comment
@@ -31,21 +31,21 @@ class TransitionExecutor(object):
         self.from_node = instance.cur_node
         # hold&assign wouldn't change node
         self.to_node = transition.output_node
-        self.all_todo_workitems = instance.get_todo_workitems()
+        self.all_todo_tasks = instance.get_todo_tasks()
 
         self.last_event = None
 
     def execute(self):
         # TODO check permission
 
-        all_todo_workitems = self.all_todo_workitems
+        all_todo_tasks = self.all_todo_tasks
         need_transfer = False
         if self.transition.routing_rule == 'joint' and self.transition.code not in ['back to', 'rollback']:
-            if all_todo_workitems.count() == 1:
+            if all_todo_tasks.count() == 1:
                 need_transfer = True
         else:
             need_transfer = True
-        self._complete_workitem(need_transfer)
+        self._complete_task(need_transfer)
         if not need_transfer:
             return
 
@@ -59,36 +59,36 @@ class TransitionExecutor(object):
         instance = self.instance
 
         agree_transition = instance.get_agree_transition()
-        all_todo_workitems = instance.get_todo_workitems()
+        all_todo_tasks = instance.get_todo_tasks()
 
         if not agree_transition:
             return
 
-        for workitem in all_todo_workitems:
-            users = [workitem.user, workitem.agent_user]
+        for task in all_todo_tasks:
+            users = [task.user, task.agent_user]
             users = [e for e in users]
             for user in set(users):
-                if self.instance.cur_node != workitem.node:  # has processed
+                if self.instance.cur_node != task.node:  # has processed
                     return
                 if instance.is_user_agreed(user):
-                    TransitionExecutor(self.operator, instance, workitem, agree_transition).execute()
+                    TransitionExecutor(self.operator, instance, task, agree_transition).execute()
 
-    def _complete_workitem(self, need_transfer):
+    def _complete_task(self, need_transfer):
         """ close workite, create event and return it """
         instance = self.instance
-        workitem = self.workitem
+        task = self.task
         transition = self.transition
 
-        workitem.status = 'completed'
-        workitem.save()
+        task.status = 'completed'
+        task.save()
 
         to_node = self.to_node if need_transfer else instance.cur_node
 
         event = create_event(
             instance, transition,
             comment=self.comment, user=self.operator,
-            old_node=workitem.node, new_node=to_node,
-            workitem=workitem)
+            old_node=task.node, new_node=to_node,
+            task=task)
 
         if self.attachments:
             event.attachments.add(*self.attachments)
@@ -142,7 +142,7 @@ class TransitionExecutor(object):
         if instance.created_by != self.operator:
             wf_send_msg([instance.created_by], 'transfered', last_event)
 
-    def _gen_new_workitem(self):
+    def _gen_new_task(self):
         last_event = self.last_event
 
         if not last_event:
@@ -152,20 +152,20 @@ class TransitionExecutor(object):
 
         need_notify_operators = []
         for operator in next_operators:
-            new_workitem = WorkItem(
+            new_task = Task(
                 instance=self.instance, node=self.to_node,
                 user=operator)
-            new_workitem.update_authorization(commit=True)
+            new_task.update_authorization(commit=True)
 
             # notify next operator(not include current operator and instance.created_by)
             if operator not in [self.operator, self.instance.created_by]:
                 need_notify_operators.append(operator)
 
-            agent_user = new_workitem.agent_user
+            agent_user = new_task.agent_user
             if agent_user and agent_user not in [self.operator, self.instance.created_by]:
                 need_notify_operators.append(agent_user)
 
-        wf_send_msg(need_notify_operators, 'new_workitem', last_event)
+        wf_send_msg(need_notify_operators, 'new_task', last_event)
 
     def update_users_on_transfer(self):
         instance = self.instance
@@ -182,7 +182,7 @@ class TransitionExecutor(object):
     def _do_transfer(self):
         self.update_users_on_transfer()
         # auto complete all current work item
-        self.all_todo_workitems.update(status='completed')
+        self.all_todo_tasks.update(status='completed')
         self._do_transfer_for_instance()
-        self._gen_new_workitem()
+        self._gen_new_task()
         self._send_notification()

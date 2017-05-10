@@ -4,8 +4,8 @@ register = template.Library()
 
 
 @register.filter
-def app_url(transition, workitem):
-    return transition.get_app_url(workitem)
+def app_url(transition, task):
+    return transition.get_app_url(task)
 
 
 @register.filter

@@ -39,7 +39,7 @@
               Process
             </label>
             <div class="controls col-md-4" style="padding-top:7px">
-              {% for o in workitem_list%}
+              {% for o in task_list%}
                 <input type="hidden" name="wi" value="{{ o.pk }}">
                 <input type="hidden" name="pi" value="{{ o.instance.pk }}">
                 {{ o.instance.no }} : {{ o.instance.summary }} <br>
