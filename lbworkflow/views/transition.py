@@ -12,7 +12,7 @@ from lbutils import get_or_none
 from lbworkflow import settings
 from lbworkflow.core.exceptions import HttpResponseException
 from lbworkflow.core.transition import TransitionExecutor
-from lbworkflow.models import Activity
+from lbworkflow.models import Node
 from lbworkflow.models import ProcessInstance
 from lbworkflow.models import Transition
 from lbworkflow.models import WorkItem
@@ -94,14 +94,14 @@ class ExecuteTransitionView(ModelFormsMixin, TemplateResponseMixin, FormsView):
         raise HttpResponseException(http_response)
 
     def has_permission(self, request, instance, workitem, transition):
-        activity_is_ok = (
-            transition.input_activity == instance.cur_activity
-            and workitem.activity == instance.cur_activity
+        node_is_ok = (
+            transition.input_node == instance.cur_node
+            and workitem.node == instance.cur_node
             and workitem.status == 'in progress')
         user_is_ok = (
             request.user in [workitem.user, workitem.agent_user]
             or instance.is_wf_admin(request.user))
-        is_ok = activity_is_ok and user_is_ok
+        is_ok = node_is_ok and user_is_ok
         return is_ok
 
     def check_permission(self, request):
@@ -233,9 +233,9 @@ class ExecuteBackToTransitionView(ExecuteTransitionView):
         return process_instance.get_back_to_transition()
 
     def get_transition_before_execute(self, cleaned_data):
-        back_to_activity = cleaned_data.get('back_to_activity')
+        back_to_node = cleaned_data.get('back_to_node')
         transition = self.transition
-        transition.output_activity = Activity.objects.get(pk=back_to_activity)
+        transition.output_node = Node.objects.get(pk=back_to_node)
         return transition
 
 
@@ -251,7 +251,7 @@ class ExecuteGiveUpTransitionView(ExecuteTransitionView):
             return None
         return WorkItem(
             instance=process_instance,
-            activity=process_instance.cur_activity,
+            node=process_instance.cur_node,
             user=request.user)
 
     def has_permission(self, request, instance, workitem, transition):
@@ -272,13 +272,13 @@ class BatchExecuteGiveUpTransitionView(BatchExecuteTransitionView):
     def get_workitem_list(self, request):
         instance_pk_list = request.POST.getlist('pi')
         instance_list = ProcessInstance.objects.filter(
-            cur_activity__status='in progress',
+            cur_node__status='in progress',
             pk__in=instance_pk_list)
         workitem_list = []
         for instance in instance_list:
             workitem = WorkItem(
                 instance=instance,
-                activity=instance.cur_activity,
+                node=instance.cur_node,
                 user=instance.created_by,
             )
             workitem_list.append(workitem)

@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from lbutils import as_callable
 
-from lbworkflow.models import Activity
+from lbworkflow.models import Node
 from lbworkflow.models import App
 from lbworkflow.models import Process
 from lbworkflow.models import ProcessCategory
@@ -43,19 +43,19 @@ def create_process(code, name, **kwargs):
     return get_or_create(Process, code, name=name, uid_field_name='code', **kwargs)
 
 
-def create_activity(uuid, process, name, **kwargs):
-    return get_or_create(Activity, uuid, process=process, name=name, **kwargs)
+def create_node(uuid, process, name, **kwargs):
+    return get_or_create(Node, uuid, process=process, name=name, **kwargs)
 
 
-def get_activity(process, name):
+def get_node(process, name):
     """
-    get activity
+    get node
     :param process:
     :param name: 'submit' or 'submit,5f31d065-4a87-487b-beea-641f0a6720c3'
-    :return: activity
+    :return: node
     """
     name_and_uuid = [e.strip() for e in name.split(',') if e.strip()]
-    qs = Activity.objects.filter(process=process)
+    qs = Node.objects.filter(process=process)
     if len(name_and_uuid) == 1:
         qs = qs.filter(name=name_and_uuid[0])
     else:
@@ -65,10 +65,10 @@ def get_activity(process, name):
 
 def get_app(name):
     """
-    get activity
+    get node
     :param process:
     :param name: 'submit' or 'submit,5f31d065-4a87-487b-beea-641f0a6720c3'
-    :return: activity
+    :return: node
     """
     name_and_uuid = [e.strip() for e in name.split(',') if e.strip()]
     qs = App.objects
@@ -79,13 +79,13 @@ def get_app(name):
     return qs[0]
 
 
-def create_transition(uuid, process, from_activity, to_activity, app='Simple', **kwargs):
-    from_activity = get_activity(process, from_activity)
-    to_activity = get_activity(process, to_activity)
+def create_transition(uuid, process, from_node, to_node, app='Simple', **kwargs):
+    from_node = get_node(process, from_node)
+    to_node = get_node(process, to_node)
     app = get_app(app)
     return get_or_create(
-        Transition, uuid, process=process, input_activity=from_activity,
-        output_activity=to_activity, app=app, **kwargs)
+        Transition, uuid, process=process, input_node=from_node,
+        output_node=to_node, app=app, **kwargs)
 
 
 def load_wf_data(app, wf_code=''):

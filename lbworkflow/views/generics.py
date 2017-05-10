@@ -180,7 +180,7 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
             'pinstance__no',
             'pinstance__summary',
             'pinstance__created_by__username',
-            'pinstance__cur_activity__name',
+            'pinstance__cur_node__name',
         ]
         fields.extend(self.quick_query_fields)
         return fields

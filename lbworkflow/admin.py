@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Activity
+from .models import Node
 from .models import App
 from .models import Authorization
 from .models import Event
@@ -29,7 +29,7 @@ class ProcessAdmin(admin.ModelAdmin):
     list_filter = ('category',)
 
 
-class ActivityAdmin(admin.ModelAdmin):
+class NodeAdmin(admin.ModelAdmin):
     search_fields = (
         'process__name', 'process__code', 'name', 'code',
         'operators', 'notice_users', 'share_users')
@@ -44,11 +44,11 @@ class ActivityAdmin(admin.ModelAdmin):
 class TransitionAdmin(admin.ModelAdmin):
     search_fields = (
         'process__name', 'process__code',
-        'input_activity__name', 'output_activity__name',
+        'input_node__name', 'output_node__name',
         'name', 'condition')
     list_display = (
         'process', 'name', 'code', 'routing_rule',
-        'input_activity', 'output_activity',
+        'input_node', 'output_node',
         'is_agree', 'can_auto_agree',
         'app', 'app_param', 'condition',
         'oid', 'is_active')
@@ -62,34 +62,34 @@ class AppAdmin(admin.ModelAdmin):
 class ProcessInstanceAdmin(admin.ModelAdmin):
     search_fields = (
         'process__name', 'process__code',
-        'created_by__username', 'cur_activity__name')
+        'created_by__username', 'cur_node__name')
     list_display = (
         'process', 'no', 'summary', 'created_by', 'created_on',
-        'cur_activity')
+        'cur_node')
     list_filter = ('process', )
     raw_id_fields = (
         'content_type', 'created_by', 'attachments', 'can_view_users',
-        'cur_activity')
+        'cur_node')
 
 
 class WorkItemAdmin(admin.ModelAdmin):
     search_fields = (
-        'instance__no', 'activity__name', 'user__username',
+        'instance__no', 'node__name', 'user__username',
         'agent__username')
     list_display = (
-        'instance', 'activity', 'user', 'agent_user', 'is_hold', 'status',
+        'instance', 'node', 'user', 'agent_user', 'is_hold', 'status',
         'created_on', 'receive_on')
     list_filter = ('instance__process', )
-    raw_id_fields = ('instance', 'activity', 'user', 'agent_user', 'authorization', )
+    raw_id_fields = ('instance', 'node', 'user', 'agent_user', 'authorization', )
 
 
 class EventAdmin(admin.ModelAdmin):
     search_fields = (
-        'instance__no', 'user__username', 'old_activity__name',
-        'new_activity__name', )
+        'instance__no', 'user__username', 'old_node__name',
+        'new_node__name', )
     list_display = (
-        'instance', 'user', 'get_act_name', 'old_activity',
-        'new_activity', 'created_on')
+        'instance', 'user', 'get_act_name', 'old_node',
+        'new_node', 'created_on')
     raw_id_fields = (
         'instance', 'user', 'workitem', 'next_operators',
         'notice_users')
@@ -103,7 +103,7 @@ class AuthorizationAdmin(admin.ModelAdmin):
 
 admin.site.register(ProcessCategory, ProcessCategoryAdmin)
 admin.site.register(Process, ProcessAdmin)
-admin.site.register(Activity, ActivityAdmin)
+admin.site.register(Node, NodeAdmin)
 admin.site.register(Transition, TransitionAdmin)
 admin.site.register(App, AppAdmin)
 admin.site.register(ProcessInstance, ProcessInstanceAdmin)

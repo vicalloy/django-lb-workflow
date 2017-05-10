@@ -18,7 +18,7 @@ class ListWF(ListView):
         'no',
         'summary',
         'created_by__username',
-        'cur_activity__name',
+        'cur_node__name',
     ]
 
     def get_permit_query_param(self, user, q_param):
@@ -28,7 +28,7 @@ class ListWF(ListView):
 
     def get_base_queryset(self):
         user = self.request.user
-        qs = ProcessInstance.objects.exclude(cur_activity__status__in=['draft', 'given up'])
+        qs = ProcessInstance.objects.exclude(cur_node__status__in=['draft', 'given up'])
         if not user.is_superuser:
             q_param = get_base_wf_permit_query_param(user, '')
             q_param = self.get_permit_query_param(user, q_param)
@@ -36,7 +36,7 @@ class ListWF(ListView):
         qs = qs.select_related(
             'process',
             'created_by',
-            'cur_activity'
+            'cur_node'
         ).distinct()
         return qs
 
@@ -47,7 +47,7 @@ class MyWF(ListView):
     quick_query_fields = [
         'no',
         'summary',
-        'cur_activity__name',
+        'cur_node__name',
     ]
 
     def get_base_queryset(self):
@@ -60,7 +60,7 @@ class Todo(ListView):
     quick_query_fields = [
         'instance__no',
         'instance__summary',
-        'instance__cur_activity__name',
+        'instance__cur_node__name',
         'instance__created_by__username',
     ]
 
@@ -72,7 +72,7 @@ class Todo(ListView):
         qs = qs.select_related(
             'instance',
             'instance__process',
-            'instance__cur_activity'
+            'instance__cur_node'
         ).distinct()
         return qs
 

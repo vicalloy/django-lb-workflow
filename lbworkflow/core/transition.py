@@ -28,9 +28,9 @@ class TransitionExecutor(object):
         self.comment = comment
         self.attachments = attachments
 
-        self.from_activity = instance.cur_activity
-        # hold&assign wouldn't change activity
-        self.to_activity = transition.output_activity
+        self.from_node = instance.cur_node
+        # hold&assign wouldn't change node
+        self.to_node = transition.output_node
         self.all_todo_workitems = instance.get_todo_workitems()
 
         self.last_event = None
@@ -51,11 +51,11 @@ class TransitionExecutor(object):
 
         self._do_transfer()
 
-        # if is agree should check if need auto agree for next activity
+        # if is agree should check if need auto agree for next node
         if self.transition.is_agree:
-            self._auto_agree_next_activity()
+            self._auto_agree_next_node()
 
-    def _auto_agree_next_activity(self):
+    def _auto_agree_next_node(self):
         instance = self.instance
 
         agree_transition = instance.get_agree_transition()
@@ -68,7 +68,7 @@ class TransitionExecutor(object):
             users = [workitem.user, workitem.agent_user]
             users = [e for e in users]
             for user in set(users):
-                if self.instance.cur_activity != workitem.activity:  # has processed
+                if self.instance.cur_node != workitem.node:  # has processed
                     return
                 if instance.is_user_agreed(user):
                     TransitionExecutor(self.operator, instance, workitem, agree_transition).execute()
@@ -82,12 +82,12 @@ class TransitionExecutor(object):
         workitem.status = 'completed'
         workitem.save()
 
-        to_activity = self.to_activity if need_transfer else instance.cur_activity
+        to_node = self.to_node if need_transfer else instance.cur_node
 
         event = create_event(
             instance, transition,
             comment=self.comment, user=self.operator,
-            old_activity=workitem.activity, new_activity=to_activity,
+            old_node=workitem.node, new_node=to_node,
             workitem=workitem)
 
         if self.attachments:
@@ -101,19 +101,19 @@ class TransitionExecutor(object):
         instance = self.instance
         wf_obj = self.wf_obj
 
-        from_activity = self.from_activity
-        from_status = from_activity.status
+        from_node = self.from_node
+        from_status = from_node.status
 
-        to_activity = self.to_activity
-        to_status = self.to_activity.status
+        to_node = self.to_node
+        to_status = self.to_node.status
 
         # Submit
-        if not from_activity.is_submitted() and to_activity.is_submitted():
+        if not from_node.is_submitted() and to_node.is_submitted():
             instance.submit_time = timezone.now()
             wf_obj.on_submit()
 
         # cancel & give up & reject
-        if from_activity.is_submitted() and not to_activity.is_submitted():
+        if from_node.is_submitted() and not to_node.is_submitted():
             wf_obj.on_fail()
 
         # complete
@@ -125,8 +125,8 @@ class TransitionExecutor(object):
         if from_status == 'completed' and to_status != 'completed':
             instance.end_on = None
 
-        instance.cur_activity = self.to_activity
-        self.wf_obj.on_do_transition(from_activity, to_activity)
+        instance.cur_node = self.to_node
+        self.wf_obj.on_do_transition(from_node, to_node)
 
         instance.save()
 
@@ -153,7 +153,7 @@ class TransitionExecutor(object):
         need_notify_operators = []
         for operator in next_operators:
             new_workitem = WorkItem(
-                instance=self.instance, activity=self.to_activity,
+                instance=self.instance, node=self.to_node,
                 user=operator)
             new_workitem.update_authorization(commit=True)
 
@@ -170,13 +170,13 @@ class TransitionExecutor(object):
     def update_users_on_transfer(self):
         instance = self.instance
         event = self.last_event
-        to_activity = event.new_activity
+        to_node = event.new_node
 
-        next_operators = to_activity.get_operators(instance.created_by, self.operator, instance)
+        next_operators = to_node.get_operators(instance.created_by, self.operator, instance)
         event.next_operators.add(*next_operators)
-        notice_users = to_activity.get_notice_users(instance.created_by, self.operator, instance)
+        notice_users = to_node.get_notice_users(instance.created_by, self.operator, instance)
         event.notice_users.add(*notice_users)
-        can_view_users = to_activity.get_share_users(instance.created_by, self.operator, instance)
+        can_view_users = to_node.get_share_users(instance.created_by, self.operator, instance)
         instance.can_view_users.add(*can_view_users)
 
     def _do_transfer(self):

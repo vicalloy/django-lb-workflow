@@ -72,14 +72,14 @@ class ViewTests(BaseTests):
         resp = self.client.post(url, data)
         leave = Leave.objects.get(reason='test save')
         self.assertRedirects(resp, '/wf/%s/' % leave.pinstance.pk)
-        self.assertEqual('Draft', leave.pinstance.cur_activity.name)
+        self.assertEqual('Draft', leave.pinstance.cur_node.name)
 
         data['act_submit'] = 'Submit'
         data['reason'] = 'test submit'
         resp = self.client.post(url, data)
         leave = Leave.objects.get(reason='test submit')
         self.assertRedirects(resp, '/wf/%s/' % leave.pinstance.pk)
-        self.assertEqual('A2', leave.pinstance.cur_activity.name)
+        self.assertEqual('A2', leave.pinstance.cur_node.name)
 
     def test_edit(self):
         self.client.login(username='owner', password='password')
@@ -94,7 +94,7 @@ class ViewTests(BaseTests):
         resp = self.client.post(url, data)
         leave = Leave.objects.get(reason='test save')
         self.assertRedirects(resp, '/wf/%s/' % leave.pinstance.pk)
-        self.assertEqual('Draft', leave.pinstance.cur_activity.name)
+        self.assertEqual('Draft', leave.pinstance.cur_node.name)
 
         url = reverse('wf_edit', args=(leave.pinstance.pk, ))
         resp = self.client.get(url)
@@ -105,7 +105,7 @@ class ViewTests(BaseTests):
         resp = self.client.post(url, data)
         leave = Leave.objects.get(reason='test submit')
         self.assertRedirects(resp, '/wf/%s/' % leave.pinstance.pk)
-        self.assertEqual('A2', leave.pinstance.cur_activity.name)
+        self.assertEqual('A2', leave.pinstance.cur_node.name)
 
     def test_delete(self):
         self.client.login(username='admin', password='password')

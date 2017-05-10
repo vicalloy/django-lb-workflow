@@ -11,7 +11,7 @@ from lbutils import get_or_none
 from lbworkflow.settings import AUTH_USER_MODEL
 from lbworkflow.settings import GET_USER_DISPLAY_NAME_FUNC
 
-from .config import Activity
+from .config import Node
 from .config import Process
 from .config import Transition
 
@@ -32,8 +32,8 @@ class ProcessInstance(models.Model):
     submit_on = models.DateTimeField(null=True, blank=True)
     end_on = models.DateTimeField(null=True, blank=True)
 
-    cur_activity = models.ForeignKey(
-        Activity,
+    cur_node = models.ForeignKey(
+        Node,
         null=True, on_delete=models.SET_NULL
     )
 
@@ -53,9 +53,9 @@ class ProcessInstance(models.Model):
         last_event = self.event_set.order_by('-created_on', '-pk').first()
         if not last_event:
             return None
-        if last_event.new_activity == self.cur_activity \
-                and self.cur_activity.status == 'in progress' \
-                and last_event.old_activity.status == 'in progress' \
+        if last_event.new_node == self.cur_node \
+                and self.cur_node.status == 'in progress' \
+                and last_event.old_node.status == 'in progress' \
                 and last_event.user == user \
                 and last_event.act_type in ['reject', 'back to', 'transition', 'give up']:
             return last_event
@@ -70,9 +70,9 @@ class ProcessInstance(models.Model):
         return True
 
     def can_give_up(self, user):
-        if self.cur_activity.status != 'in progress':
+        if self.cur_node.status != 'in progress':
             return False
-        if not self.cur_activity.can_give_up:
+        if not self.cur_node.can_give_up:
             return False
         if self.is_wf_admin(user):
             return True
@@ -92,28 +92,28 @@ class ProcessInstance(models.Model):
         return ', '.join([GET_USER_DISPLAY_NAME_FUNC(e) for e in self.get_operators()])
 
     def get_reject_transition(self):
-        return self.process.get_reject_transition(self.cur_activity)
+        return self.process.get_reject_transition(self.cur_node)
 
-    def get_back_to_transition(self, out_activity=None):
-        return self.process.get_back_to_transition(self.cur_activity, out_activity)
+    def get_back_to_transition(self, out_node=None):
+        return self.process.get_back_to_transition(self.cur_node, out_node)
 
-    def get_rollback_transition(self, out_activity):
-        return self.process.get_rollback_transition(self.cur_activity, out_activity)
+    def get_rollback_transition(self, out_node):
+        return self.process.get_rollback_transition(self.cur_node, out_node)
 
     def get_give_up_transition(self):
-        return self.process.get_give_up_transition(self.cur_activity)
+        return self.process.get_give_up_transition(self.cur_node)
 
     def create_workitem(self, operator):
         """ create workitem for submit/give up/rollback """
         return WorkItem.objects.create(
             instance=self,
-            activity=self.cur_activity,
+            node=self.cur_node,
             user=operator,
         )
 
     def get_transitions(self, only_agree=False, only_can_auto_agree=False):
         qs = Transition.objects.filter(
-            process=self.process, input_activity=self.cur_activity
+            process=self.process, input_node=self.cur_node
         ).order_by('is_agree', 'oid', 'id')
         if only_agree:
             qs = qs.filter(is_agree=True)
@@ -151,7 +151,7 @@ class ProcessInstance(models.Model):
 
     def get_todo_workitems(self, user=None):
         qs = WorkItem.objects.filter(
-            instance=self, activity=self.cur_activity,
+            instance=self, node=self.cur_node,
             status='in progress').filter(Q(agent_user=user) | Q(user=user))
         if user:
             qs = qs.filter(Q(agent_user=user) | Q(user=user))
@@ -174,17 +174,17 @@ class ProcessInstance(models.Model):
         events = Event.objects.filter(instance=self).order_by('-created_on', '-id')
         activities = []
         for event in events:
-            if event.old_activity == self.cur_activity:
+            if event.old_node == self.cur_node:
                 activities = []
                 continue
-            if event.old_activity.status not in ['in progress']:
+            if event.old_node.status not in ['in progress']:
                 break
-            if event.old_activity not in activities:
-                activities.append(event.old_activity)
+            if event.old_node not in activities:
+                activities.append(event.old_node)
         return activities
 
     def has_received(self):
-        if self.cur_activity.status != 'in progress':
+        if self.cur_node.status != 'in progress':
             return True
         return self.workitem_set.filter(status='in progress', receive_on__isnull=False).exists()
 
@@ -244,7 +244,7 @@ class WorkItem(models.Model):
     )
 
     instance = models.ForeignKey(ProcessInstance)
-    activity = models.ForeignKey(Activity)
+    node = models.ForeignKey(Node)
     user = models.ForeignKey(AUTH_USER_MODEL, verbose_name='User', null=True, blank=True)
     agent_user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name='Agent user',
@@ -261,7 +261,7 @@ class WorkItem(models.Model):
     created_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '%s - %s - %s' % (self.instance.summary, self.activity.name, self.pk)
+        return '%s - %s - %s' % (self.instance.summary, self.node.name, self.pk)
 
     def update_authorization(self, commit=True):
         today = datetime.date.today()
@@ -296,11 +296,11 @@ class Event(models.Model):
     act_type = models.CharField(
         max_length=255, choices=EVENT_ACT_CHOICES,
         default='transition')
-    old_activity = models.ForeignKey(
-        Activity, related_name='out_events',
+    old_node = models.ForeignKey(
+        Node, related_name='out_events',
         null=True, blank=True)
-    new_activity = models.ForeignKey(
-        Activity, related_name='in_events',
+    new_node = models.ForeignKey(
+        Node, related_name='in_events',
         null=True, blank=True)
     workitem = models.ForeignKey(
         WorkItem, related_name='events',
@@ -330,15 +330,15 @@ class Event(models.Model):
         return self.get_act_type_display()
 
     def get_next_notice_users_display(self):
-        if self.old_activity == self.new_activity:
+        if self.old_node == self.new_node:
             return ''
         return ', '.join([GET_USER_DISPLAY_NAME_FUNC(e) for e in self.notice_users.all()])
 
     def __str__(self):
-        old_activity = self.old_activity.name if self.old_activity else ''
-        new_activity = self.new_activity.name if self.new_activity else ''
-        return '%s: %s - %s - %s' % (self.instance.summary, old_activity,
-                                     self.get_act_name(), new_activity)
+        old_node = self.old_node.name if self.old_node else ''
+        new_node = self.new_node.name if self.new_node else ''
+        return '%s: %s - %s - %s' % (self.instance.summary, old_node,
+                                     self.get_act_name(), new_node)
 
 
 class BaseWFObj(models.Model):
@@ -362,7 +362,7 @@ class BaseWFObj(models.Model):
         return ''
 
     def get_status(self):
-        return self.pinstance.cur_activity.status
+        return self.pinstance.cur_node.status
 
     def get_process_summary(self):
         return "%s" % self
@@ -384,7 +384,7 @@ class BaseWFObj(models.Model):
     def on_fail(self):
         pass
 
-    def on_do_transition(self, cur_activity, to_activity):
+    def on_do_transition(self, cur_node, to_node):
         pass
 
     def get_absolute_url(self):
@@ -405,7 +405,7 @@ class BaseWFObj(models.Model):
             self.save()
         instance = ProcessInstance.objects.create(
             process=process, created_by=created_by, content_object=self,
-            cur_activity=process.get_draft_active())
+            cur_node=process.get_draft_active())
         self.pinstance = instance
         self.save()  # instance will save after self.save
         if submit:
@@ -416,7 +416,7 @@ class BaseWFObj(models.Model):
         from lbworkflow.core.transition import TransitionExecutor
 
         instance = self.pinstance
-        if instance.cur_activity.is_submitted():
+        if instance.cur_node.is_submitted():
             return
         user = user or self.created_by
         workitem = instance.create_workitem(user)

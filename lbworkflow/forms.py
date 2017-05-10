@@ -69,16 +69,16 @@ class WorkflowFormMixin(object):
         obj = self.save()
         # add a edit event, change resolution to draft
         instance = obj.pinstance
-        if instance.cur_activity.status in ['rejected', 'draft']:
+        if instance.cur_node.status in ['rejected', 'draft']:
             WorkItem.objects.filter(instance=instance, status='running').delete()
             Event.objects.create(
-                instance=instance, old_activity=instance.cur_activity,
-                new_activity=instance.process.get_draft_active(),
+                instance=instance, old_node=instance.cur_node,
+                new_node=instance.process.get_draft_active(),
                 act_type='edit', user=request.user,
             )
-            instance.cur_activity = instance.process.get_draft_active()
+            instance.cur_node = instance.process.get_draft_active()
             instance.save()
-        can_resubmit = instance.cur_activity.status in ['draft']
+        can_resubmit = instance.cur_node.status in ['draft']
         # Other action
         if submit and can_resubmit:
             obj.submit_process(request.user)
@@ -125,16 +125,16 @@ class BSBatchWorkFlowForm(BootstrapFormHelperMixin, BatchWorkFlowForm):
         self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')
 
 
-class BackToActivityForm(WorkFlowForm):
-    back_to_activity = forms.ChoiceField(label='Back to', required=True)
+class BackToNodeForm(WorkFlowForm):
+    back_to_node = forms.ChoiceField(label='Back to', required=True)
 
     def __init__(self, process_instance, *args, **kwargs):
-        super(BackToActivityForm, self).__init__(*args, **kwargs)
+        super(BackToNodeForm, self).__init__(*args, **kwargs)
         choices = [(e.pk, e.name) for e in process_instance.get_can_back_to_activities()]
-        self.fields['back_to_activity'].choices = choices
+        self.fields['back_to_node'].choices = choices
 
 
-class BSBackToActivityForm(BootstrapFormHelperMixin, BackToActivityForm):
+class BSBackToNodeForm(BootstrapFormHelperMixin, BackToNodeForm):
     def __init__(self, *args, **kw):
-        super(BSBackToActivityForm, self).__init__(*args, **kw)
+        super(BSBackToNodeForm, self).__init__(*args, **kw)
         self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')

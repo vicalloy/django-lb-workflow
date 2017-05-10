@@ -21,7 +21,7 @@ def generate_process_flowchart(process):
                 node [shape = ellipse];
                 edge [fontsize=14]
                 {% for transition in transitions %}
-                "{{ transition.input_activity.name }}" -> "{{ transition.output_activity.name }}"
+                "{{ transition.input_node.name }}" -> "{{ transition.output_node.name }}"
                 [label="{{ transition.name }} {% if transition.get_condition_descn %}: {% endif %} {{ transition.get_condition_descn }}"] ;
                 {% endfor %}
             }

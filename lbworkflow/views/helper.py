@@ -17,7 +17,7 @@ def add_processed_message(request, process_instance, act_descn='Processed'):
         request,
         'Process "%s" has been %s. Current status："%s" Current user："%s"' %
         (
-            process_instance.no, act_descn, process_instance.cur_activity.name,
+            process_instance.no, act_descn, process_instance.cur_node.name,
             process_instance.get_operators_display()
         )
     )
@@ -29,7 +29,7 @@ def user_wf_info_as_dict(wf_obj, user):
         return ctx
     instance = wf_obj.pinstance
     is_wf_admin = instance.is_wf_admin(user)
-    in_process = instance.cur_activity.status == 'in progress'
+    in_process = instance.cur_node.status == 'in progress'
     workitem = instance.get_todo_workitem(user)
     ctx['wf_code'] = instance.process.code
     ctx['process'] = instance.process
@@ -40,8 +40,8 @@ def user_wf_info_as_dict(wf_obj, user):
     ctx['operators_display'] = instance.get_operators_display()
     ctx['is_wf_admin'] = is_wf_admin
 
-    can_edit = not instance.cur_activity.is_submitted() and instance.created_by == user
-    can_edit = can_edit or (instance.cur_activity.can_edit and workitem)
+    can_edit = not instance.cur_node.is_submitted() and instance.created_by == user
+    can_edit = can_edit or (instance.cur_node.can_edit and workitem)
     can_edit = can_edit or is_wf_admin
     ctx['can_edit'] = can_edit
     ctx['can_rollback'] = instance.can_rollback(user)
@@ -56,7 +56,7 @@ def user_wf_info_as_dict(wf_obj, user):
             receive_on=None
         ).update(receive_on=timezone.now())
         transitions = instance.get_transitions()
-        ctx['can_reject'] = instance.cur_activity.can_reject
+        ctx['can_reject'] = instance.cur_node.can_reject
         ctx['can_back_to'] = None
         ctx['transitions'] = transitions
         ctx['agree_transitions'] = instance.get_merged_agree_transitions()

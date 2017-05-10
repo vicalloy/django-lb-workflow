@@ -18,14 +18,14 @@ class TransitionExecutorTests(BaseTests):
         leave.submit_process()
 
         # A1 will auto agree
-        self.assertEqual(leave.pinstance.cur_activity.name, 'A2')
+        self.assertEqual(leave.pinstance.cur_node.name, 'A2')
         self.assertEqual(leave.pinstance.get_operators_display(), 'tom')
 
         # A3 not auto agree
         workitem = instance.get_todo_workitem()
         transition = instance.get_agree_transition()
         TransitionExecutor(self.users['tom'], instance, workitem, transition).execute()
-        self.assertEqual(leave.pinstance.cur_activity.name, 'A3')
+        self.assertEqual(leave.pinstance.cur_node.name, 'A3')
 
 
 class ViewTests(BaseTests):
@@ -53,7 +53,7 @@ class ViewTests(BaseTests):
 
         self.client.login(username='tom', password='password')
 
-    def do_agree(self, username, activity_name, leave=None, data={}):
+    def do_agree(self, username, node_name, leave=None, data={}):
         if not leave:
             leave = self.leave
         leave = Leave.objects.get(pk=leave.pk)
@@ -64,7 +64,7 @@ class ViewTests(BaseTests):
         resp = self.client.post(transition_url, data=data)
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=leave.pk)
-        self.assertEqual(activity_name, leave.pinstance.cur_activity.name)
+        self.assertEqual(node_name, leave.pinstance.cur_node.name)
 
     def test_execute_transition(self):
         self.do_agree('tom', 'A3')
@@ -108,7 +108,7 @@ class ViewTests(BaseTests):
         resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
-        self.assertEqual('A3', leave.pinstance.cur_activity.name)
+        self.assertEqual('A3', leave.pinstance.cur_node.name)
 
     def test_reject(self):
         url = reverse('wf_reject')
@@ -118,7 +118,7 @@ class ViewTests(BaseTests):
         resp = self.client.post('%s?wi_id=%s' % (url, self.workitem.pk))
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
-        self.assertEqual('Rejected', leave.pinstance.cur_activity.name)
+        self.assertEqual('Rejected', leave.pinstance.cur_node.name)
 
     def test_give_up(self):
         self.client.login(username='owner', password='password')
@@ -129,7 +129,7 @@ class ViewTests(BaseTests):
         resp = self.client.post('%s?pk=%s' % (url, self.leave.pinstance.pk))
         self.assertRedirects(resp, '/wf/my/')
         leave = Leave.objects.get(pk=self.leave.pk)
-        self.assertEqual('Given up', leave.pinstance.cur_activity.name)
+        self.assertEqual('Given up', leave.pinstance.cur_node.name)
 
     def test_back_to(self):
         self.client.post(self.transition_url)  # A2 TO A3
@@ -138,15 +138,15 @@ class ViewTests(BaseTests):
         url = reverse('wf_back_to')
         resp = self.client.get('%s?wi_id=%s' % (url, self.workitem.pk))
         self.assertEqual(resp.status_code, 200)
-        back_to_activity = leave.pinstance.get_can_back_to_activities()[0]
+        back_to_node = leave.pinstance.get_can_back_to_activities()[0]
 
         resp = self.client.post(
             '%s?wi_id=%s' % (url, self.workitem.pk),
-            {'back_to_activity': back_to_activity.pk}
+            {'back_to_node': back_to_node.pk}
         )
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
-        self.assertEqual('A2', leave.pinstance.cur_activity.name)
+        self.assertEqual('A2', leave.pinstance.cur_node.name)
 
     def test_batch_agree(self):
         url = reverse('wf_batch_agree')
@@ -161,7 +161,7 @@ class ViewTests(BaseTests):
         resp = self.client.post(url, data)
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
-        self.assertEqual('A3', leave.pinstance.cur_activity.name)
+        self.assertEqual('A3', leave.pinstance.cur_node.name)
 
     def test_batch_reject(self):
         url = reverse('wf_batch_reject')
@@ -176,7 +176,7 @@ class ViewTests(BaseTests):
         resp = self.client.post(url, data)
         self.assertRedirects(resp, '/wf/todo/')
         leave = Leave.objects.get(pk=self.leave.pk)
-        self.assertEqual('Rejected', leave.pinstance.cur_activity.name)
+        self.assertEqual('Rejected', leave.pinstance.cur_node.name)
 
     def test_batch_give_up(self):
         self.client.login(username='owner', password='password')
@@ -191,4 +191,4 @@ class ViewTests(BaseTests):
         resp = self.client.post(url, data)
         self.assertRedirects(resp, '/wf/my/')
         leave = Leave.objects.get(pk=self.leave.pk)
-        self.assertEqual('Given up', leave.pinstance.cur_activity.name)
+        self.assertEqual('Given up', leave.pinstance.cur_node.name)

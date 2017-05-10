@@ -40,7 +40,7 @@ class LeaveListView(WFListView):
             o.created_by.username, o.created_on,
             o.start_on, o.end_on, o.leave_days,
             o.actual_start_on, o.actual_end_on, o.actual_leave_days,
-            o.pinstance.cur_activity.name,
+            o.pinstance.cur_node.name,
         ]
 
 

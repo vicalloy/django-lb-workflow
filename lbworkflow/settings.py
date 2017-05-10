@@ -55,4 +55,4 @@ BATCH_WORK_FLOW_FORM = getattr(
 
 BACK_TO_ACTIVITY_FORM = getattr(
     django_settings, 'LBWF_BACK_TO_ACTIVITY_FORM',
-    'lbworkflow.forms.BSBackToActivityForm')
+    'lbworkflow.forms.BSBackToNodeForm')

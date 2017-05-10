@@ -12,11 +12,11 @@ def app_url(transition, workitem):
 def flow_status_css_class(pinstance):
     if not pinstance:
         return 'default'
-    if pinstance.cur_activity.status in ['rejected']:
+    if pinstance.cur_node.status in ['rejected']:
         return 'danger'
-    if pinstance.cur_activity.status == 'in progress':
+    if pinstance.cur_node.status == 'in progress':
         return 'info'
-    if pinstance.cur_activity.status == 'finished':
+    if pinstance.cur_node.status == 'finished':
         return 'success'
     return 'default'
 

@@ -139,27 +139,27 @@ class Process(models.Model):
         return True
 
     def get_draft_active(self):
-        return get_or_none(Activity, process=self, status='draft')
+        return get_or_none(Node, process=self, status='draft')
 
     def get_rejected_active(self):
-        return get_or_none(Activity, process=self, status='rejected')
+        return get_or_none(Node, process=self, status='rejected')
 
     def get_given_up_active(self):
-        return get_or_none(Activity, process=self, status='given up')
+        return get_or_none(Node, process=self, status='given up')
 
-    def get_rollback_transition(self, in_activity, out_activity):
+    def get_rollback_transition(self, in_node, out_node):
         transition = Transition(
             name='Rollback',
             code='rollback',
             process=self,
             is_agree=False,
             can_auto_agree=False,
-            input_activity=in_activity,
-            output_activity=out_activity,
+            input_node=in_node,
+            output_node=out_node,
         )
         return transition
 
-    def get_give_up_transition(self, in_activity):
+    def get_give_up_transition(self, in_node):
         output = self.get_given_up_active()
         transition = Transition(
             name='Give up',
@@ -167,42 +167,42 @@ class Process(models.Model):
             process=self,
             is_agree=False,
             can_auto_agree=False,
-            input_activity=in_activity,
-            output_activity=output,
+            input_node=in_node,
+            output_node=output,
         )
         return transition
 
-    def get_back_to_transition(self, in_activity, out_activity=None):
+    def get_back_to_transition(self, in_node, out_node=None):
         transition = Transition(
             name='Back to',
             code='back to',
             process=self,
             is_agree=False,
             can_auto_agree=False,
-            input_activity=in_activity,
-            output_activity=out_activity,
+            input_node=in_node,
+            output_node=out_node,
         )
         return transition
 
-    def get_reject_transition(self, in_activity):
+    def get_reject_transition(self, in_node):
         transition = Transition(
             name='Reject',
             code='reject',
             process=self,
             is_agree=False,
             can_auto_agree=False,
-            input_activity=in_activity,
-            output_activity=self.get_rejected_active(),
+            input_node=in_node,
+            output_node=self.get_rejected_active(),
         )
         return transition
 
 
-class ActivityManager(models.Manager):
+class NodeManager(models.Manager):
     def get_by_natural_key(self, uuid):
         return self.get(uuid=uuid)
 
 
-class Activity(models.Model):
+class Node(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
         ('given up', 'Given up'),
@@ -230,7 +230,7 @@ class Activity(models.Model):
     audit_page_type = models.CharField(
         'Audit page type', max_length=64,
         choices=AUDIT_PAGE_TYPE_CHOICES,
-        help_text='If this activity can edit, will auto goto edit mode when audit.',
+        help_text='If this node can edit, will auto goto edit mode when audit.',
         default='view')
 
     can_edit = models.BooleanField('Can edit', default=False)
@@ -247,7 +247,7 @@ class Activity(models.Model):
     is_active = models.BooleanField('Is active', default=True)
     ext_data = JSONField(default="{}")
 
-    objects = ActivityManager()
+    objects = NodeManager()
 
     def __str__(self):
         return self.name
@@ -315,13 +315,13 @@ class Transition(models.Model):
         default='split',
         choices=ROUTING_RULE_CHOICES,
         help_text="joint: do transition after all work item finished. joint: do transition immediately")
-    input_activity = models.ForeignKey(
-        Activity, verbose_name='Input activity',
+    input_node = models.ForeignKey(
+        Node, verbose_name='Input node',
         null=True, on_delete=models.SET_NULL,
         related_name='input_transitions',
         help_text='')
-    output_activity = models.ForeignKey(
-        Activity, verbose_name='Output activity',
+    output_node = models.ForeignKey(
+        Node, verbose_name='Output node',
         null=True, on_delete=models.SET_NULL,
         related_name='output_transitions',
         help_text='')

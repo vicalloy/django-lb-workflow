@@ -69,9 +69,9 @@ def detail(request, pk, template_name=None, ext_ctx={}):
     user_wf_info = user_wf_info_as_dict(instance.content_object, request.user)
     ctx.update(user_wf_info)
 
-    if not is_print and instance.cur_activity.can_edit \
-            and instance.cur_activity.audit_view_type == 'edit' \
-            and ext_ctx['workitem'] and instance.cur_activity.resolution == 'started':
+    if not is_print and instance.cur_node.can_edit \
+            and instance.cur_node.audit_view_type == 'edit' \
+            and ext_ctx['workitem'] and instance.cur_node.resolution == 'started':
         return redirect(reverse('wf_edit', args=[instance.pk]))
     detail_func = getattr(views, 'detail', _default_detail)
     ret = detail_func(request, instance, ext_ctx=ctx)

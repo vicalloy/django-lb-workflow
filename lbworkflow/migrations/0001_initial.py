@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Activity',
+            name='Node',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('code', models.CharField(blank=True, max_length=255, verbose_name='Code')),
                 ('step', models.IntegerField(default=0, verbose_name='Step')),
                 ('status', models.CharField(choices=[('draft', 'Draft'), ('given up', 'Given up'), ('rejected', 'Rejected'), ('in progress', 'In Progress'), ('completed', 'Completed')], default='in progress', max_length=16, verbose_name='Type')),
-                ('audit_page_type', models.CharField(choices=[('view', 'view'), ('edit', 'Edit')], default='view', help_text='If this activity can edit, will auto goto edit mode when audit.', max_length=64, verbose_name='Audit page type')),
+                ('audit_page_type', models.CharField(choices=[('view', 'view'), ('edit', 'Edit')], default='view', help_text='If this node can edit, will auto goto edit mode when audit.', max_length=64, verbose_name='Audit page type')),
                 ('can_edit', models.BooleanField(default=False, verbose_name='Can edit')),
                 ('can_reject', models.BooleanField(default=True, verbose_name='Can reject')),
                 ('can_give_up', models.BooleanField(default=True, verbose_name='Can give up')),
@@ -126,7 +126,7 @@ class Migration(migrations.Migration):
                 ('can_view_users', models.ManyToManyField(blank=True, related_name='can_view_pinstances', to=settings.AUTH_USER_MODEL, verbose_name='Can view users')),
                 ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
                 ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='instances', to=settings.AUTH_USER_MODEL)),
-                ('cur_activity', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='lbworkflow.Activity')),
+                ('cur_node', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='lbworkflow.Node')),
                 ('process', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lbworkflow.Process')),
             ],
         ),
@@ -163,8 +163,8 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=True, verbose_name='Is active')),
                 ('ext_data', jsonfield.fields.JSONField(default='{}')),
                 ('app', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='lbworkflow.App', verbose_name='Application to perform')),
-                ('input_activity', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='input_transitions', to='lbworkflow.Activity', verbose_name='Input activity')),
-                ('output_activity', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='output_transitions', to='lbworkflow.Activity', verbose_name='Output activity')),
+                ('input_node', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='input_transitions', to='lbworkflow.Node', verbose_name='Input node')),
+                ('output_node', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='output_transitions', to='lbworkflow.Node', verbose_name='Output node')),
                 ('process', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lbworkflow.Process', verbose_name='Process')),
             ],
         ),
@@ -176,7 +176,7 @@ class Migration(migrations.Migration):
                 ('receive_on', models.DateTimeField(blank=True, null=True, verbose_name='Receive on')),
                 ('is_hold', models.BooleanField(default=False, verbose_name='Is hold')),
                 ('created_on', models.DateTimeField(auto_now=True)),
-                ('activity', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lbworkflow.Activity')),
+                ('node', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lbworkflow.Node')),
                 ('agent_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='agent_user_workitems', to=settings.AUTH_USER_MODEL, verbose_name='Agent user')),
                 ('authorization', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='lbworkflow.Authorization', verbose_name='Authorization')),
                 ('instance', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lbworkflow.ProcessInstance')),
@@ -195,8 +195,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='event',
-            name='new_activity',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='in_events', to='lbworkflow.Activity'),
+            name='new_node',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='in_events', to='lbworkflow.Node'),
         ),
         migrations.AddField(
             model_name='event',
@@ -210,8 +210,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='event',
-            name='old_activity',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='out_events', to='lbworkflow.Activity'),
+            name='old_node',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='out_events', to='lbworkflow.Node'),
         ),
         migrations.AddField(
             model_name='event',
@@ -244,7 +244,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='authorized_user_authorizations', to=settings.AUTH_USER_MODEL, verbose_name='User'),
         ),
         migrations.AddField(
-            model_name='activity',
+            model_name='node',
             name='process',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lbworkflow.Process', verbose_name='Process'),
         ),
