@@ -61,7 +61,7 @@
 {% endblock %}
 
 {% block form_act_btns %}
-  {% if not process_instance.cur_activity.is_submitted %}
+  {% if not process_instance.cur_node.is_submitted %}
     <input type="submit" class="btn btn-primary" name="act_submit" value="Submit"/>
   {% endif %}
   <button type="submit" class="btn btn-default" name="act_save">Save</button>

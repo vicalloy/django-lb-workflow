@@ -10,9 +10,9 @@
   <tr>
     <th>Created on</th>
     <td>{{ process_instance.created_on|date:"Y-m-d H:i" }}</td>
-    <th>Current activity</th>
+    <th>Current node</th>
     <td>
-      {{ process_instance.cur_activity.name }}
+      {{ process_instance.cur_node.name }}
       {% if task.is_hold %}
         (hold)
       {% endif %}

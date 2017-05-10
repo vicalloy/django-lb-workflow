@@ -36,18 +36,18 @@
         </div>
         <div class="box-body">
           <div class="form-group">
-            <label class="control-label col-xs-2">Current activity</label>
+            <label class="control-label col-xs-2">Current node</label>
             <div class="controls col-xs-6">
               <span class="text-block">
-                {{ transition.input_activity.name }}
+                {{ transition.input_node.name }}
               </span>
             </div>
           </div>
-          {% if backto_activity_form %}
+          {% if backto_node_form %}
             <div class="form-group">
-              <label class="control-label col-xs-2">Next activity</label>
+              <label class="control-label col-xs-2">Next node</label>
               <div class="controls col-xs-6">
-                {{ backto_activity_form.backto_activity }}
+                {{ backto_node_form.backto_node }}
               </div>
             </div>
           {% endif %}
