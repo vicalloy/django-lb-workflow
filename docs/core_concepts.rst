@@ -4,11 +4,21 @@ Core concepts
 
 .. _`core_concepts`:
 
-``django-lb-workflow`` is ``Entity-Based Workflow``.
-For example, the publication of documents on a web site can be simply modeled by
-the document going through the states of new, submitted, and then approved or rejected.
-In entity-based workflows, the document is the main issue and its available actions are
-defined by its current status.
+``django-lb-workflow`` is ``Activity-Based Workflow``.
+Activity-based workflow systems have workflow processes comprised of activities
+to be completed in order to accomplish a goal.
+
+.. image:: _static/demo-flow.png
+
+Half Config
+-----------
+
+``django-lb-workflow`` is ``half config``.
+
+- ``Data model``/``action``/``Layout of form`` is written by code.
+    - They are too complex to config and the change is not too often.
+- The node(activity) and transition is configurable.
+    - The pattern is clear and the change is often.
 
 Data model
 ----------
@@ -73,3 +83,36 @@ A task perform log.
 **BaseWFObj**
 
 A abstract class for flow model. Every flow model should inherit from it.
+
+
+Views and Forms
+---------------
+
+``django-lb-workflow`` provide a set of views and forms to customized flow.
+
+url provide by ``django-lb-workflow``
+#####################################
+
+you can find all url in ``lbworkflow/urls.py``
+
+- Main entrance
+    - Todo
+    - I submitted
+    - Start a new flow
+    - Reports
+- Flow
+    - New
+    - Edit
+    - Delete
+    - List(Report)
+    - Detail
+    - Print
+- Actions(App)
+    - Agree
+    - Back to
+    - Reject
+    - Give up
+    - Batch agree
+    - Batch reject
+    - Batch give up
+    - Execute customized transition

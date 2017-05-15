@@ -12,6 +12,8 @@ What is django-lb-workflow
 
 django-lb-workflow's source code hosted on `GitHub <https://github.com/vicalloy/django-lb-workflow>`_.
 
+.. image:: _static/demo-flow.png
+
 Demo site
 ---------
 
