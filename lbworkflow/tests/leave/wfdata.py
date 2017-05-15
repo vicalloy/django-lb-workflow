@@ -1,5 +1,5 @@
-from lbworkflow.core.datahelper import create_node
 from lbworkflow.core.datahelper import create_category
+from lbworkflow.core.datahelper import create_node
 from lbworkflow.core.datahelper import create_process
 from lbworkflow.core.datahelper import create_transition
 

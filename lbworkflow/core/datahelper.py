@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from lbutils import as_callable
 
-from lbworkflow.models import Node
 from lbworkflow.models import App
+from lbworkflow.models import Node
 from lbworkflow.models import Process
 from lbworkflow.models import ProcessCategory
 from lbworkflow.models import Transition

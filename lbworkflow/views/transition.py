@@ -14,8 +14,8 @@ from lbworkflow.core.exceptions import HttpResponseException
 from lbworkflow.core.transition import TransitionExecutor
 from lbworkflow.models import Node
 from lbworkflow.models import ProcessInstance
-from lbworkflow.models import Transition
 from lbworkflow.models import Task
+from lbworkflow.models import Transition
 
 from .helper import add_processed_message
 from .helper import import_wf_views
