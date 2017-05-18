@@ -18,13 +18,19 @@ from .config import Transition
 
 class ProcessInstance(models.Model):
     no = models.CharField('NO.', max_length=100, blank=True)
-    process = models.ForeignKey('lbworkflow.Process')
+    process = models.ForeignKey(
+        'lbworkflow.Process',
+        on_delete=models.CASCADE
+    )
     created_by = models.ForeignKey(
         AUTH_USER_MODEL,
         null=True, on_delete=models.SET_NULL,
         related_name='instances')
 
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE
+    )
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
@@ -243,13 +249,24 @@ class Task(models.Model):
         ('completed', 'Completed'),
     )
 
-    instance = models.ForeignKey(ProcessInstance)
-    node = models.ForeignKey(Node)
-    user = models.ForeignKey(AUTH_USER_MODEL, verbose_name='User', null=True, blank=True)
+    instance = models.ForeignKey(
+        ProcessInstance,
+        on_delete=models.CASCADE
+    )
+    node = models.ForeignKey(
+        Node,
+        on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        AUTH_USER_MODEL, verbose_name='User', null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
     agent_user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name='Agent user',
         related_name='agent_user_tasks',
-        null=True, blank=True)
+        null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
     authorization = models.ForeignKey(
         Authorization, verbose_name='Authorization',
         blank=True, null=True, on_delete=models.SET_NULL,
@@ -291,20 +308,32 @@ class Event(models.Model):
         ('hold', 'Hold'),
         ('unhold', 'Unhold')
     )
-    instance = models.ForeignKey(ProcessInstance)
-    user = models.ForeignKey(AUTH_USER_MODEL)
+    instance = models.ForeignKey(
+        ProcessInstance,
+        on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        AUTH_USER_MODEL,
+        on_delete=models.SET_NULL
+    )
     act_type = models.CharField(
         max_length=255, choices=EVENT_ACT_CHOICES,
         default='transition')
     old_node = models.ForeignKey(
         Node, related_name='out_events',
-        null=True, blank=True)
+        null=True, blank=True,
+        on_delete=models.CASCADE
+    )
     new_node = models.ForeignKey(
         Node, related_name='in_events',
-        null=True, blank=True)
+        null=True, blank=True,
+        on_delete=models.CASCADE
+    )
     task = models.ForeignKey(
         Task, related_name='events',
-        null=True, blank=True)
+        null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
     transition = models.ForeignKey(
         Transition, blank=True,
         null=True, on_delete=models.SET_NULL)
@@ -345,7 +374,9 @@ class BaseWFObj(models.Model):
     pinstance = models.ForeignKey(
         ProcessInstance, blank=True, null=True,
         related_name="%(class)s",
-        verbose_name='Process instance')
+        verbose_name='Process instance',
+        on_delete=models.SET_NULL
+    )
     created_on = models.DateTimeField('Created on', auto_now_add=True)
     created_by = models.ForeignKey(
         AUTH_USER_MODEL,

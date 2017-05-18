@@ -216,7 +216,10 @@ class Node(models.Model):
     )
 
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
-    process = models.ForeignKey('Process', verbose_name='Process')
+    process = models.ForeignKey(
+        'Process',
+        on_delete=models.CASCADE,
+        verbose_name='Process')
     name = models.CharField('Name', max_length=255)
     code = models.CharField(
         'Code', max_length=255, blank=True)
@@ -293,7 +296,11 @@ class Transition(models.Model):
         ('joint', 'Joint'),
     )
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
-    process = models.ForeignKey('Process', verbose_name='Process')
+    process = models.ForeignKey(
+        'Process',
+        on_delete=models.CASCADE,
+        verbose_name='Process'
+    )
     name = models.CharField(
         'Name', max_length=100, default='Agree',
         help_text="It also the action's name, like: Agree/Submit")
