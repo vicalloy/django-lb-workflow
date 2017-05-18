@@ -1,10 +1,10 @@
 import uuid
 
 from django.conf import settings as django_settings
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.template import Context
 from django.template import Template
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from jsonfield import JSONField
 from lbutils import create_instance

@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from lbworkflow.core.transition import TransitionExecutor
 from lbworkflow.views.helper import user_wf_info_as_dict
