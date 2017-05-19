@@ -375,7 +375,7 @@ class BaseWFObj(models.Model):
         ProcessInstance, blank=True, null=True,
         related_name="%(class)s",
         verbose_name='Process instance',
-        on_delete=models.SET_NULL
+        on_delete=models.CASCADE
     )
     created_on = models.DateTimeField('Created on', auto_now_add=True)
     created_by = models.ForeignKey(
