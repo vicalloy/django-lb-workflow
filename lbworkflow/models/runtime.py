@@ -314,7 +314,7 @@ class Event(models.Model):
     )
     user = models.ForeignKey(
         AUTH_USER_MODEL,
-        on_delete=models.SET_NULL
+        on_delete=models.CASCADE
     )
     act_type = models.CharField(
         max_length=255, choices=EVENT_ACT_CHOICES,
