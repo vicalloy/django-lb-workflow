@@ -434,9 +434,6 @@ class BaseWFObj(models.Model):
     def on_do_transition(self, cur_node, to_node):
         """
         Will call when process node transfer
-        
-        :param cur_node: 
-        :param to_node: 
         """
         pass
 
@@ -456,7 +453,7 @@ class BaseWFObj(models.Model):
     def create_pinstance(self, process, submit=False):
         """
         Create and set self.pinstance for this model
-        
+
         :param process: Which process to use
         :param submit: Whether auto submit it after create
         :return: The created process instance
@@ -478,7 +475,7 @@ class BaseWFObj(models.Model):
     def submit_process(self, user=None):
         """
         Submit this process.
-        
+
         :param user: Which user submit the process. The user is self.created_by if user is None.
         """
         from lbworkflow.core.transition import TransitionExecutor
