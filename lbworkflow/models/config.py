@@ -96,6 +96,9 @@ class ProcessManager(models.Manager):
 
 
 class Process(models.Model):
+    """
+    A process holds the map that describes the flow of work.
+    """
     code = models.CharField(
         'Code', max_length=100, unique=True,
         help_text='A unique code to identify process')
@@ -203,6 +206,10 @@ class NodeManager(models.Manager):
 
 
 class Node(models.Model):
+    """
+    Node is the states of an instance.
+    """
+
     STATUS_CHOICES = (
         ('draft', 'Draft'),
         ('given up', 'Given up'),
@@ -291,7 +298,10 @@ class TransitionManager(models.Manager):
 
 
 class Transition(models.Model):
-    ROUTING_RULE_CHOICES = (  # TODO name ...
+    """
+    A Transition connects two node: a From and a To activity.
+    """
+    ROUTING_RULE_CHOICES = (
         ('split', 'split'),
         ('joint', 'Joint'),
     )
@@ -383,6 +393,9 @@ class AppManager(models.Manager):
 
 
 class App(models.Model):
+    """
+    An application is a python view that can be called by URL.
+    """
     APP_TYPE_CHOICES = (
         ('url', 'URL'),
     )

@@ -237,7 +237,7 @@ Creating models::
         def __str__(self):
             return self.title
 
-``python manager.py shell`` to open django shell, and run the following code to generate flow code::
+``python manager.py shell`` to open django shell, and run the following code to generate skeleton code::
 
     >>> from lbworkflow.flowgen import FlowAppGenerator
     >>> from issue.models import Issue as wf_class

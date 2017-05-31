@@ -17,6 +17,10 @@ from .config import Transition
 
 
 class ProcessInstance(models.Model):
+    """
+    A process instance is created when someone decides to do something,
+    and doing this thing means start using a process defined in ``django-lb-workflow``.
+    """
     no = models.CharField('NO.', max_length=100, blank=True)
     process = models.ForeignKey(
         'lbworkflow.Process',
@@ -244,6 +248,9 @@ class Authorization(models.Model):
 
 
 class Task(models.Model):
+    """
+    A task object represents a task you are performing.
+    """
     STATUS_CHOICES = (
         ('in progress', 'In Progress'),
         ('completed', 'Completed'),
@@ -296,6 +303,9 @@ class Task(models.Model):
 
 
 class Event(models.Model):
+    """
+    A task perform log.
+    """
     EVENT_ACT_CHOICES = (
         ('transition', 'Transition'),
         ('edit', 'Edit'),
@@ -371,6 +381,9 @@ class Event(models.Model):
 
 
 class BaseWFObj(models.Model):
+    """
+    A abstract class for flow model. Every flow model should inherit from it.
+    """
     pinstance = models.ForeignKey(
         ProcessInstance, blank=True, null=True,
         related_name="%(class)s",
@@ -407,21 +420,33 @@ class BaseWFObj(models.Model):
             pinstance.save()
 
     def on_complete(self):
+        """ Will call when process complete """
         pass
 
     def on_submit(self):
+        """ Will call when process submit """
         pass
 
     def on_fail(self):
+        """ Will call when process fail(cancel/give up/reject)"""
         pass
 
     def on_do_transition(self, cur_node, to_node):
+        """
+        Will call when process node transfer
+        
+        :param cur_node: 
+        :param to_node: 
+        """
         pass
 
     def get_absolute_url(self):
         return ''
 
     def save(self, *args, **kwargs):
+        """
+        update self.pinstance.summary on save.
+        """
         super(BaseWFObj, self).save(*args, **kwargs)
         instance = self.pinstance
         if instance:
@@ -429,6 +454,13 @@ class BaseWFObj(models.Model):
             instance.save()
 
     def create_pinstance(self, process, submit=False):
+        """
+        Create and set self.pinstance for this model
+        
+        :param process: Which process to use
+        :param submit: Whether auto submit it after create
+        :return: The created process instance
+        """
         created_by = self.created_by
         if not isinstance(process, Process):
             process = get_or_none(Process, code=process)
@@ -444,6 +476,11 @@ class BaseWFObj(models.Model):
         return instance
 
     def submit_process(self, user=None):
+        """
+        Submit this process.
+        
+        :param user: Which user submit the process. The user is self.created_by if user is None.
+        """
         from lbworkflow.core.transition import TransitionExecutor
 
         instance = self.pinstance

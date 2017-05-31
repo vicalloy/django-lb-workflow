@@ -34,3 +34,4 @@ Contents
    install
    example
    core_concepts
+   settings

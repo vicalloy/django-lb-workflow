@@ -85,34 +85,49 @@ A task perform log.
 A abstract class for flow model. Every flow model should inherit from it.
 
 
+User Parser
+-----------
+
+``django-lb-workflow`` use a text field to config users for ``Node``
+and user a parser to cover it to Django model. The default parser is
+``lbworkflow.core.userparser.SimpleUserParser``. You can replace it with your implement.
+
+
 Views and Forms
 ---------------
 
 ``django-lb-workflow`` provide a set of views and forms to customized flow.
+
+Classes for create/edit/list process instance is in ``lbworkflow/views/generics.py``.
+
+Classes for customize transition is in ``lbworkflow/views/transition.py``.
+
+Classes for customize form is in ``lbworkflow/views/forms.py``.
 
 url provide by ``django-lb-workflow``
 #####################################
 
 you can find all url in ``lbworkflow/urls.py``
 
-- Main entrance
-    - Todo
-    - I submitted
-    - Start a new flow
-    - Reports
+- Main entrance.
+    - ``wf_todo`` List tasks that need current user to process.
+    - ``wf_my_wf`` List processes that current user submitted.
+    - ``wf_start_wf`` List the processes that current user can submit.
+    - ``wf_report_list`` Each process have a default report. This url will list all report link.
 - Flow
-    - New
-    - Edit
-    - Delete
-    - List(Report)
-    - Detail
-    - Print
+    - ``wf_new [wf_code]`` Submit a new process. ``wf_code`` used to specify which process to submit.
+    - ``wf_edit [pk]`` Edit a process.
+    - ``wf_delete`` Delete a process.
+    - ``wf_list [wf_code]`` Default report for a process. ``wf_code`` used to specify the process.
+    - ``wf_detail [pk]`` Display the detail information for a process.
+    - ``wf_print_detail [pk]`` A page to display process information used for print.
 - Actions(App)
-    - Agree
-    - Back to
-    - Reject
-    - Give up
-    - Batch agree
-    - Batch reject
-    - Batch give up
-    - Execute customized transition
+    - ``wf_agree`` Agree a process.
+    - ``wf_back_to`` Rollback process to previous node.
+    - ``wf_reject`` Reject a process.
+    - ``wf_give_up`` Give up a process.
+    - ``wf_batch_agree``
+    - ``wf_batch_reject``
+    - ``wf_batch_give_up``
+    - ``wf_execute_transition`` Execute a transition for a process.
+    - ``wf_execute_transition [wf_code] [trans_func]`` Execute a transition for a process with customize function.
