@@ -1,4 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.forms import BaseFormSet
+from django.forms import BaseModelFormSet
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect
 from django.views.generic.base import ContextMixin
@@ -11,7 +13,7 @@ class FormsMixin(ContextMixin):
     """
 
     initial = {}
-    form_classes = None
+    form_classes = None  # the main form should named as form
     success_url = None
 
     def get_initial(self, form_class_key):
@@ -33,14 +35,16 @@ class FormsMixin(ContextMixin):
         forms = {}
         self.forms = forms
         for form_class_key, form_class in form_classes.items():
-            forms[form_class_key] = form_class(**self.get_form_kwargs(form_class_key))
+            forms[form_class_key] = form_class(**self.get_form_kwargs(form_class_key, form_class))
         return forms
 
-    def get_form_kwargs(self, form_class_key):
+    def get_form_kwargs(self, form_class_key, form_class):
         """
         Returns the keyword arguments for instantiating the form.
         """
         kwargs = {'initial': self.get_initial(form_class_key)}
+        if form_class_key != 'form':
+            kwargs['prefix'] = form_class_key
         if self.request.method in ('POST', 'PUT'):
             kwargs.update({
                 'data': self.request.POST,
@@ -76,16 +80,31 @@ class FormsMixin(ContextMixin):
 
 class ModelFormsMixin(object):
 
-    def get_form_kwargs(self, form_class_key):
-        kwargs = super().get_form_kwargs(form_class_key)
-        form_class = self.form_classes.get(form_class_key)
-        if not issubclass(form_class, ModelForm):
+    def get_form_kwargs(self, form_class_key, form_class):
+        kwargs = super().get_form_kwargs(form_class_key, form_class)
+        if not issubclass(form_class, (ModelForm, BaseModelFormSet)):
             return kwargs
         instance = getattr(self, 'object', None)
+        # if have main form, try to get instance from main form
+        # other form may have ForeignKey to main object
         form = self.forms.get('form')
-        if form:
-            kwargs['instance'] = form.instance
+        if form and getattr(form, 'instance', None):
+            instance = getattr(form, 'instance', None)
         kwargs['instance'] = instance
+        return kwargs
+
+
+class FormSetMixin(object):
+
+    def get_formset_kwargs(self, form_class_key, form_class):
+        # TODO for formset, prefix, helper
+        return {}
+
+    def get_form_kwargs(self, form_class_key, form_class):
+        kwargs = super().get_form_kwargs(form_class_key, form_class)
+        if not issubclass(form_class, BaseFormSet):
+            return kwargs
+        kwargs = self.get_formset_kwargs(form_class_key, form_class)
         return kwargs
 
 

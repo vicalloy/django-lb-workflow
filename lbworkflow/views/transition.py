@@ -221,11 +221,11 @@ class ExecuteBackToTransitionView(ExecuteTransitionView):
         # TODO ...
         return True
 
-    def get_form_kwargs(self, form_class_key):
+    def get_form_kwargs(self, form_class_key, form_class):
         """
         Returns the keyword arguments for instantiating the form.
         """
-        kwargs = super(ExecuteBackToTransitionView, self).get_form_kwargs(form_class_key)
+        kwargs = super(ExecuteBackToTransitionView, self).get_form_kwargs(form_class_key, form_class)
         kwargs['process_instance'] = self.process_instance
         return kwargs
 
