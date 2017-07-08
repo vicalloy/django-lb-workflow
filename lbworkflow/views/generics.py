@@ -16,7 +16,6 @@ from lbworkflow.models import Process
 from .helper import get_base_wf_permit_query_param
 from .helper import user_wf_info_as_dict
 from .mixin import FormsView
-from .mixin import ModelFormsMixin
 
 
 class WorkflowTemplateResponseMixin(TemplateResponseMixin):
@@ -62,7 +61,7 @@ class ExcelResponseMixin(object):
             object_list, lambda o: self.get_formated_excel_data(o))
 
 
-class CreateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
+class CreateView(WorkflowTemplateResponseMixin, FormsView):
     form_classes = {
         # 'form': None,  # the form for BaseWFObj should named as form
     }
@@ -90,7 +89,7 @@ class CreateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
         return super(CreateView, self).dispatch(request, *args, **kwargs)
 
 
-class UpdateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
+class UpdateView(WorkflowTemplateResponseMixin, FormsView):
     form_classes = {
         # 'form': None,  # the form for BaseWFObj should named as form
     }

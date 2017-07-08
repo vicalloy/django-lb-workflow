@@ -21,10 +21,9 @@ from .helper import add_processed_message
 from .helper import import_wf_views
 from .helper import user_wf_info_as_dict
 from .mixin import FormsView
-from .mixin import ModelFormsMixin
 
 
-class ExecuteTransitionView(ModelFormsMixin, TemplateResponseMixin, FormsView):
+class ExecuteTransitionView(TemplateResponseMixin, FormsView):
     """
     request.GET:
         ts_id: transition pk

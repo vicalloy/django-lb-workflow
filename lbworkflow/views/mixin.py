@@ -108,7 +108,7 @@ class FormSetMixin(object):
         return kwargs
 
 
-class FormsView(FormsMixin, View):
+class FormsView(FormSetMixin, ModelFormsMixin, FormsMixin, View):
     """
     A mixin that renders any number of forms on GET and processes it on POST.
     """
