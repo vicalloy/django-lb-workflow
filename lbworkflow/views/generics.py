@@ -64,7 +64,7 @@ class ExcelResponseMixin(object):
 
 class CreateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
     form_classes = {
-        # 'form': None,
+        # 'form': None,  # the form for BaseWFObj should named as form
     }
     wf_code = None
     model = None
@@ -92,7 +92,7 @@ class CreateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
 
 class UpdateView(ModelFormsMixin, WorkflowTemplateResponseMixin, FormsView):
     form_classes = {
-        # 'form': None,
+        # 'form': None,  # the form for BaseWFObj should named as form
     }
     wf_code = None
     model = None
