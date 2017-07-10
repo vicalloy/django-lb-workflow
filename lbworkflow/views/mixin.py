@@ -7,6 +7,12 @@ from django.views.generic.base import ContextMixin
 from django.views.generic.base import View
 
 
+try:
+    from crispy_forms.helper import FormHelper
+except ImportError:
+    pass
+
+
 class FormsMixin(ContextMixin):
     """
     A mixin that provides a way to show and handle any number of form in a request.
@@ -27,6 +33,14 @@ class FormsMixin(ContextMixin):
             raise ImproperlyConfigured("Provide form_classes.")
         return self.form_classes
 
+    def after_create_form(self, form_class_key, form):
+        return form
+
+    def create_form(self, form_class_key, form_class):
+        form = form_class(**self.get_form_kwargs(form_class_key, form_class))
+        self.after_create_form(form_class_key, form)
+        return form
+
     def create_forms(self, **form_classes):
         """
         Returns an instance of the forms to be used in this view.
@@ -35,7 +49,7 @@ class FormsMixin(ContextMixin):
         forms = {}
         self.forms = forms
         for form_class_key, form_class in form_classes.items():
-            forms[form_class_key] = form_class(**self.get_form_kwargs(form_class_key, form_class))
+            forms[form_class_key] = self.create_form(form_class_key, form_class)
         return forms
 
     def get_form_kwargs(self, form_class_key, form_class):
@@ -96,15 +110,24 @@ class ModelFormsMixin(object):
 
 class FormSetMixin(object):
 
+    def after_create_formset(self, form_class_key, formset):
+        pass
+
+    def after_create_form(self, form_class_key, form):
+        super().after_create_form(form_class_key, form)
+        if isinstance(form, BaseFormSet):
+            self.after_create_formset(form_class_key, form)
+        return form
+
     def get_formset_kwargs(self, form_class_key, form_class):
-        # TODO for formset, prefix, helper
         return {}
 
     def get_form_kwargs(self, form_class_key, form_class):
         kwargs = super().get_form_kwargs(form_class_key, form_class)
         if not issubclass(form_class, BaseFormSet):
             return kwargs
-        kwargs = self.get_formset_kwargs(form_class_key, form_class)
+        ext_kwargs = self.get_formset_kwargs(form_class_key, form_class)
+        kwargs.update(ext_kwargs)
         return kwargs
 
 
@@ -136,3 +159,14 @@ class FormsView(FormSetMixin, ModelFormsMixin, FormsMixin, View):
     # object, note that browsers only support POST for now.
     def put(self, *args, **kwargs):
         return self.post(*args, **kwargs)
+
+
+class BSFormSetMixin(object):
+    """
+    Crispy & Bootstrap for formset
+    """
+    def after_create_formset(self, form_class_key, formset):
+        helper = FormHelper()
+        helper.template = 'swift/bootstrap3/table_inline_formset.html'
+        formset.helper = helper
+        return formset
