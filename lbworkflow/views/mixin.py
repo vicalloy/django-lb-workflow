@@ -1,6 +1,4 @@
 from django.core.exceptions import ImproperlyConfigured
-from django.forms import BaseFormSet
-from django.forms import BaseModelFormSet
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect
 from django.views.generic.base import ContextMixin
@@ -98,7 +96,10 @@ class ModelFormsMixin(object):
 
     def get_form_kwargs(self, form_class_key, form_class):
         kwargs = super().get_form_kwargs(form_class_key, form_class)
-        if not issubclass(form_class, (ModelForm, BaseModelFormSet)):
+        # not (ModelForm or ModelFormSet)
+        formset_form_class = getattr(form_class, 'form', None)
+        if not issubclass(form_class, ModelForm) \
+                and not issubclass(formset_form_class, ModelForm):
             return kwargs
         instance = getattr(self, 'object', None)
         # if have main form, try to get instance from main form
@@ -110,14 +111,32 @@ class ModelFormsMixin(object):
         return kwargs
 
 
+def is_formset(form):
+    # form class
+    if getattr(form, '__name__', '').endswith('FormSet'):
+        return True
+    # form instance
+    return type(form).__name__.endswith('FormSet')
+
+
 class FormSetMixin(object):
 
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        formset_list = []
+        s = {}
+        for form in self.forms.values():
+            if is_formset(form):
+                formset_list.append(form)
+        kwargs['formset_list'] = formset_list
+        return kwargs
+
     def after_create_formset(self, form_class_key, formset):
-        pass
+        formset.title = "Items"
 
     def after_create_form(self, form_class_key, form):
         super().after_create_form(form_class_key, form)
-        if isinstance(form, BaseFormSet):
+        if is_formset(form):
             self.after_create_formset(form_class_key, form)
         return form
 
@@ -126,7 +145,7 @@ class FormSetMixin(object):
 
     def get_form_kwargs(self, form_class_key, form_class):
         kwargs = super().get_form_kwargs(form_class_key, form_class)
-        if not issubclass(form_class, BaseFormSet):
+        if is_formset(form_class):
             return kwargs
         ext_kwargs = self.get_formset_kwargs(form_class_key, form_class)
         kwargs.update(ext_kwargs)
@@ -168,7 +187,8 @@ class BSFormSetMixin(object):
     Crispy & Bootstrap for formset
     """
     def after_create_formset(self, form_class_key, formset):
+        super().after_create_formset(form_class_key, formset)
         helper = FormHelper()
-        helper.template = 'swift/bootstrap3/table_inline_formset.html'
+        helper.template = 'lbadminlte/bootstrap3/table_inline_formset.html'
         formset.helper = helper
         return formset
