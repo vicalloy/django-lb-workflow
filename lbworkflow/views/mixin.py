@@ -97,7 +97,7 @@ class ModelFormsMixin(object):
     def get_form_kwargs(self, form_class_key, form_class):
         kwargs = super().get_form_kwargs(form_class_key, form_class)
         # not (ModelForm or ModelFormSet)
-        formset_form_class = getattr(form_class, 'form', None)
+        formset_form_class = getattr(form_class, 'form', str)
         if not issubclass(form_class, ModelForm) \
                 and not issubclass(formset_form_class, ModelForm):
             return kwargs
