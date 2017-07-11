@@ -124,7 +124,6 @@ class FormSetMixin(object):
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
         formset_list = []
-        s = {}
         for form in self.forms.values():
             if is_formset(form):
                 formset_list.append(form)
