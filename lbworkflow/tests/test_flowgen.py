@@ -1,8 +1,8 @@
 from lbworkflow.flowgen import FlowAppGenerator
 from lbworkflow.flowgen import clean_generated_files
 from lbworkflow.tests.issue.models import Issue
-from lbworkflow.tests.purchase.models import Purchase
 from lbworkflow.tests.purchase.models import Item
+from lbworkflow.tests.purchase.models import Purchase
 
 from .test_base import BaseTests
 
