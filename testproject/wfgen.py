@@ -17,6 +17,13 @@ def gen():
     FlowAppGenerator().gen(wf_class, [wf_item_class], replace=True)
 
 
+def rm_folder(path):
+    try:
+        shutil.rmtree(path)
+    except:
+        pass
+
+
 def clean():
     from lbworkflow.flowgen import clean_generated_files
     from lbworkflow.tests.issue.models import Issue
@@ -25,12 +32,13 @@ def clean():
     from lbworkflow.tests.leave.models import Leave
     folder_path = os.path.dirname(inspect.getfile(Leave))
     path = os.path.join(folder_path, 'migrations')
-    shutil.rmtree(path)
+    rm_folder(path)
     # remove migrations for purchase
     from lbworkflow.tests.purchase.models import Purchase
+    clean_generated_files(Purchase)
     folder_path = os.path.dirname(inspect.getfile(Purchase))
     path = os.path.join(folder_path, 'migrations')
-    shutil.rmtree(path)
+    rm_folder(path)
 
 
 def load_data():

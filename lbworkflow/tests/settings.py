@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     'lbworkflow',
     'lbworkflow.tests.leave',
+    'lbworkflow.tests.purchase',
 
     'lbworkflow.tests.issue',
 ]
@@ -132,6 +133,7 @@ STATIC_URL = '/static/'
 
 LBWF_APPS = {
     'leave': 'lbworkflow.tests.leave',
+    'purchase': 'lbworkflow.tests.purchase',
 }
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
