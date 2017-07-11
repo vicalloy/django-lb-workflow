@@ -39,7 +39,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
 
     def get_template_names(self):
         try:
-            return super(ExecuteTransitionView, self).get_template_names()
+            return super().get_template_names()
         except ImproperlyConfigured:
             base_tmpl = 'lbworkflow/do_transition_form.html'
             _meta = self.object._meta
@@ -141,7 +141,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
-        kwargs = super(ExecuteTransitionView, self).get_context_data(**kwargs)
+        kwargs = super().get_context_data(**kwargs)
         kwargs['task'] = self.task
         kwargs['transition'] = self.transition
         kwargs.update(user_wf_info_as_dict(self.object, self.request.user))
@@ -152,7 +152,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         try:
             self.init_process_data(request)
             self.check_permission(request)
-            return super(ExecuteTransitionView, self).dispatch(request, *args, **kwargs)
+            return super().dispatch(request, *args, **kwargs)
         except HttpResponseException as error:
             return error.http_response
 
@@ -170,7 +170,7 @@ class BatchExecuteTransitionView(FormView):
     def get_context_data(self, **kwargs):
         kwargs['task_list'] = self.task_list
         kwargs['transition_name'] = self.get_transition_name()
-        return super(BatchExecuteTransitionView, self).get_context_data(**kwargs)
+        return super().get_context_data(**kwargs)
 
     def get_transition(self, process_instance):
         pass
@@ -181,7 +181,7 @@ class BatchExecuteTransitionView(FormView):
     def post(self, request, *args, **kwargs):
         if not request.POST.get('do_submit'):
             return self.get(request, *args, **kwargs)
-        return super(BatchExecuteTransitionView, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         user = self.request.user
@@ -208,7 +208,7 @@ class BatchExecuteTransitionView(FormView):
 
     def dispatch(self, request, *args, **kwargs):
         self.task_list = self.get_task_list(request)
-        return super(BatchExecuteTransitionView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ExecuteBackToTransitionView(ExecuteTransitionView):
@@ -224,7 +224,7 @@ class ExecuteBackToTransitionView(ExecuteTransitionView):
         """
         Returns the keyword arguments for instantiating the form.
         """
-        kwargs = super(ExecuteBackToTransitionView, self).get_form_kwargs(form_class_key, form_class)
+        kwargs = super().get_form_kwargs(form_class_key, form_class)
         kwargs['process_instance'] = self.process_instance
         return kwargs
 
