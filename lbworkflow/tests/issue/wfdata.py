@@ -13,7 +13,6 @@ def load_issue():
     category = create_category('5f31d065-00cc-0020-beea-641f0a670010', 'HR')
     process = create_process('issue', 'Issue', category=category)
     create_node('5f31d065-00a0-0020-beea-641f0a670010', process, 'Draft', status='draft')
-    create_node('5f31d065-00a0-0020-beea-641f0a670010', process, 'Draft', status='draft')  # test for update
     create_node('5f31d065-00a0-0020-beea-641f0a670020', process, 'Given up', status='given up')
     create_node('5f31d065-00a0-0020-beea-641f0a670030', process, 'Rejected', status='rejected')
     create_node('5f31d065-00a0-0020-beea-641f0a670040', process, 'Completed', status='completed')
