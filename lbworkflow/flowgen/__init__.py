@@ -14,7 +14,7 @@ __all__ = (
 def clean_generated_files(model_class):
     folder_path = os.path.dirname(inspect.getfile(model_class))
     for path, dirs, files in os.walk(folder_path):
-        if not path.endswith('issue'):
+        if not path.endswith(model_class.__name__.lower()):
             shutil.rmtree(path)
         for file in files:
             if file not in ['models.py', 'wfdata.py', '__init__.py']:
@@ -66,7 +66,7 @@ class FlowAppGenerator(object):
             loader=loader,
         )
 
-    def gen(self, model_class, detail_model_class=None, wf_code=None, replace=False, ignores=['wfdata.py']):
+    def gen(self, model_class, item_model_class_list=None, wf_code=None, replace=False, ignores=['wfdata.py']):
         dest = os.path.dirname(inspect.getfile(model_class))
         app_name = model_class.__module__.split('.')[-2]
         if not wf_code:
@@ -80,13 +80,18 @@ class FlowAppGenerator(object):
             'fields': get_fields(model_class),
             'grouped_fields': group(get_fields(model_class)),
         }
-        if detail_model_class:
-            ctx.update({
-                'dm__class_name': detail_model_class.__name__,
-                'dm__field_names': get_field_names(detail_model_class),
-                'dm__fields': get_fields(detail_model_class),
-                'dm__grouped__fields': group(get_fields(detail_model_class)),
-            })
+        if item_model_class_list:
+            item_list = []
+            for item_model_class in item_model_class_list:
+                item_ctx = {
+                    'class_name': item_model_class.__name__,
+                    'lowercase_class_name': item_model_class.__name__.lower(),
+                    'field_names': get_field_names(item_model_class),
+                    'fields': get_fields(item_model_class),
+                    'grouped__fields': group(get_fields(item_model_class)),
+                }
+                item_list.append(item_ctx)
+            ctx['item_list'] = item_list
         self.copy_template(self.app_template_path, dest, ctx, replace, ignores)
 
     def copy_template(self, src, dest, ctx={}, replace=False, ignores=[]):

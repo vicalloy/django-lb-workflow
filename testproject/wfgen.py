@@ -12,6 +12,9 @@ def gen():
     from lbworkflow.flowgen import FlowAppGenerator
     from lbworkflow.tests.issue.models import Issue as wf_class
     FlowAppGenerator().gen(wf_class, replace=True)
+    from lbworkflow.tests.purchase.models import Purchase as wf_class
+    from lbworkflow.tests.purchase.models import Item as wf_item_class
+    FlowAppGenerator().gen(wf_class, [wf_item_class], replace=True)
 
 
 def clean():
@@ -23,6 +26,11 @@ def clean():
     folder_path = os.path.dirname(inspect.getfile(Leave))
     path = os.path.join(folder_path, 'migrations')
     shutil.rmtree(path)
+    # remove migrations for purchase
+    from lbworkflow.tests.purchase.models import Purchase
+    folder_path = os.path.dirname(inspect.getfile(Purchase))
+    path = os.path.join(folder_path, 'migrations')
+    shutil.rmtree(path)
 
 
 def load_data():
@@ -30,6 +38,7 @@ def load_data():
     load_wf_data('lbworkflow')
     load_wf_data('lbworkflow.tests.issue')
     load_wf_data('lbworkflow.tests.leave')
+    load_wf_data('lbworkflow.tests.purchase')
 
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,5 +55,6 @@ if __name__ == "__main__":
     gen()
     call_command('makemigrations', 'issue')
     call_command('makemigrations', 'leave')
+    call_command('makemigrations', 'purchase')
     call_command('migrate')
     load_data()

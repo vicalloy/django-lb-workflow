@@ -17,3 +17,17 @@
   </tr>
   {% endcomment %}
 </table>
+[% if item_list %][% for item in item_list %]
+<br>
+
+<table class="table table-bordered table-striped no-margin print">
+  <tr>[% for f in item.fields %]
+    <th>[[ f.verbose_name ]]</th>[% endfor %]
+  </tr>
+  {% for o in object.[[ item.lowercase_class_name]]_set.all %}
+  <tr>[% for f in item.fields %]
+    <td>{{ o.[[ f.name ]] }}</td>[% endfor %]
+  </tr>
+  {% endfor %}
+</table>
+[% endfor %][% endif %]

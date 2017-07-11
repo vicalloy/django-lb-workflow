@@ -1,10 +1,20 @@
 from django.contrib import admin
 
 from .models import [[ class_name ]]
-
+[% if item_list %][% for item in item_list %]
+from .models import [[ item.class_name ]]
+[% endfor %][% endif %]
 
 class [[ class_name ]]Admin(admin.ModelAdmin):
     list_display = ([[ field_names ]])
 
 
 admin.site.register([[ class_name ]], [[ class_name ]]Admin)
+[% if item_list %][% for item in item_list %]
+
+class [[ item.class_name ]]Admin(admin.ModelAdmin):
+    list_display = ([[ item.field_names ]])
+
+
+admin.site.register([[ item.class_name ]], [[ item.class_name ]]Admin)
+[% endfor %][% endif %]

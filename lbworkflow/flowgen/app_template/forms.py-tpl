@@ -1,5 +1,5 @@
-from django import forms
-from django import forms
+from django import forms[% if item_list %]
+from django.forms.models import inlineformset_factory[% endif %]
 from crispy_forms.bootstrap import StrictButton
 from crispy_forms.layout import Layout
 
@@ -8,6 +8,9 @@ from lbworkflow.forms import WorkflowFormMixin
 from lbworkflow.forms import BSQuickSearchForm
 
 from .models import [[ class_name ]]
+[% if item_list %][% for item in item_list %]
+from .models import [[ item.class_name ]]
+[% endfor %][% endif %]
 
 
 class SearchForm(BSQuickSearchForm):
@@ -35,4 +38,21 @@ class [[ class_name ]]Form(BootstrapFormHelperMixin, WorkflowFormMixin, forms.Mo
         fields = [
             [[ field_names ]]
         ]
+[% if item_list %][% for item in item_list %]
 
+class [[ item.class_name ]]Form(BootstrapFormHelperMixin, WorkflowFormMixin, forms.ModelForm):
+
+    class Meta:
+        model = [[ item.class_name ]]
+        fields = [
+          [[ item.field_names ]]
+        ]
+
+
+def get_[[ item.lowercase_class_name ]]_formset_class(**kwargs):
+    params = {'extra': 1, 'can_delete': True}
+    params.update(kwargs)
+    return inlineformset_factory(
+            [[ class_name ]], [[ item.class_name ]],
+            form=[[ item.class_name ]]Form, **params)
+[% endfor %][% endif %]
