@@ -52,8 +52,8 @@
   <h1>
     <a href="{% url 'wf_my_wf' %}">My workflow</a>
     &gt;
-    {% if obj %}
-      {{ obj }}
+    {% if object %}
+      {{ object }}
     {% else %}
       {{ process.name }}
     {% endif %}
