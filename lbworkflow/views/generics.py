@@ -73,6 +73,7 @@ class CreateView(WorkflowTemplateResponseMixin, FormsView):
         return reverse('wf_detail', args=(self.object.pinstance.pk, ))
 
     def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
         kwargs['wf_code'] = self.wf_code
         kwargs['process'] = get_object_or_404(Process, code=self.wf_code)
         return kwargs
@@ -80,7 +81,9 @@ class CreateView(WorkflowTemplateResponseMixin, FormsView):
     def forms_valid(self, **forms):
         form = forms.pop('form')
         self.object = form.save_new_process(self.request, self.wf_code)
-        # TODO forms.save
+        # TODO refactor, you may update total amount base items
+        for form in forms.values():
+            form.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def dispatch(self, request, wf_code, *args, **kwargs):
@@ -101,13 +104,16 @@ class UpdateView(WorkflowTemplateResponseMixin, FormsView):
         return reverse('wf_detail', args=(self.object.pinstance.pk, ))
 
     def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
         kwargs.update(user_wf_info_as_dict(self.object, self.request.user))
         return kwargs
 
     def forms_valid(self, **forms):
         form = forms.pop('form')
         self.object = form.update_process(self.request)
-        # TODO forms.save
+        # TODO refactor
+        for form in forms.values():
+            form.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def dispatch(self, request, wf_object, *args, **kwargs):
