@@ -1,7 +1,6 @@
 {% extends "lbadminlte/mbase_popup.html" %}
 
 {% block flow_help %}
-  {{ for_test }}
 {% endblock %}
 
 {% block content %}

@@ -1,7 +1,6 @@
 {% extends "lbworkflow/wf_base_detail.html" %}
 
 {% block flow_help %}
-  {{ for_test }}
 {% endblock %}
 
 {% block right_side_header_ext_btns %}
