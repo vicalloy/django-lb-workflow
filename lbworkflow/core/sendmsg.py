@@ -5,6 +5,7 @@ from lbworkflow import settings
 # wf_send_sms(users, mail_type, event, ext_ctx)
 # wf_send_mail(users, mail_type, event, ext_ctx)
 
+
 def wf_send_msg(users, msg_type, event=None, ext_ctx=None):
     if not users:
         return
