@@ -2,7 +2,6 @@ from lbutils import as_callable
 
 from lbworkflow import settings
 
-
 # wf_send_sms(users, mail_type, event, ext_ctx)
 # wf_send_mail(users, mail_type, event, ext_ctx)
 
