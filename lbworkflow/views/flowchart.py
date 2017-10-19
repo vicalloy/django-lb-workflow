@@ -19,6 +19,12 @@ def generate_process_flowchart(process):
                     labelloc=t
                     ];
                 node [shape = ellipse];
+                {
+                    node [shape=diamond label="Router"];
+                    {% for node in router_nodes %}
+                    {{ node.name }};
+                    {% endfor %}
+                }
                 edge [fontsize=14]
                 {% for transition in transitions %}
                 "{{ transition.input_node.name }}" -> "{{ transition.output_node.name }}"
@@ -27,7 +33,14 @@ def generate_process_flowchart(process):
             }
         """  # NOQA
         transitions = process.transition_set.all()
-        request = Context({'name': process.name, 'transitions': transitions})
+        router_nodes = process.node_set.filter(node_type='router')
+        request = Context(
+            {
+                'name': process.name,
+                'router_nodes': router_nodes,
+                'transitions': transitions
+            }
+        )
         t = Template(file_template)
         G = pgv.AGraph(string=t.render(request))
         return G

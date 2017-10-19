@@ -221,6 +221,10 @@ class Node(models.Model):
         ('view', 'view'),
         ('edit', 'Edit'),
     )
+    TYPE_CHOICES = (
+        ('node', 'Node'),
+        ('router', 'Router'),
+    )
 
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     process = models.ForeignKey(
@@ -235,13 +239,16 @@ class Node(models.Model):
         help_text="",
     )
     status = models.CharField(
-        'Type', max_length=16,
+        'Status', max_length=16,
         default='in progress', choices=STATUS_CHOICES)
     audit_page_type = models.CharField(
         'Audit page type', max_length=64,
         choices=AUDIT_PAGE_TYPE_CHOICES,
         help_text='If this node can edit, will auto goto edit mode when audit.',
         default='view')
+    node_type = models.CharField(
+        'Status', max_length=16,
+        default='node', choices=TYPE_CHOICES)
 
     can_edit = models.BooleanField('Can edit', default=False)
     can_reject = models.BooleanField('Can reject', default=True)

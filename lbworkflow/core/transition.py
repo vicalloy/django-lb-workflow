@@ -8,9 +8,10 @@ from .sendmsg import wf_send_msg
 
 def create_event(instance, transition, **kwargs):
     act_type = 'transition' if transition.pk else transition.code
-    transition = transition if transition.pk else None
+    if transition.is_agree:
+        act_type = 'agree'
     event = Event.objects.create(
-        instance=instance, transition=transition, act_type=act_type,
+        instance=instance, act_name=transition.name, act_type=act_type,
         **kwargs)
     return event
 
@@ -52,7 +53,7 @@ class TransitionExecutor(object):
         self._do_transfer()
 
         # if is agree should check if need auto agree for next node
-        if self.transition.is_agree:
+        if self.transition.is_agree or self.to_node.node_type == 'router':
             self._auto_agree_next_node()
 
     def _auto_agree_next_node(self):
@@ -64,9 +65,18 @@ class TransitionExecutor(object):
         if not agree_transition:
             return
 
+        # if from router, create a task
+        if self.to_node.node_type == 'router':
+            task = Task(
+                instance=self.instance,
+                node=self.instance.cur_node,
+                user=self.operator,
+            )
+            all_todo_tasks = [task]
+
         for task in all_todo_tasks:
             users = [task.user, task.agent_user]
-            users = [e for e in users]
+            users = [e for e in users if e]
             for user in set(users):
                 if self.instance.cur_node != task.node:  # has processed
                     return
@@ -83,12 +93,21 @@ class TransitionExecutor(object):
         task.save()
 
         to_node = self.to_node if need_transfer else instance.cur_node
+        self.to_node = to_node
 
-        event = create_event(
-            instance, transition,
-            comment=self.comment, user=self.operator,
-            old_node=task.node, new_node=to_node,
-            task=task)
+        event = None
+        pre_last_event = instance.last_event()
+        if pre_last_event and pre_last_event.new_node.node_type == 'router':
+            event = pre_last_event
+            event.new_node = to_node
+            event.save()
+
+        if not event:
+            event = create_event(
+                instance, transition,
+                comment=self.comment, user=self.operator,
+                old_node=task.node, new_node=to_node,
+                task=task)
 
         if self.attachments:
             event.attachments.add(*self.attachments)

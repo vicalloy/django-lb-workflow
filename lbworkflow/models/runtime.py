@@ -58,9 +58,12 @@ class ProcessInstance(models.Model):
     def __str__(self):
         return self.no
 
+    def last_event(self):
+        return self.event_set.order_by('-created_on', '-pk').first()
+
     def can_rollback(self, user):
         """ if can roll back, return last event """
-        last_event = self.event_set.order_by('-created_on', '-pk').first()
+        last_event = self.last_event()
         if not last_event:
             return None
         if last_event.new_node == self.cur_node \
@@ -173,9 +176,7 @@ class ProcessInstance(models.Model):
         for event in events:
             if event.act_type in ['give up', 'reject', 'back to']:
                 break
-            if not event.act_type == 'transition':
-                continue
-            if not event.transition or not event.transition.is_agree:
+            if event.act_type != 'agree':
                 continue
             users.append(event.user)
         return user in users
@@ -308,6 +309,7 @@ class Event(models.Model):
     """
     EVENT_ACT_CHOICES = (
         ('transition', 'Transition'),
+        ('agree', 'Agree'),
         ('edit', 'Edit'),
         ('give up', 'Give up'),
         ('reject', 'Reject'),
@@ -329,6 +331,8 @@ class Event(models.Model):
     act_type = models.CharField(
         max_length=255, choices=EVENT_ACT_CHOICES,
         default='transition')
+    act_name = models.CharField(
+        max_length=255, blank=True)
     old_node = models.ForeignKey(
         Node, related_name='out_events',
         null=True, blank=True,
@@ -344,9 +348,6 @@ class Event(models.Model):
         null=True, blank=True,
         on_delete=models.SET_NULL
     )
-    transition = models.ForeignKey(
-        Transition, blank=True,
-        null=True, on_delete=models.SET_NULL)
 
     next_operators = models.ManyToManyField(
         AUTH_USER_MODEL, related_name='audit_events',
@@ -364,7 +365,7 @@ class Event(models.Model):
 
     def get_act_name(self):
         if self.act_type == 'transition':
-            return self.transition.name if self.transition else ''
+            return self.act_name
         # TODO assign should show assign to who
         return self.get_act_type_display()
 
