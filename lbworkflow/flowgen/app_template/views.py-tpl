@@ -48,7 +48,7 @@ class [[ class_name ]]ListView(WFListView):
         return [
             o.created_by.username, o.created_on,
             [% for f in fields %]o.[[ f.name ]], [% endfor %]
-            o.pinstance.cur_activity.name,
+            o.pinstance.cur_node.name,
         ]
 
 
