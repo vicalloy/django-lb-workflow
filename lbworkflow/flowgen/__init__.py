@@ -126,7 +126,8 @@ class FlowAppGenerator(object):
     def copy_template_file(self, src, dest, ctx={}):
         if os.path.sep != '/':
             # https://github.com/pallets/jinja/issues/767
-            # Jinja template names are not fileystem paths. They always use forward slashes so this is working as intended.
+            # Jinja template names are not fileystem paths.
+            # They always use forward slashes so this is working as intended.
             src = src.replace(os.path.sep, '/')
         template = self.env.get_template(src)
         template.stream(ctx).dump(dest, encoding='utf-8')
