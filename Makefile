@@ -1,3 +1,8 @@
+pyenv:
+	pipenv --python 3
+	pipenv install -d
+	pipenv shell
+
 test:
 	coverage run ./runtests.py
 

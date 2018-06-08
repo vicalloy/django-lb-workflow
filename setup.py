@@ -21,12 +21,12 @@ setup(
         'django-lbattachment>=1.0.2',
         'django-stronghold',
     ],
+    tests_require=[
+        'coverage',
+        'flake8>=2.0,<3.0',
+        'isort',
+    ],
     extras_require={
-        'tests': [
-            'coverage',
-            'flake8>=2.0,<3.0',
-            'isort',
-        ],
         'options': [
             'django-compressor>=2.1.1',
             'django-bower>=5.2.0',

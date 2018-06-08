@@ -15,7 +15,7 @@ RUN mkdir -p /usr/deploy
 WORKDIR /usr/deploy
 RUN git clone https://github.com/vicalloy/django-lb-workflow
 WORKDIR /usr/deploy/django-lb-workflow
-RUN pip install -r testproject/requirements.txt
+RUN pip install -e .[options]
 
 RUN make wfgen
 RUN make reload_test_data
