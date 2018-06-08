@@ -11,4 +11,4 @@ django-lbattachment>=1.0.2
 django-lb-adminlte>=0.9.4
 jinja2>=2.9.6
 django-impersonate
-django-stronghold
+django-stronghold>=0.3.0
