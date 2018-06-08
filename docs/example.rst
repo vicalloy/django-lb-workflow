@@ -22,15 +22,6 @@ Creating a project::
 
     $ django-admin.py startproject helloword
 
-Creating ``helloword/middleware.py`` to compatible stronghold to django 1.10+::
-
-    from django.utils.deprecation import MiddlewareMixin
-    from stronghold.middleware import LoginRequiredMiddleware
-
-
-    class LoginRequiredStrongholdMiddleware(MiddlewareMixin, LoginRequiredMiddleware):
-        pass
-
 Add the following code in the file ``settings.py``::
 
     INSTALLED_APPS = [
@@ -51,7 +42,7 @@ Add the following code in the file ``settings.py``::
     ]
 
     MIDDLEWARE += [
-        'testproject.middleware.LoginRequiredStrongholdMiddleware',
+        'stronghold.middleware.LoginRequiredMiddleware',
     ]
 
     CRISPY_TEMPLATE_PACK = 'bootstrap3'
