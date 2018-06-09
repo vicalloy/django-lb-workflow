@@ -37,6 +37,18 @@ Workflow is on PyPI so all you need is: ::
 
     pip install django-lb-workflow
 
+Pipenv
+------
+
+Install pipenv and create a virtualenv:  ::
+
+    pip3 install pipenv
+    make pyenv
+
+Spawns a shell within the virtualenv: ::
+
+    pipenv shell
+
 Testing
 -------
 
@@ -47,10 +59,9 @@ Running the test suite is as simple as: ::
 Run test project
 ----------------
 
-Running the test suite is as simple as: ::
+Running the test project is as simple as: ::
 
-    pip install -r testproject/requirements.txt
-    python testproject/manager.py bower_install
+    python testproject/manage.py bower_install
     python testproject/wfgen.py
     make run
 
