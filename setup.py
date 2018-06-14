@@ -19,7 +19,6 @@ setup(
         'jinja2>=2.9.6',
         'django-lbutils>=1.0.3',
         'django-lbattachment>=1.0.2',
-        'django-stronghold',
     ],
     tests_require=[
         'coverage',
@@ -34,6 +33,7 @@ setup(
             'django-lb-adminlte>=0.9.4',
             'django-el-pagination>=3.0.1',
             'django-impersonate',
+            'django-stronghold',
         ],
     },
     classifiers=[
