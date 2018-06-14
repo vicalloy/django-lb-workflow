@@ -10,7 +10,7 @@ from .forms import get_[[ item.lowercase_class_name ]]_formset_class
 from .models import [[ class_name ]]
 
 
-class [[ class_name ]]CreateView(BSFormSetMixin, CreateView):
+class [[ class_name ]]CreateView([% if item_list %]BSFormSetMixin, [% endif %]CreateView):
     form_classes = {
         'form': [[ class_name ]]Form,
         [% if item_list %][% for item in item_list %]
@@ -22,7 +22,7 @@ class [[ class_name ]]CreateView(BSFormSetMixin, CreateView):
 new = [[ class_name ]]CreateView.as_view()
 
 
-class [[ class_name ]]UpdateView(BSFormSetMixin, UpdateView):
+class [[ class_name ]]UpdateView([% if item_list %]BSFormSetMixin, [% endif %]UpdateView):
     form_classes = {
         'form': [[ class_name ]]Form,
         [% if item_list %][% for item in item_list %]
