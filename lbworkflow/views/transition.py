@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 from django.forms import ModelForm
@@ -304,12 +305,30 @@ class BatchExecuteAgreeTransitionView(BatchExecuteTransitionView):
 
 
 class ExecuteRejectTransitionView(ExecuteTransitionView):
+    def get_task(self, request):
+        task = super().get_task(request)
+        return task if task and task.node.can_reject else None
 
     def get_init_transition(self, process_instance, request):
         return process_instance.get_reject_transition()
 
 
 class BatchExecuteRejectTransitionView(BatchExecuteTransitionView):
+    def get_task_list(self, request):
+        task_list = []
+        for task in super().get_task_list(request):
+            if task.node.can_reject:
+                task_list.append(task)
+            else:
+                messages.info(
+                    request,
+                    """You can't reject process "%s" """ %
+                    (
+                        task.instance.no,
+                    )
+                )
+        return task_list
+
     def get_transition_name(self):
         return 'Reject'
 
