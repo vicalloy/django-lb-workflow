@@ -451,7 +451,7 @@ class App(models.Model):
             url_component_list = url.split(' ')
             url_param = [render(e, ctx) for e in url_component_list[1:]]
             url = reverse(url_component_list[0], args=url_param)
-        except:
+        except Exception:
             pass
         if "?" not in url:
             url = "%s?a=" % url
