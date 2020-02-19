@@ -200,13 +200,13 @@ class ProcessInstance(models.Model):
         return self.task_set.filter(status='in progress', receive_on__isnull=False).exists()
 
     def save(self, *args, **kwargs):
-        super(ProcessInstance, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         wf_obj = self.content_object
         if not self.no and wf_obj:  # self.no depend on pk(you should save to get pk)
             self.no = wf_obj.get_process_no()
             self.created_by = wf_obj.created_by
             self.summary = wf_obj.get_process_summary()
-            super(ProcessInstance, self).save(force_update=True)
+            super().save(force_update=True)
 
 
 class Authorization(models.Model):
@@ -244,7 +244,7 @@ class Authorization(models.Model):
 
     def save(self, *args, **kwargs):
         # TODO on delete
-        super(Authorization, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.update_agent_for_task()
 
 
@@ -445,7 +445,7 @@ class BaseWFObj(models.Model):
         """
         update self.pinstance.summary on save.
         """
-        super(BaseWFObj, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         instance = self.pinstance
         if instance:
             instance.summary = self.get_process_summary()

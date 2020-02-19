@@ -38,7 +38,7 @@ class QuickSearchFormMixin(forms.Form):
 class BSQuickSearchForm(BSSearchFormMixin, QuickSearchFormMixin, forms.Form):
 
     def __init__(self, *args, **kw):
-        super(BSQuickSearchForm, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
         self.init_form_helper()
 
 
@@ -100,7 +100,7 @@ class WorkFlowForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.instance = kwargs.pop('instance', None)
-        super(WorkFlowForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         return self.instance
@@ -111,7 +111,7 @@ class WorkFlowForm(forms.Form):
 
 class BSWorkFlowForm(BootstrapFormHelperMixin, WorkFlowForm):
     def __init__(self, *args, **kw):
-        super(BSWorkFlowForm, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
         self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')
 
 
@@ -121,7 +121,7 @@ class BatchWorkFlowForm(WorkFlowForm):
 
 class BSBatchWorkFlowForm(BootstrapFormHelperMixin, BatchWorkFlowForm):
     def __init__(self, *args, **kw):
-        super(BSBatchWorkFlowForm, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
         self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')
 
 
@@ -129,12 +129,12 @@ class BackToNodeForm(WorkFlowForm):
     back_to_node = forms.ChoiceField(label='Back to', required=True)
 
     def __init__(self, process_instance, *args, **kwargs):
-        super(BackToNodeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         choices = [(e.pk, e.name) for e in process_instance.get_can_back_to_activities()]
         self.fields['back_to_node'].choices = choices
 
 
 class BSBackToNodeForm(BootstrapFormHelperMixin, BackToNodeForm):
     def __init__(self, *args, **kw):
-        super(BSBackToNodeForm, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
         self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')

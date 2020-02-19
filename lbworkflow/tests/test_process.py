@@ -32,7 +32,7 @@ class HelperTests(BaseTests):
 class ViewTests(BaseTests):
 
     def setUp(self):
-        super(ViewTests, self).setUp()
+        super().setUp()
         self.client.login(username='owner', password='password')
 
     def test_start_wf(self):

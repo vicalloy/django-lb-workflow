@@ -77,6 +77,6 @@ class Todo(ListView):
         return qs
 
     def get_queryset(self):
-        queryset = super(Todo, self).get_queryset()
+        queryset = super().get_queryset()
         queryset.filter(receive_on=None).update(receive_on=timezone.now())
         return queryset

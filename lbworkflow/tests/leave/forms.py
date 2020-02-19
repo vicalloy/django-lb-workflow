@@ -10,7 +10,7 @@ from .models import Leave
 class LeaveForm(BootstrapFormHelperMixin, WorkflowFormMixin, forms.ModelForm):
 
     def __init__(self, *args, **kw):
-        super(LeaveForm, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
         self.init_crispy_helper()
         self.layout_fields([
             ['start_on', 'end_on'],
@@ -19,7 +19,7 @@ class LeaveForm(BootstrapFormHelperMixin, WorkflowFormMixin, forms.ModelForm):
         ])
 
     def save(self, commit=True):
-        obj = super(LeaveForm, self).save(commit=False)
+        obj = super().save(commit=False)
         obj.init_actual_info()
         if commit:
             self.save_m2m()
@@ -37,7 +37,7 @@ class HRForm(BootstrapFormHelperMixin, WorkflowFormMixin, forms.ModelForm):
         widget=forms.Textarea())
 
     def __init__(self, *args, **kw):
-        super(HRForm, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
         self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')
         self.layout_fields([
             ['actual_start_on', ],

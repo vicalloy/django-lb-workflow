@@ -17,7 +17,7 @@ class BaseTests(TestCase):
         self.init_data()
 
     def init_users(self):
-        super(BaseTests, self).setUp()
+        super().setUp()
         self.users = init_users()
 
     # TODO add a function to submit new leave

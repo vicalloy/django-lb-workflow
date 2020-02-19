@@ -52,7 +52,7 @@ class FlowAppGenerator(object):
                 os.path.dirname(os.path.abspath(__file__)),
                 'app_template')
         self.app_template_path = app_template_path
-        super(FlowAppGenerator, self).__init__()
+        super().__init__()
 
     def init_env(self, template_path):
         loader = FileSystemLoader(template_path)

@@ -21,7 +21,7 @@ from .mixin import FormsView
 class WorkflowTemplateResponseMixin(TemplateResponseMixin):
     def get_template_names(self):
         try:
-            return super(WorkflowTemplateResponseMixin, self).get_template_names()
+            return super().get_template_names()
         except ImproperlyConfigured:
             base_tmpl = self.base_template_name
             templates = ["%s/%s" % (self.wf_code, base_tmpl,), ]
@@ -88,7 +88,7 @@ class CreateView(WorkflowTemplateResponseMixin, FormsView):
 
     def dispatch(self, request, wf_code, *args, **kwargs):
         self.wf_code = wf_code
-        return super(CreateView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class UpdateView(WorkflowTemplateResponseMixin, FormsView):
@@ -117,7 +117,7 @@ class UpdateView(WorkflowTemplateResponseMixin, FormsView):
 
     def dispatch(self, request, wf_object, *args, **kwargs):
         self.object = wf_object
-        return super(UpdateView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
@@ -129,7 +129,7 @@ class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
 
     def dispatch(self, request, *args, wf_code=None, **kwargs):
         self.wf_code = wf_code
-        return super(BaseListView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_quick_query_fields(self):
         return self.quick_query_fields
