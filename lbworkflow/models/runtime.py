@@ -283,7 +283,7 @@ class Task(models.Model):
     receive_on = models.DateTimeField('Receive on', null=True, blank=True)
     is_hold = models.BooleanField('Is hold', default=False)
 
-    created_on = models.DateTimeField(auto_now=True)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return '%s - %s - %s' % (self.instance.summary, self.node.name, self.pk)
@@ -361,7 +361,7 @@ class Event(models.Model):
         LBAttachment, verbose_name='Attachment', blank=True)
     ext_data = JSONField(null=True, blank=True)
 
-    created_on = models.DateTimeField(auto_now=True)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     def get_act_name(self):
         if self.act_type == 'transition':
