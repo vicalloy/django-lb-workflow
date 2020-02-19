@@ -40,7 +40,7 @@ class WorkflowTemplateResponseMixin(TemplateResponseMixin):
             return templates
 
 
-class ExcelResponseMixin(object):
+class ExcelResponseMixin:
     excel_titles = []
     excel_file_name = 'flow'
 
@@ -87,7 +87,6 @@ class CreateView(WorkflowTemplateResponseMixin, FormsView):
         return HttpResponseRedirect(self.get_success_url())
 
     def dispatch(self, request, wf_code, *args, **kwargs):
-        self.request = request
         self.wf_code = wf_code
         return super(CreateView, self).dispatch(request, *args, **kwargs)
 
@@ -117,7 +116,6 @@ class UpdateView(WorkflowTemplateResponseMixin, FormsView):
         return HttpResponseRedirect(self.get_success_url())
 
     def dispatch(self, request, wf_object, *args, **kwargs):
-        self.request = request
         self.object = wf_object
         return super(UpdateView, self).dispatch(request, *args, **kwargs)
 
@@ -130,7 +128,6 @@ class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
     base_template_name = 'list.html'
 
     def dispatch(self, request, *args, wf_code=None, **kwargs):
-        self.request = request
         self.wf_code = wf_code
         return super(BaseListView, self).dispatch(request, *args, **kwargs)
 

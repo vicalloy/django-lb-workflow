@@ -92,7 +92,7 @@ class FormsMixin(ContextMixin):
         return self.render_to_response(self.get_context_data(**forms))
 
 
-class ModelFormsMixin(object):
+class ModelFormsMixin:
 
     def get_form_kwargs(self, form_class_key, form_class):
         kwargs = super().get_form_kwargs(form_class_key, form_class)
@@ -119,7 +119,7 @@ def is_formset(form):
     return type(form).__name__.endswith('FormSet')
 
 
-class FormSetMixin(object):
+class FormSetMixin:
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
@@ -181,7 +181,7 @@ class FormsView(FormSetMixin, ModelFormsMixin, FormsMixin, View):
         return self.post(*args, **kwargs)
 
 
-class BSFormSetMixin(object):
+class BSFormSetMixin:
     """
     Crispy & Bootstrap for formset
     """

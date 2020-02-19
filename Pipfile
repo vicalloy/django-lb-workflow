@@ -1,10 +1,12 @@
 [[source]]
-url = "https://pypi.org/simple"
+#url = "https://pypi.org/simple"
+url = "https://pypi.douban.com/simple/ "
 verify_ssl = true
 name = "pypi"
 
 [packages]
-"e1839a8" = {path = ".", editable = true}
+e1839a8 = {path = ".",editable = true}
+pre-commit = "*"
 
 [dev-packages]
 coverage = "*"

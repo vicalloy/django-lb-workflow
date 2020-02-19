@@ -51,7 +51,7 @@ class BSQuickSearchWithExportForm(BSQuickSearchForm):
         )
 
 
-class WorkflowFormMixin(object):
+class WorkflowFormMixin:
     def save_new_process(self, request, wf_code):
         submit = request.POST.get('act_submit')
         act_name = request.POST.get('act_submit') or 'Save'
