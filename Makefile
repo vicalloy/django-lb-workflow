@@ -1,6 +1,6 @@
 pyenv:
 	pipenv --python 3
-	pipenv install -d
+	pipenv install --dev -d
 	pipenv shell
 
 test:
