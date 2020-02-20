@@ -134,9 +134,6 @@ class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
     def get_quick_query_fields(self):
         return self.quick_query_fields
 
-    def get_base_queryset(self):
-        return self.queryset
-
     def do_filter(self, queryset, query_data):
         quick_query_fields = self.get_quick_query_fields()
         return do_filter(queryset, query_data, quick_query_fields, self.int_quick_query_fields)
@@ -151,7 +148,6 @@ class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         search_form = self.get_search_form(request)
-        self.queryset = self.get_base_queryset()
         queryset = self.get_queryset()
         self.object_list = self.do_filter(
             queryset,
@@ -191,7 +187,8 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
         # override this function to add addition permit
         return q_param
 
-    def get_base_queryset(self):
+    def get_queryset(self):
+        super().get_queryset()
         # only show have permission
         user = self.request.user
         qs = self.model.objects.all()

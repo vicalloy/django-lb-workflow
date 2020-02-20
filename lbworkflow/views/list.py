@@ -11,6 +11,7 @@ from .helper import get_base_wf_permit_query_param
 
 
 class ListWF(ListView):
+    model = ProcessInstance
     ordering = '-created_on'
     template_name = 'lbworkflow/list_wf.html'
     search_form_class = None  # can config search_form_class
@@ -26,9 +27,10 @@ class ListWF(ListView):
         get_permit_query_param = as_callable(PROCESS_INSTANCE_GET_PERMIT_QUERY_PARAM_FUNC)
         return get_permit_query_param(user, q_param)
 
-    def get_base_queryset(self):
+    def get_queryset(self):
         user = self.request.user
-        qs = ProcessInstance.objects.exclude(cur_node__status__in=['draft', 'given up'])
+        qs = super().get_queryset()
+        qs = qs.exclude(cur_node__status__in=['draft', 'given up'])
         if not user.is_superuser:
             q_param = get_base_wf_permit_query_param(user, '')
             q_param = self.get_permit_query_param(user, q_param)
@@ -42,6 +44,7 @@ class ListWF(ListView):
 
 
 class MyWF(ListView):
+    model = ProcessInstance
     template_name = 'lbworkflow/my_wf.html'
     search_form_class = None  # can config search_form_class
     quick_query_fields = [
@@ -50,11 +53,13 @@ class MyWF(ListView):
         'cur_node__name',
     ]
 
-    def get_base_queryset(self):
-        return ProcessInstance.objects.filter(created_by=self.request.user)
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(created_by=self.request.user)
 
 
 class Todo(ListView):
+    model = Task
     template_name = 'lbworkflow/todo.html'
     search_form_class = None  # can config search_form_class
     quick_query_fields = [
@@ -64,19 +69,16 @@ class Todo(ListView):
         'instance__created_by__username',
     ]
 
-    def get_base_queryset(self):
+    def get_queryset(self):
         user = self.request.user
-        qs = Task.objects.filter(
+        qs = super().get_queryset()
+        qs = qs.filter(
             Q(user=user) | Q(agent_user=user),
             status='in progress')
+        qs.filter(receive_on=None).update(receive_on=timezone.now())
         qs = qs.select_related(
             'instance',
             'instance__process',
             'instance__cur_node'
         ).distinct()
         return qs
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset.filter(receive_on=None).update(receive_on=timezone.now())
-        return queryset
