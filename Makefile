@@ -1,6 +1,7 @@
 pyenv:
-	pipenv --python 3
-	pipenv install --dev -d
+	#pip install pipenv --upgrade
+	#pipenv --python 3
+	pipenv install -d --skip-lock
 	pipenv shell
 
 test:
