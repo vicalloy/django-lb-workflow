@@ -10,6 +10,7 @@ setup(
     description="Reusable workflow library for Django",
     license='BSD',
     packages=find_packages(exclude=['tests']),
+    python_requires=">=3.4",
     include_package_data=True,
     install_requires=[
         'django>=1.10',
