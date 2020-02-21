@@ -1,11 +1,14 @@
 from django import forms
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from lbattachment.models import LBAttachment
 from lbutils import BootstrapFormHelperMixin
 from lbutils import JustSelectedSelectMultiple
 
 from lbworkflow.models import Event
 from lbworkflow.models import Task
+
+User = get_user_model()
 
 try:
     from crispy_forms.helper import FormHelper
@@ -113,6 +116,10 @@ class BSWorkFlowForm(BootstrapFormHelperMixin, WorkFlowForm):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')
+        self.layout_fields([
+            ['attachments', ],
+            ['comment', ],
+        ])
 
 
 class BatchWorkFlowForm(WorkFlowForm):
@@ -138,3 +145,30 @@ class BSBackToNodeForm(BootstrapFormHelperMixin, BackToNodeForm):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')
+        self.layout_fields([
+            ['back_to_node', ],
+            ['attachments', ],
+            ['comment', ],
+        ])
+
+
+class AddAssigneeForm(WorkFlowForm):
+    assignees = forms.ModelMultipleChoiceField(
+        label='Assignees', required=True,
+        queryset=User.objects
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(AddAssigneeForm, self).__init__(*args, **kwargs)
+        self.init_crispy_helper()
+
+
+class BSAddAssigneeForm(BootstrapFormHelperMixin, AddAssigneeForm):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.init_crispy_helper(label_class='col-md-2', field_class='col-md-8')
+        self.layout_fields([
+            ['assignees', ],
+            ['attachments', ],
+            ['comment', ],
+        ])

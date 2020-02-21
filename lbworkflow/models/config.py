@@ -199,6 +199,18 @@ class Process(models.Model):
         )
         return transition
 
+    def get_add_assignee_transition(self, in_node):
+        transition = Transition(
+            name='Add assignee',
+            code='add assignee',
+            process=self,
+            is_agree=False,
+            can_auto_agree=False,
+            input_node=in_node,
+            output_node=in_node,
+        )
+        return transition
+
 
 class NodeManager(models.Manager):
     def get_by_natural_key(self, uuid):
@@ -427,10 +439,6 @@ class App(models.Model):
     def get_url(self, task, transition):
         def render(templ_str, ctx):
             return Template(templ_str).render(Context(ctx))
-        if transition == 'reject':
-            transition = task.instance.process.get_reject_transition()
-        if transition == 'back to':
-            transition = task.instance.process.get_back_to_transition()
         ts_id = transition.pk or transition.code
 
         ctx = {

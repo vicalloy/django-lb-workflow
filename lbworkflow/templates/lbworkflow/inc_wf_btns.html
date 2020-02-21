@@ -8,6 +8,10 @@
   <a class="{% if is_btn %}btn btn-primary{% endif %}" href="{{ t|app_url:task }}">{{ t.name }}</a>
   <span>|</span>
 {% endfor %}
+{% if task  %}
+<a class="{% if is_btn %}btn btn-primary{% endif %}" href="{% url 'wf_add_assignee' %}?wi_id={{ task.pk }}">Add assignee</a>
+<span>|</span>
+{% endif %}
 {% if can_reject  %}
   <a class="{% if is_btn %}btn btn-danger{% endif %}" href="{% url 'wf_reject' %}?wi_id={{ task.pk }}">Reject</a>
   <span>|</span>

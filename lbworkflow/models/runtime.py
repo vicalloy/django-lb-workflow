@@ -116,12 +116,16 @@ class ProcessInstance(models.Model):
     def get_give_up_transition(self):
         return self.process.get_give_up_transition(self.cur_node)
 
-    def create_task(self, operator):
+    def get_add_assignee_transition(self):
+        return self.process.get_add_assignee_transition(self.cur_node)
+
+    def create_task(self, operator, **kwargs):
         """ create task for submit/give up/rollback """
         return Task.objects.create(
             instance=self,
             node=self.cur_node,
             user=operator,
+            **kwargs
         )
 
     def get_transitions(self, only_agree=False, only_can_auto_agree=False):
@@ -282,6 +286,7 @@ class Task(models.Model):
     status = models.CharField(max_length=255, choices=STATUS_CHOICES, default='in progress')
     receive_on = models.DateTimeField('Receive on', null=True, blank=True)
     is_hold = models.BooleanField('Is hold', default=False)
+    is_joint = models.BooleanField('Is joint', default=False)
 
     created_on = models.DateTimeField(auto_now_add=True)
 

@@ -12,11 +12,14 @@ from lbutils import get_or_none
 
 from lbworkflow import settings
 from lbworkflow.core.exceptions import HttpResponseException
+from lbworkflow.core.sendmsg import wf_send_msg
 from lbworkflow.core.transition import TransitionExecutor
+from lbworkflow.core.transition import create_event
 from lbworkflow.models import Node
 from lbworkflow.models import ProcessInstance
 from lbworkflow.models import Task
 from lbworkflow.models import Transition
+from lbworkflow.settings import GET_USER_DISPLAY_NAME_FUNC
 
 from .helper import add_processed_message
 from .helper import import_wf_views
@@ -249,6 +252,7 @@ class ExecuteGiveUpTransitionView(ExecuteTransitionView):
         process_instance = get_or_none(ProcessInstance, pk=pk)
         if not process_instance:
             return None
+        return process_instance.create_task(request.user)
         return Task(
             instance=process_instance,
             node=process_instance.cur_node,
@@ -337,6 +341,40 @@ class BatchExecuteRejectTransitionView(BatchExecuteTransitionView):
 
 
 # TODO Rollback
+
+
+class AddAssigneeView(ExecuteTransitionView):
+    form_classes = {
+        'form': as_callable(settings.ADD_ASSIGNEE_FORM)
+    }
+
+    def get_form_kwargs(self, form_class_key, form_class):
+        kwargs = super().get_form_kwargs(form_class_key, form_class)
+        kwargs['instance'] = self.process_instance
+        return kwargs
+
+    def get_init_transition(self, process_instance, request):
+        return process_instance.get_add_assignee_transition()
+
+    def do_transition(self, cleaned_data):
+        request = self.request
+        transition = self.get_transition_before_execute(cleaned_data)
+        comment = cleaned_data.get('comment')
+        attachments = cleaned_data.get('attachments')
+        user = request.user
+        instance = self.process_instance
+        assignees = cleaned_data.get('assignees', [])
+        for assignee in assignees:
+            instance.create_task(assignee, is_joint=True)
+        msg = 'Add assignee %s.' % ', '.join([GET_USER_DISPLAY_NAME_FUNC(e) for e in assignees])
+        messages.info(request, msg)
+        comment = msg + '\n' + comment
+        event = create_event(
+            instance, transition,
+            comment=comment, user=user,
+            old_node=instance.cur_node, new_node=instance.cur_node)
+        event.attachments.add(*attachments)
+        wf_send_msg(assignees, 'new_workitem', event)
 
 
 def execute_transitions(request, wf_code, trans_func):
