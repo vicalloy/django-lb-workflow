@@ -165,13 +165,13 @@ class BatchExecuteTransitionView(FormView):
     def get_success_url(self):
         return reverse("wf_todo")
 
-    def get_transition_name(self):
-        return 'Agree'
-
     def get_context_data(self, **kwargs):
         kwargs['task_list'] = self.task_list
         kwargs['transition_name'] = self.get_transition_name()
         return super().get_context_data(**kwargs)
+
+    def get_transition_name(self):
+        return 'Agree'
 
     def get_transition(self, process_instance):
         pass
@@ -266,9 +266,6 @@ class BatchExecuteGiveUpTransitionView(BatchExecuteTransitionView):
     def get_success_url(self):
         return reverse("wf_my_wf")
 
-    def get_transition_name(self):
-        return 'Give up'
-
     def get_task_list(self, request):
         instance_pk_list = request.POST.getlist('pi')
         instance_list = ProcessInstance.objects.filter(
@@ -283,6 +280,9 @@ class BatchExecuteGiveUpTransitionView(BatchExecuteTransitionView):
             )
             task_list.append(task)
         return task_list
+
+    def get_transition_name(self):
+        return 'Give up'
 
     def get_transition(self, process_instance):
         return process_instance.get_give_up_transition()
