@@ -13,7 +13,7 @@ setup(
     python_requires=">=3.4",
     include_package_data=True,
     install_requires=[
-        'django>=1.10',
+        'django>=1.10,<3.0',
         'jsonfield>=1.0.1',
         'pygraphviz>=1.3',
         'xlsxwriter>=0.9.6',
