@@ -48,6 +48,7 @@ def load_data():
     load_wf_data('lbworkflow.tests.leave')
     load_wf_data('lbworkflow.tests.purchase')
 
+
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, BASE_DIR)
