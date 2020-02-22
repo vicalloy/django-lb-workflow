@@ -8,7 +8,7 @@ from lbworkflow import settings
 
 
 def import_wf_views(wf_code, view_module_name='views'):
-    wf_module = settings.WF_APPS.get(wf_code)
+    wf_module = settings.WF_APPS.get(wf_code.split('__')[0])
     return importlib.import_module('%s.%s' % (wf_module, view_module_name))
 
 

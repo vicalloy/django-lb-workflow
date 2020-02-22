@@ -1,0 +1,15 @@
+{% include "lbworkflow/inc_wf_status.html" %}
+<table class="table table-bordered tb-detail no-margin">
+  <tr>
+    <th>Summary</th>
+    <td colspan="3">
+      {{ object.summary }}
+    </td>
+  </tr>
+  <tr>
+    <th>Content</th>
+    <td colspan="3">
+      {{ object.content|linebreaks }}
+    </td>
+  </tr>
+</table>

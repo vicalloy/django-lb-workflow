@@ -24,7 +24,12 @@ class WorkflowTemplateResponseMixin(TemplateResponseMixin):
             return super().get_template_names()
         except ImproperlyConfigured:
             base_tmpl = self.base_template_name
-            templates = ["%s/%s" % (self.wf_code, base_tmpl,), ]
+            paths = self.wf_code.split('__')
+            templates = [
+                "%s/%s" % (paths[0], base_tmpl,),
+            ]
+            paths.append(base_tmpl)
+            templates.append('/'.join(paths))
             _meta = None
             object = getattr(self, 'object', None)
             if object:

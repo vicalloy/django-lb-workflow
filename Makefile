@@ -24,6 +24,7 @@ wfgen_clean:
 
 reload_test_data:
 	cd testproject;python manage.py callfunc lbworkflow.wfdata.load_data
+	cd testproject;python manage.py callfunc lbworkflow.simplewf.wfdata.load_data
 	cd testproject;python manage.py callfunc lbworkflow.tests.wfdata.load_data
 	cd testproject;python manage.py callfunc lbworkflow.tests.leave.wfdata.load_data
 	cd testproject;python manage.py callfunc lbworkflow.tests.issue.wfdata.load_data
