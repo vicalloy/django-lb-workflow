@@ -122,6 +122,7 @@ class UpdateView(WorkflowTemplateResponseMixin, FormsView):
 
     def dispatch(self, request, wf_object, *args, **kwargs):
         self.object = wf_object
+        self.wf_code = wf_object.pinstance.process.code
         return super().dispatch(request, *args, **kwargs)
 
 
