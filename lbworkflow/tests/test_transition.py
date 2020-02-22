@@ -192,3 +192,22 @@ class ViewTests(BaseTests):
         self.assertRedirects(resp, '/wf/my/')
         leave = Leave.objects.get(pk=self.leave.pk)
         self.assertEqual('Given up', leave.pinstance.cur_node.name)
+
+    def test_add_assignee(self):
+        url = reverse('wf_add_assignee')
+        url = '%s?wi_id=%s' % (url, self.task.pk)
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+
+        data = {
+            'assignees': (self.users['hr'].pk, self.users['owner'].pk, ),
+            'comment': 'comments',
+        }
+        resp = self.client.post(url, data)
+        self.assertRedirects(resp, '/wf/todo/')
+        leave = Leave.objects.get(pk=self.leave.pk)
+        self.assertEqual('A2', leave.pinstance.cur_node.name)
+
+        self.do_agree('tom', 'A2')
+        self.do_agree('hr', 'A2')
+        self.do_agree('owner', 'A3')
