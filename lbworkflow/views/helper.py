@@ -27,8 +27,7 @@ def get_wf_template_names(wf_code, base_template_name, wf_object=None, model=Non
     templates = []
     paths = wf_code.split('__')
     for i in range(len(paths)):
-        temp_paths = paths[:-i]
-        temp_paths.append(base_template_name)
+        temp_paths = paths[:len(paths) - i] + [base_template_name]
         templates.append('/'.join(temp_paths))
     _meta = None
     if wf_object:
