@@ -1,4 +1,4 @@
-from lbworkflow.core.datahelper import create_activity
+from lbworkflow.core.datahelper import create_node
 from lbworkflow.core.datahelper import create_category
 from lbworkflow.core.datahelper import create_process
 from lbworkflow.core.datahelper import create_transition
@@ -10,10 +10,10 @@ def load_data():
 
 def load_[[ wf_code ]]():
     category = create_category('', '')
-    process = create_process('leave', 'Leave', category=category)
-    create_activity('', process, 'Draft', status='draft')
-    create_activity('', process, 'Given up', status='given up')
-    create_activity('', process, 'Rejected', status='rejected')
-    create_activity('', process, 'Completed', status='completed')
-    create_activity('', process, 'A1', operators='[owner]')
+    process = create_process('[[ wf_code ]]', '[[ wf_code ]]', category=category)
+    create_node('', process, 'Draft', status='draft')
+    create_node('', process, 'Given up', status='given up')
+    create_node('', process, 'Rejected', status='rejected')
+    create_node('', process, 'Completed', status='completed')
+    create_node('', process, 'A1', operators='[owner]')
     create_transition('', process, 'Draft,', 'A1')
