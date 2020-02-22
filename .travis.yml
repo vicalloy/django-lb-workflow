@@ -1,14 +1,10 @@
 language: python
 
-python: 3.4
-
 addons:
   apt:
     sources:
       - deadsnakes
     packages:
-      - python3.5
-      - python3.5-dev
       - graphviz
       - libgraphviz-dev
       - pkg-config
@@ -20,9 +16,6 @@ install:
 env:
   - TOXENV=isort
   - TOXENV=flake8
-  - TOXENV=py34-django111
-  - TOXENV=py34-django220
-  - TOXENV=py34-django_trunk
   - TOXENV=py35-django111
   - TOXENV=py35-django220
   - TOXENV=py35-django_trunk
@@ -35,7 +28,6 @@ notifications:
 
 matrix:
   allow_failures:
-    - env: TOXENV=py34-django_trunk
     - env: TOXENV=py35-django_trunk
 
 after_success: coveralls
