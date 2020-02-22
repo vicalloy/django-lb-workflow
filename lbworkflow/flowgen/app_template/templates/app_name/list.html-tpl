@@ -12,7 +12,7 @@
     <div class="right-btns">
     </div>
     <h1>
-      [[ wf_name ]]
+      {{ process.name }}
     </h1>
   </section>
   <section class="content">
