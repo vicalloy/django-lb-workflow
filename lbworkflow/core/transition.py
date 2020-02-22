@@ -41,11 +41,12 @@ class TransitionExecutor(object):
 
         all_todo_tasks = self.all_todo_tasks
         need_transfer = False
-        if self.transition.routing_rule == 'joint' and self.transition.code not in ['back to', 'rollback']:
+        if self.transition.routing_rule == 'joint':
             if all_todo_tasks.count() == 1:
                 need_transfer = True
         else:
-            need_transfer = True
+            if not all_todo_tasks.exclude(pk=self.task.pk).filter(is_joint=True).exists():
+                need_transfer = True
         self._complete_task(need_transfer)
         if not need_transfer:
             return
