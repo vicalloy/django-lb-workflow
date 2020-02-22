@@ -11,6 +11,7 @@ from lbworkflow.models import Process
 from lbworkflow.models import ProcessCategory
 from lbworkflow.models import ProcessInstance
 
+from .helper import get_wf_template_names
 from .helper import import_wf_views
 from .helper import user_wf_info_as_dict
 
@@ -45,10 +46,13 @@ def edit(request, pk):
 def _default_detail(request, instance, ext_ctx={}, template_name=None):
     is_print = ext_ctx.get('is_print')
     if not template_name:
-        template_name = 'detail.html'
+        base_template_name = 'detail.html'
         if is_print:
-            template_name = 'print.html'
-        template_name = '%s/%s' % (instance.process.code, template_name)
+            base_template_name = 'print.html'
+        template_name = get_wf_template_names(
+            instance.process.code,
+            base_template_name,
+            wf_object=instance.content_object)
     ctx = {}
     ctx.update(ext_ctx)
     return render(request, template_name, ctx)

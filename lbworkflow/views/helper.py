@@ -23,6 +23,27 @@ def add_processed_message(request, process_instance, act_descn='Processed'):
     )
 
 
+def get_wf_template_names(wf_code, base_template_name, wf_object=None, model=None):
+    templates = []
+    paths = wf_code.split('__')
+    for i in range(len(paths)):
+        temp_paths = paths[:-i]
+        temp_paths.append(base_template_name)
+        templates.append('/'.join(temp_paths))
+    _meta = None
+    if wf_object:
+        _meta = wf_object._meta
+    elif model:
+        _meta = model._meta
+    if _meta:
+        app_label = _meta.app_label
+        object_name = _meta.object_name.lower()
+        templates.extend([
+            "%s/%s/%s" % (app_label, object_name, base_template_name,),
+            "%s/%s" % (app_label, base_template_name,), ])
+    return templates
+
+
 def user_wf_info_as_dict(wf_obj, user):
     ctx = {}
     if user.is_anonymous:

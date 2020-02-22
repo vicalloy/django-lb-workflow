@@ -14,6 +14,7 @@ from lbworkflow.forms import BSQuickSearchWithExportForm
 from lbworkflow.models import Process
 
 from .helper import get_base_wf_permit_query_param
+from .helper import get_wf_template_names
 from .helper import user_wf_info_as_dict
 from .mixin import FormsView
 
@@ -23,26 +24,11 @@ class WorkflowTemplateResponseMixin(TemplateResponseMixin):
         try:
             return super().get_template_names()
         except ImproperlyConfigured:
-            base_tmpl = self.base_template_name
-            paths = self.wf_code.split('__')
-            templates = [
-                "%s/%s" % (paths[0], base_tmpl,),
-            ]
-            paths.append(base_tmpl)
-            templates.append('/'.join(paths))
-            _meta = None
-            object = getattr(self, 'object', None)
-            if object:
-                _meta = self.object._meta
-            elif self.model:
-                _meta = self.model._meta
-            if _meta:
-                app_label = _meta.app_label
-                object_name = _meta.object_name.lower()
-                templates.extend([
-                    "%s/%s/%s" % (app_label, object_name, base_tmpl,),
-                    "%s/%s" % (app_label, base_tmpl,), ])
-            return templates
+            return get_wf_template_names(
+                self.wf_code,
+                self.base_template_name,
+                wf_object=getattr(self, 'object', None),
+                model=getattr(self, 'model', None))
 
 
 class ExcelResponseMixin:
