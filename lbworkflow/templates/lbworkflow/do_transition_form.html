@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block head_ext %}
+  {{ form.media.js }}
   <style>
     #id_comment {
       height: 80px;
@@ -77,6 +78,7 @@
   <script src="{% static 'blueimp-file-upload/js/vendor/jquery.ui.widget.js' %}"></script>
   <script src="{% static 'blueimp-file-upload/js/jquery.fileupload.js' %}"></script>
   <script src="{% static 'blueimp-file-upload/js/jquery.iframe-transport.js' %}"></script>
+  {{ form.media.js }}
   <script type="text/javascript">
     $(function(){
       initUploader($('#id_attachments'));

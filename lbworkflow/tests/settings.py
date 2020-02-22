@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'compressor',
     'djangobower',
     'el_pagination',
+    'django_select2',
 
     'lbworkflow',
     'lbworkflow.simplewf',

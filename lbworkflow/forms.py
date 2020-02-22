@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django_select2.forms import ModelSelect2MultipleWidget
 from lbattachment.models import LBAttachment
 from lbutils import BootstrapFormHelperMixin
 from lbutils import JustSelectedSelectMultiple
@@ -152,10 +153,17 @@ class BSBackToNodeForm(BootstrapFormHelperMixin, BackToNodeForm):
         ])
 
 
+class UserSelect2MultipleWidget(ModelSelect2MultipleWidget):
+    search_fields = [
+        'username__icontains',
+    ]
+
+
 class AddAssigneeForm(WorkFlowForm):
     assignees = forms.ModelMultipleChoiceField(
         label='Assignees', required=True,
-        queryset=User.objects
+        queryset=User.objects,
+        widget=UserSelect2MultipleWidget
     )
 
     def __init__(self, *args, **kwargs):

@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^wf/', include('lbworkflow.urls')),
     url(r'^attachment/', include('lbattachment.urls')),
+    url(r'^select2/', include('django_select2.urls')),
 ]
