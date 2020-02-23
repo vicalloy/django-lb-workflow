@@ -20,7 +20,6 @@ setup(
         'jinja2>=2.9.6',
         'django-lbutils>=1.0.3',
         'django-lbattachment>=1.0.2',
-        'django_select2>=7.2.0',
     ],
     tests_require=[
         'coverage',
@@ -29,6 +28,7 @@ setup(
     ],
     extras_require={
         'options': [
+            'django_select2>=7.2.0',
             'django-compressor>=2.1.1',
             'django-bower>=5.2.0',
             'django-crispy-forms>=1.6',
