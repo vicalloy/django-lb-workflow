@@ -1,4 +1,5 @@
 language: python
+cache: pip
 
 addons:
   apt:
@@ -13,13 +14,6 @@ install:
   - pip install --upgrade pip setuptools tox virtualenv coveralls
   - npm install -g bower
 
-env:
-  - TOXENV=isort
-  - TOXENV=flake8
-  - TOXENV=py35-django111
-  - TOXENV=py35-django220
-  - TOXENV=py35-django_trunk
-
 script:
   - tox
 
@@ -27,7 +21,36 @@ notifications:
   email: false
 
 matrix:
+  include:
+    # Linting
+    - python: 3.7
+      env: TOXENV=flake8
+    - python: 3.7
+      env: TOXENV=isort
+    - python: 3.7
+      env: TOXENV=docs
+    # Tests
+    - python: 3.5
+      env: TOXENV=py35-django1x
+    - python: 3.6
+      env: TOXENV=py36-django1x
+    - python: 3.7
+      env: TOXENV=py37-django1x
+    - python: 3.5
+      env: TOXENV=py35-django2x
+    - python: 3.6
+      env: TOXENV=py36-django2x
+    - python: 3.7
+      env: TOXENV=py37-django2x
+    - python: 3.7
+      env: TOXENV=py37-django2x
+    # Python 3.8 as Django<=2.2 doesn't officially support Python 3.8
+    - python: 3.8
+      env: TOXENV=py38-django2x
+    # Future (Should be in `allow_failures`)
+    - python: 3.7
+      env: TOXENV=py37-django_trunk
   allow_failures:
-    - env: TOXENV=py35-django_trunk
+    - env: TOXENV=py37-django_trunk
 
 after_success: coveralls
