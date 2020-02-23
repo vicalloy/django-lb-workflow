@@ -1,3 +1,4 @@
+import django
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -8,9 +9,12 @@ from lbutils import JustSelectedSelectMultiple
 from lbworkflow.models import Event
 from lbworkflow.models import Task
 
-try:
+django_major_version = django.VERSION[0]
+
+# django_select2 not support django1.x
+if django_major_version > 2:
     from django_select2.forms import ModelSelect2MultipleWidget
-except ImportError:
+else:
     ModelSelect2MultipleWidget = None
 
 User = get_user_model()
@@ -157,7 +161,6 @@ class BSBackToNodeForm(BootstrapFormHelperMixin, BackToNodeForm):
         ])
 
 
-# django_select2 not support django1.x
 if ModelSelect2MultipleWidget:
     class UserSelect2MultipleWidget(ModelSelect2MultipleWidget):
         search_fields = [
