@@ -33,9 +33,9 @@ setup(
             'django-bower>=5.2.0',
             'django-crispy-forms>=1.6',
             'django-lb-adminlte>=0.9.4',
-            'django-el-pagination>=3.0.1',
             'django-impersonate',
             'django-stronghold',
+            'django-bootstrap-pagination>=1.7.0',
         ],
     },
     classifiers=[

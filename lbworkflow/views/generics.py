@@ -9,6 +9,7 @@ from django.views.generic.list import MultipleObjectTemplateResponseMixin
 from lbutils import do_filter
 from lbutils import simple_export2xlsx
 
+from lbworkflow import settings
 from lbworkflow.forms import BSQuickSearchForm
 from lbworkflow.forms import BSQuickSearchWithExportForm
 from lbworkflow.models import Process
@@ -113,6 +114,7 @@ class UpdateView(WorkflowTemplateResponseMixin, FormsView):
 
 
 class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
+    paginate_by = settings.WF_PAGE_SIZE
     search_form_class = BSQuickSearchForm
     quick_query_fields = []
     int_quick_query_fields = []

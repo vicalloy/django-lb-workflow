@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'lbutils',
     'compressor',
     'djangobower',
-    'el_pagination',
     'django_select2',
+    'bootstrap_pagination',
 
     'lbworkflow',
     'lbworkflow.simplewf',

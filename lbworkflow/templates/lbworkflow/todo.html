@@ -1,7 +1,7 @@
 {% extends "base_ext.html" %}
 
 {% load crispy_forms_tags %}
-{% load el_pagination_tags %}
+{% load bootstrap_pagination %}
 {% load lbworkflow_tags %}
 
 {% block nav_sel_node %}id-nav-todo{% endblock %}
@@ -44,7 +44,6 @@
                 <th>Current operator</th>
                 <th>Node</th>
               </tr>
-              {% paginate object_list %}
               {% for o in object_list %}{% with pi=o.instance %}
                 <tr>
                   <td>
@@ -68,7 +67,7 @@
         </form>
       </div>
       <div class="box-footer clearfix">
-        {% show_pages %}
+        {% bootstrap_paginate page_obj %}
         <div style="float:right">
           <button class="btn btn-sm btn-default"
                   onclick="$('#id-list-form').attr('action', '{% url 'wf_batch_agree' %}');$('#id-list-form').submit()">

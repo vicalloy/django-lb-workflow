@@ -6,6 +6,8 @@ USER_PARSER = getattr(
     django_settings, 'LBWF_USER_PARSER',
     'lbworkflow.core.userparser.SimpleUserParser')
 
+WF_PAGE_SIZE = getattr(django_settings, 'LBWF_PAGE_SIZE', 20)
+
 EVAL_FUNCS = getattr(django_settings, 'LBWF_EVAL_FUNCS', {})
 
 WF_SEND_MSG_FUNCS = getattr(

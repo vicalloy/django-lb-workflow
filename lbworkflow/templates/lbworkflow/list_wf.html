@@ -1,7 +1,7 @@
 {% extends "base_ext.html" %}
 
 {% load crispy_forms_tags %}
-{% load el_pagination_tags %}
+{% load bootstrap_pagination %}
 {% load lbworkflow_tags %}
 
 {% block nav_sel_node %}id-nav-list-wf{% endblock %}
@@ -39,7 +39,6 @@
               <th>Current operator</th>
               <th>Node</th>
             </tr>
-            {% paginate object_list %}
             {% for pi in object_list %}
               <tr>
                 <td><a href="{% url 'wf_detail' pi.pk %}">{{ pi.no }}</a></td>
@@ -59,7 +58,7 @@
         </table>
       </div>
       <div class="box-footer clearfix">
-        {% show_pages %}
+        {% bootstrap_paginate page_obj %}
       </div>
     </div>
   </section>
