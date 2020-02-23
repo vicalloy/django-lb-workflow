@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django-lb-workflow = {editable = true,path = "."}
+django-lb-workflow = {editable=true, extras=["options"], path = "."}
 
 [dev-packages]
 coverage = "*"
