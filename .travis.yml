@@ -1,4 +1,6 @@
 language: python
+dist: bionic
+
 cache: pip
 
 addons:
