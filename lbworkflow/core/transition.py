@@ -41,7 +41,9 @@ class TransitionExecutor(object):
 
         all_todo_tasks = self.all_todo_tasks
         need_transfer = False
-        if self.transition.routing_rule == 'joint':
+        if self.transition.code in ['reject', 'back to', 'give up']:
+            need_transfer = True
+        elif self.transition.routing_rule == 'joint':
             if all_todo_tasks.count() == 1:
                 need_transfer = True
         else:
