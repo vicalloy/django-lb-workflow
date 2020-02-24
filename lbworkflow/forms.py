@@ -12,7 +12,7 @@ from lbworkflow.models import Task
 django_major_version = django.VERSION[0]
 
 # django_select2 not support django1.x
-if django_major_version > 2:
+if django_major_version >= 2:
     from django_select2.forms import ModelSelect2MultipleWidget
 else:
     ModelSelect2MultipleWidget = None

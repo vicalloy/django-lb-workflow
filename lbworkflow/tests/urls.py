@@ -14,5 +14,5 @@ urlpatterns = [
 
 django_major_version = django.VERSION[0]
 
-if django_major_version > 2:
+if django_major_version >= 2:
     urlpatterns.append(url(r'^select2/', include('django_select2.urls')))
