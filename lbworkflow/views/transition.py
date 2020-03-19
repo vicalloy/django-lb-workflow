@@ -24,7 +24,7 @@ from lbworkflow.settings import GET_USER_DISPLAY_NAME_FUNC
 from .helper import add_processed_message
 from .helper import import_wf_views
 from .helper import user_wf_info_as_dict
-from .mixin import FormsView
+from .forms import FormsView
 
 
 class ExecuteTransitionView(TemplateResponseMixin, FormsView):

@@ -17,7 +17,7 @@ from lbworkflow.models import Process
 from .helper import get_base_wf_permit_query_param
 from .helper import get_wf_template_names
 from .helper import user_wf_info_as_dict
-from .mixin import FormsView
+from .forms import FormsView
 
 
 class WorkflowTemplateResponseMixin(TemplateResponseMixin):
