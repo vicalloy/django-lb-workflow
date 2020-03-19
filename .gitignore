@@ -3,6 +3,7 @@ vendor/
 bower_components/
 py3env/
 lbattachments/
+*.swp
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
