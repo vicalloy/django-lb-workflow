@@ -21,10 +21,10 @@ from lbworkflow.models import Task
 from lbworkflow.models import Transition
 from lbworkflow.settings import GET_USER_DISPLAY_NAME_FUNC
 
+from .forms import FormsView
 from .helper import add_processed_message
 from .helper import import_wf_views
 from .helper import user_wf_info_as_dict
-from .forms import FormsView
 
 
 class ExecuteTransitionView(TemplateResponseMixin, FormsView):
