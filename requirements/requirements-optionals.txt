@@ -1,0 +1,9 @@
+# Optional packages which may be used
+django_select2>=7.2.0
+django-compressor>=2.1.1
+django-bower>=5.2.0
+django-crispy-forms>=1.6
+django-lb-adminlte>=0.9.4
+django-bootstrap-pagination>=1.7.0
+django-impersonate
+django-stronghold

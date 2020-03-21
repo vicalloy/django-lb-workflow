@@ -1,21 +1,13 @@
-import django
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django_select2.forms import ModelSelect2MultipleWidget
 from lbattachment.models import LBAttachment
 from lbutils import BootstrapFormHelperMixin
 from lbutils import JustSelectedSelectMultiple
 
 from lbworkflow.models import Event
 from lbworkflow.models import Task
-
-django_major_version = django.VERSION[0]
-
-# django_select2 not support django1.x
-if django_major_version >= 2:
-    from django_select2.forms import ModelSelect2MultipleWidget
-else:
-    ModelSelect2MultipleWidget = None
 
 User = get_user_model()
 
@@ -161,13 +153,10 @@ class BSBackToNodeForm(BootstrapFormHelperMixin, BackToNodeForm):
         ])
 
 
-if ModelSelect2MultipleWidget:
-    class UserSelect2MultipleWidget(ModelSelect2MultipleWidget):
-        search_fields = [
-            'username__icontains',
-        ]
-else:
-    UserSelect2MultipleWidget = None
+class UserSelect2MultipleWidget(ModelSelect2MultipleWidget):
+    search_fields = [
+        'username__icontains',
+    ]
 
 
 class AddAssigneeForm(WorkFlowForm):

@@ -182,10 +182,9 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
         return q_param
 
     def get_queryset(self):
-        super().get_queryset()
+        qs = super().get_queryset()
         # only show have permission
         user = self.request.user
-        qs = self.model.objects.all()
         if self.wf_code:
             qs = qs.filter(pinstance__process__code=self.wf_code)
         if not user.is_superuser:

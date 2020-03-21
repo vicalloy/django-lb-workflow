@@ -11,39 +11,39 @@ except ImportError:
 
 
 def generate_process_flowchart(process):
-        file_template = """
-            strict digraph {
-                rankdir=TB;
-                graph [ratio="auto"
-                    label="{{ name }}"
-                    labelloc=t
-                    ];
-                node [shape = ellipse];
-                {
-                    node [shape=diamond label="Router"];
-                    {% for node in router_nodes %}
-                    {{ node.name }};
-                    {% endfor %}
-                }
-                edge [fontsize=14]
-                {% for transition in transitions %}
-                "{{ transition.input_node.name }}" -> "{{ transition.output_node.name }}"
-                [label="{{ transition.name }} {% if transition.get_condition_descn %}: {% endif %} {{ transition.get_condition_descn }}"] ;
+    file_template = """
+        strict digraph {
+            rankdir=TB;
+            graph [ratio="auto"
+                label="{{ name }}"
+                labelloc=t
+                ];
+            node [shape = ellipse];
+            {
+                node [shape=diamond label="Router"];
+                {% for node in router_nodes %}
+                {{ node.name }};
                 {% endfor %}
             }
-        """  # NOQA
-        transitions = process.transition_set.all()
-        router_nodes = process.node_set.filter(node_type='router')
-        request = Context(
-            {
-                'name': process.name,
-                'router_nodes': router_nodes,
-                'transitions': transitions
-            }
-        )
-        t = Template(file_template)
-        G = pgv.AGraph(string=t.render(request))
-        return G
+            edge [fontsize=14]
+            {% for transition in transitions %}
+            "{{ transition.input_node.name }}" -> "{{ transition.output_node.name }}"
+            [label="{{ transition.name }} {% if transition.get_condition_descn %}: {% endif %} {{ transition.get_condition_descn }}"] ;
+            {% endfor %}
+        }
+    """  # NOQA
+    transitions = process.transition_set.all()
+    router_nodes = process.node_set.filter(node_type='router')
+    request = Context(
+        {
+            'name': process.name,
+            'router_nodes': router_nodes,
+            'transitions': transitions
+        }
+    )
+    t = Template(file_template)
+    G = pgv.AGraph(string=t.render(request))
+    return G
 
 
 def render_dot_graph(graph):

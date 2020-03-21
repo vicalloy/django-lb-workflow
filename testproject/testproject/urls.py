@@ -1,12 +1,12 @@
 from django.conf import settings
-from django.conf.urls import include
-from django.conf.urls import url
+from django.urls import include
+from django.urls import path
 from django.conf.urls.static import static
 
 
 urlpatterns = [
-    url(r'^', include('lbworkflow.tests.urls')),
-    url(r'^impersonate/', include('impersonate.urls')),
+    path('', include('lbworkflow.tests.urls')),
+    path('impersonate/', include('impersonate.urls')),
 ]
 
 if settings.DEBUG:
