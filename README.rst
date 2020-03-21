@@ -9,7 +9,7 @@ django-lb-workflow
 
 Reusable workflow library for Django.
 
-``django-lb-workflow`` supports Django 1.10+ on Python 3.4+.
+``django-lb-workflow`` supports Django 2.20+ on Python 3.5+.
 
 .. image:: https://github.com/vicalloy/django-lb-workflow/raw/master/docs/_static/demo-flow.png
 
