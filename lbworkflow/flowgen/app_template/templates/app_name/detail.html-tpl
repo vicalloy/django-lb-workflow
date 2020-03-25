@@ -1,8 +1,5 @@
 {% extends "lbworkflow/wf_base_detail.html" %}
 
-{% block flow_help %}
-{% endblock %}
-
 {% block right_side_header_ext_btns %}
     <a class="" target="_blank" href="{% url 'wf_print_detail' process_instance.pk %}">Print</a>
     <span>|</span>

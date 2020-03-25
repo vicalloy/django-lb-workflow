@@ -1,11 +1,8 @@
 {% extends "lbadminlte/mbase_popup.html" %}
 
-{% block flow_help %}
-  {{ for_test }}
-{% endblock %}
-
 {% block content %}
   {% include "leave/inc_detail_info.html" %}
   <br/>
   {% include "lbworkflow/inc_wf_history.html" %}
+  {{ for_test }}
 {% endblock %}

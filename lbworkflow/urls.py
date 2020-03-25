@@ -50,4 +50,7 @@ urlpatterns = [
     path('flowchart/process/<str:wf_code>/',
          flowchart.process_flowchart,
          name='wf_process_flowchart'),
+    path('flowchart/<int:pk>/',
+         flowchart.process_instance_flowchart,
+         name='wf_process_instance_flowchart'),
 ]

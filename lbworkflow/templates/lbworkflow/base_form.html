@@ -16,9 +16,6 @@
         <li>
           <a href="#id-tb-wf-log" role="tab" data-toggle="tab">Operate history</a>
         </li>
-        <li>
-          <a href="#id-tb-wf-graph" role="tab" data-toggle="tab">Help</a>
-        </li>
       </ul>
       <div class="tab-content">
         <div class="tab-pane active" id="id-tb-base">
@@ -29,14 +26,8 @@
         {% block right_side_tab_ctx_ext %}
         {% endblock %}
         <div class="tab-pane" id="id-tb-wf-log">
+          <a href="{% url 'wf_process_flowchart' process.code %}" target="_blank">Flow Chart</a>
           {% include "lbworkflow/inc_wf_history.html" %}
-        </div>
-        <div class="tab-pane" id="id-tb-wf-graph">
-          {% block flow_help %}
-          {% endblock %}
-          <a href="{% url 'wf_process_flowchart' process.code %}" target="_blank">Open in new window</a>
-          <br/>
-          <img src="{% url 'wf_process_flowchart' wf_code %}"/>
         </div>
       </div>
     </div>

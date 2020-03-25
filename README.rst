@@ -1,3 +1,5 @@
+https://github.com/mermaid-js/mermaid/
+
 django-lb-workflow
 ==================
 

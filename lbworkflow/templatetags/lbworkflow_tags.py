@@ -24,3 +24,10 @@ def flow_status_css_class(pinstance):
 @register.filter
 def category_have_perm_processes(category, user):
     return category.get_can_apply_processes(user)
+
+
+@register.filter(is_safe=True)
+def mermaid_transition_line(transition, event_transitions):
+    if (transition.input_node, transition.output_node) in event_transitions:
+        return '-->'
+    return '-.->'

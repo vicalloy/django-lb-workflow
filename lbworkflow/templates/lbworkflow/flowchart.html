@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div style="margin: 10px;">
+  <h1>{{ process.name }}</h1>
+  <div class="mermaid">
+    {{ graph_src }}
+  </div>
+</div>
+{% endblock %}
+
+{% block footer_ext %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" type="text/javascript"></script>
+<script>
+mermaid.initialize({startOnLoad:true});
+</script>
+{% endblock %}

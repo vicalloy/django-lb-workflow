@@ -1,8 +1,5 @@
 {% extends "lbadminlte/mbase_popup.html" %}
 
-{% block flow_help %}
-{% endblock %}
-
 {% block content %}
   {% include "[[ app_name ]]/inc_detail_info.html" %}
   <br/>

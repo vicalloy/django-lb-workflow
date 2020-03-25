@@ -1,57 +1,84 @@
-from django.http import HttpResponse
 from django.template import Context
 from django.template import Template
 
 from lbworkflow.models import Process
-
-try:
-    import pygraphviz as pgv
-except ImportError:
-    pass
+from lbworkflow.models import ProcessInstance
 
 
-def generate_process_flowchart(process):
+def get_event_transitions(process_instance):
+    from lbworkflow.models import Event
+    events = Event.objects.filter(instance=process_instance).order_by('-created_on', '-id')
+    transitions = []
+    for event in events:
+        transition = (event.old_node, event.new_node)
+        if event.old_node.status not in ['in progress']:
+            transitions.append(transition)
+            break
+        if transition not in transitions:
+            transitions.append(transition)
+    for t in transitions:
+        print(t)
+    return transitions
+
+
+def generate_mermaid_src(process_instance):
     file_template = """
-        strict digraph {
-            rankdir=TB;
-            graph [ratio="auto"
-                label="{{ name }}"
-                labelloc=t
-                ];
-            node [shape = ellipse];
-            {
-                node [shape=diamond label="Router"];
-                {% for node in router_nodes %}
-                {{ node.name }};
-                {% endfor %}
-            }
-            edge [fontsize=14]
-            {% for transition in transitions %}
-            "{{ transition.input_node.name }}" -> "{{ transition.output_node.name }}"
-            [label="{{ transition.name }} {% if transition.get_condition_descn %}: {% endif %} {{ transition.get_condition_descn }}"] ;
-            {% endfor %}
-        }
+    {% load lbworkflow_tags %}
+    graph TD
+    {% for node in nodes %}
+    {% if node.node_type == 'router' %}
+    {{node.pk}}{ {{node.name}} }
+    {% else %}
+    {{node.pk}}( {{node.name}} )
+    {% endif %}
+    {% endfor %}
+    {% for transition in transitions %}
+    {{ transition.input_node.pk }} {{ transition|mermaid_transition_line:event_transitions|safe }}{% if transition.get_condition_descn %}|{{transition.get_condition_descn}}|{% endif %} {{ transition.output_node.pk }}
+    {% endfor %}
     """  # NOQA
+    if isinstance(process_instance, Process):
+        process = process_instance
+        process_instance = None
+    else:
+        process = process_instance.process
+
     transitions = process.transition_set.all()
-    router_nodes = process.node_set.filter(node_type='router')
-    request = Context(
+    event_transitions = []
+    if process_instance:
+        event_transitions = get_event_transitions(process_instance)
+
+    nodes = process.node_set.all()
+    ctx = Context(
         {
             'name': process.name,
-            'router_nodes': router_nodes,
-            'transitions': transitions
+            'nodes': nodes,
+            'transitions': transitions,
+            'event_transitions': event_transitions
         }
     )
     t = Template(file_template)
-    G = pgv.AGraph(string=t.render(request))
-    return G
-
-
-def render_dot_graph(graph):
-    image_data = graph.draw(format='png', prog='dot')
-    return HttpResponse(image_data, content_type="image/png")
+    return t.render(ctx)
 
 
 def process_flowchart(request, wf_code):
+    from django.shortcuts import render
+    template_name = 'lbworkflow/flowchart.html'
     process = Process.objects.get(code=wf_code)
-    G = generate_process_flowchart(process)
-    return render_dot_graph(G)
+    graph_src = generate_mermaid_src(process)
+    ctx = {
+        'process': process,
+        'graph_src': graph_src
+    }
+    return render(request, template_name, ctx)
+
+
+def process_instance_flowchart(request, pk):
+    from django.shortcuts import render
+    template_name = 'lbworkflow/flowchart.html'
+    process_instance = ProcessInstance.objects.get(pk=pk)
+    graph_src = generate_mermaid_src(process_instance)
+    ctx = {
+        'process': process_instance.process,
+        'graph_src': graph_src
+    }
+    return render(request, template_name, ctx)

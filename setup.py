@@ -15,7 +15,6 @@ setup(
     install_requires=[
         'django>=2.2',
         'jsonfield>=1.0.1',
-        'pygraphviz>=1.3',
         'xlsxwriter>=0.9.6',
         'jinja2>=2.9.6',
         'django-lbutils>=1.1.0',
