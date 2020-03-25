@@ -11,13 +11,11 @@ def get_event_transitions(process_instance):
     transitions = []
     for event in events:
         transition = (event.old_node, event.new_node)
-        if event.old_node.status not in ['in progress']:
+        if event.new_node.status not in ['in progress']:
             transitions.append(transition)
             break
         if transition not in transitions:
             transitions.append(transition)
-    for t in transitions:
-        print(t)
     return transitions
 
 
