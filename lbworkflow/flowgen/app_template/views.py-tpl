@@ -1,7 +1,7 @@
 from lbworkflow.views.generics import CreateView
 from lbworkflow.views.generics import UpdateView
 from lbworkflow.views.generics import WFListView[% if item_list %]
-from lbworkflow.views.mixin import BSFormSetMixin[% endif %]
+from lbworkflow.views.forms import BSFormSetMixin[% endif %]
 
 from .forms import [[ class_name ]]Form
 [% if item_list %][% for item in item_list %]
