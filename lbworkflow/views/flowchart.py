@@ -11,8 +11,7 @@ def get_event_transitions(process_instance):
     transitions = []
     for event in events:
         transition = (event.old_node, event.new_node)
-        if event.new_node.status not in ['in progress']:
-            transitions.append(transition)
+        if event.new_node.status in ['rejected', 'given up']:
             break
         if transition not in transitions:
             transitions.append(transition)
