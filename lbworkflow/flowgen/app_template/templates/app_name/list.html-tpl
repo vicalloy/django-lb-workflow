@@ -1,7 +1,6 @@
 {% extends "base_ext.html" %}
 
 {% load crispy_forms_tags %}
-{% load el_pagination_tags %}
 {% load lbworkflow_tags %}
 
 {% block nav_sel_node %}id-nav-[[ wf_code ]]{% endblock %}
