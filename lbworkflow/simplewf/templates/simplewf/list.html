@@ -30,11 +30,8 @@
             <tr>
               <th>NO.</th>
               <th>Created by</th>
-
               <th>Summary</th>
-
               <th>Content</th>
-
               <th>Created on</th>
               <th>Current operator</th>
               <th>Activity</th>
@@ -43,11 +40,8 @@
               <tr>
                 <td><a href="{% url 'wf_detail' pi.pk %}">{{ pi.no }}</a></td>
                 <td>{{ pi.created_by }}</td>
-
                 <td>{{ o.summary }}</td>
-
                 <td>{{ o.content }}</td>
-
                 <td>{{ pi.created_on|date:"Y-m-d H:i" }}</td>
                 <td>{{ pi.get_operators_display }}</td>
                 <td>
