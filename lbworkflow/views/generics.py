@@ -177,10 +177,6 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
         fields.extend(self.quick_query_fields)
         return fields
 
-    def get_permit_query_param(self, user, q_param):
-        # override this function to add addition permit
-        return q_param
-
     def get_queryset(self):
         qs = super().get_queryset()
         # only show have permission
@@ -190,6 +186,5 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
         if not user.is_superuser:
             return qs
         q_param = get_base_wf_permit_query_param(user)
-        q_param = self.get_permit_query_param(user, q_param)
         qs = qs.filter(q_param).distinct()
         return qs
