@@ -60,12 +60,9 @@ def user_wf_info_as_dict(wf_obj, user):
     ctx['operators_display'] = instance.get_operators_display()
     ctx['is_wf_admin'] = is_wf_admin
 
-    can_edit = not instance.cur_node.is_submitted() and instance.created_by == user
-    can_edit = can_edit or (instance.cur_node.can_edit and task)
-    can_edit = can_edit or is_wf_admin
-    ctx['can_edit'] = can_edit
-    ctx['can_rollback'] = instance.can_rollback(user)
+    ctx['can_edit'] = True  # FIXME
 
+    ctx['can_rollback'] = instance.can_rollback(user)
     if in_process:
         ctx['can_assign'] = task or is_wf_admin or user.is_superuser
         ctx['can_remind'] = instance.created_by == user or is_wf_admin

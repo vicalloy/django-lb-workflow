@@ -54,7 +54,6 @@ class ViewTests(BaseTests):
     def test_detail(self):
         resp = self.client.get(reverse('wf_detail', args=('1', )))
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, 'from leave.detail')
 
     def test_submit(self):
         self.client.login(username='owner', password='password')

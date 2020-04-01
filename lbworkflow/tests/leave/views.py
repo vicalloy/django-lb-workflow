@@ -45,7 +45,3 @@ class LeaveListView(WFListView):
 
 
 show_list = LeaveListView.as_view()
-
-
-def detail(request, instance, ext_ctx, *args, **kwargs):
-    return {'for_test': 'from leave.detail'}

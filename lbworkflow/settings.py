@@ -1,4 +1,20 @@
 from django.conf import settings as django_settings
+from django.utils.module_loading import import_string
+
+
+def perform_import(val):
+    """
+    If the given setting is a string import notation,
+    then perform the necessary import or imports.
+    """
+    if val is None:
+        return None
+    elif isinstance(val, str):
+        return import_string(val)
+    elif isinstance(val, (list, tuple)):
+        return [import_string(item) for item in val]
+    return val
+
 
 AUTH_USER_MODEL = getattr(django_settings, 'AUTH_USER_MODEL', 'auth.User')
 
@@ -16,21 +32,24 @@ WF_SEND_MSG_FUNCS = getattr(
     ['lbworkflow.core.sendmsg.wf_print', ],
 )
 
+DEFAULT_PERMISSION_CLASSES = getattr(
+    django_settings, 'LBWF_DEFAULT_PERMISSION_CLASSES', []
+)
+DEFAULT_NEW_WF_PERMISSION_CLASSES = getattr(
+    django_settings, 'LBWF_DEFAULT_NEW_PERMISSION_CLASSES', []
+)
+DEFAULT_EDIT_WF_PERMISSION_CLASSES = getattr(
+    django_settings, 'LBWF_DEFAULT_EDIT_PERMISSION_CLASSES',
+    ['lbworkflow.views.permissions.DefaultEditWorkFlowPermission']
+)
+DEFAULT_DETAIL_WF_PERMISSION_CLASSES = getattr(
+    django_settings, 'LBWF_DEFAULT_DETAIL_PERMISSION_CLASSES',
+    ['lbworkflow.views.permissions.DefaultDetailWorkFlowPermission']
+)
+
 GET_USER_DISPLAY_NAME_FUNC = getattr(
     django_settings, 'LBWF_GET_USER_DISPLAY_NAME_FUNC',
     lambda user: "%s" % user)
-
-CAN_EDIT_WF_FUNC = getattr(
-    django_settings, 'LBWF_CAN_EDIT_WF_FUNC',
-    lambda *args, **kwargs: True)
-
-CAN_SUBMIT_WF_FUNC = getattr(
-    django_settings, 'LBWF_CAN_SUBMIT_WF_FUNC',
-    lambda *args, **kwargs: True)
-
-CAN_VIEW_WF_FUNC = getattr(
-    django_settings, 'LBWF_CAN_VIEW_WF_FUNC',
-    lambda *args, **kwargs: True)
 
 DEBUG_WORKFLOW = getattr(django_settings, 'LBWF_DEBUG_WORKFLOW', False)
 WF_APPS = getattr(django_settings, 'LBWF_APPS', {})

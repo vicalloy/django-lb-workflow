@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.forms import ModelForm
-from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic.base import TemplateResponseMixin
@@ -75,26 +75,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
         self.object = instance.content_object
 
     def raise_no_permission_exception(self, instance=None):
-        from django.template import Context, Template
-        t = Template("""
-            <!DOCTYPE HTML>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <title></title>
-            </head>
-            <body>
-                No permission to perform this action
-                {% if instance %}
-                    <br/>
-                    <a href="{% url 'wf_detail' instance.pk %}"> View this process </a>
-                {% endif %}
-            </body>
-            </html>
-            """)
-        http_response = HttpResponse(
-            t.render(Context({"instance": instance})), content_type='text/html', status=403)
-        raise HttpResponseException(http_response)
+        raise PermissionDenied()
 
     def has_permission(self, request, instance, task, transition):
         node_is_ok = (

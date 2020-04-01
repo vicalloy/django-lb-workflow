@@ -183,3 +183,7 @@ COMPRESS_PRECOMPILERS = (
 )
 
 PROJECT_TITLE = 'LB-Workflow'
+
+LBWF_DEFAULT_PERMISSION_CLASSES = ['lbworkflow.views.permissions.AllowAny']
+LBWF_DEFAULT_NEW_PERMISSION_CLASSES = ['lbworkflow.tests.permissions.TestPermission']
+# LBWF_DEFAULT_EDIT_PERMISSION_CLASSES = ['lbworkflow.views.permissions.AllowAny']

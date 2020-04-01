@@ -1,7 +1,9 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from django.urls import reverse
+from django.views.generic.base import ContextMixin
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.base import View
 from django.views.generic.list import MultipleObjectMixin
@@ -18,16 +20,20 @@ from .forms import FormsView
 from .helper import get_base_wf_permit_query_param
 from .helper import get_wf_template_names
 from .helper import user_wf_info_as_dict
+from .permissions import PermissionMixin
 
 
 class WorkflowTemplateResponseMixin(TemplateResponseMixin):
+    def get_base_template_name(self):
+        return self.base_template_name
+
     def get_template_names(self):
         try:
             return super().get_template_names()
         except ImproperlyConfigured:
             return get_wf_template_names(
                 self.wf_code,
-                self.base_template_name,
+                self.get_base_template_name(),
                 wf_object=getattr(self, 'object', None),
                 model=getattr(self, 'model', None))
 
@@ -53,10 +59,13 @@ class ExcelResponseMixin:
             object_list, lambda o: self.get_formated_excel_data(o))
 
 
-class CreateView(WorkflowTemplateResponseMixin, FormsView):
+class CreateView(PermissionMixin, WorkflowTemplateResponseMixin, FormsView):
     form_classes = {
         # 'form': None,  # the form for BaseWFObj should named as form
     }
+    permission_classes = settings.perform_import(
+        settings.DEFAULT_NEW_WF_PERMISSION_CLASSES
+    )
     wf_code = None
     model = None
     base_template_name = 'form.html'
@@ -80,13 +89,18 @@ class CreateView(WorkflowTemplateResponseMixin, FormsView):
 
     def dispatch(self, request, wf_code, *args, **kwargs):
         self.wf_code = wf_code
+        process = get_object_or_404(Process, code=wf_code)
+        self.check_all_permissions(request, process)
         return super().dispatch(request, *args, **kwargs)
 
 
-class UpdateView(WorkflowTemplateResponseMixin, FormsView):
+class UpdateView(PermissionMixin, WorkflowTemplateResponseMixin, FormsView):
     form_classes = {
         # 'form': None,  # the form for BaseWFObj should named as form
     }
+    permission_classes = settings.perform_import(
+        settings.DEFAULT_EDIT_WF_PERMISSION_CLASSES
+    )
     wf_code = None
     model = None
     base_template_name = 'form.html'
@@ -110,6 +124,7 @@ class UpdateView(WorkflowTemplateResponseMixin, FormsView):
     def dispatch(self, request, wf_object, *args, **kwargs):
         self.object = wf_object
         self.wf_code = wf_object.pinstance.process.code
+        self.check_all_permissions(request, wf_object)
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -177,14 +192,47 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
         fields.extend(self.quick_query_fields)
         return fields
 
-    def get_queryset(self):
-        qs = super().get_queryset()
+    def permit_filter(self, qs):
         # only show have permission
         user = self.request.user
+        if user.is_superuser:
+            q_param = get_base_wf_permit_query_param(user)
+            qs = qs.filter(q_param).distinct()
+        return qs
+
+    def get_queryset(self):
+        qs = super().get_queryset()
         if self.wf_code:
             qs = qs.filter(pinstance__process__code=self.wf_code)
-        if not user.is_superuser:
-            return qs
-        q_param = get_base_wf_permit_query_param(user)
-        qs = qs.filter(q_param).distinct()
+        qs = self.permit_filter(qs)
         return qs
+
+
+class DetailView(PermissionMixin, WorkflowTemplateResponseMixin, ContextMixin, View):
+    permission_classes = settings.perform_import(
+        settings.DEFAULT_DETAIL_WF_PERMISSION_CLASSES
+    )
+    base_template_name = 'detail.html'
+    base_print_template_name = 'print.html'
+
+    def get_base_template_name(self):
+        if self.is_print:
+            return self.base_print_template_name
+        return self.base_template_name
+
+    def get(self, request, *args, **kwargs):
+        user_wf_info = user_wf_info_as_dict(self.object, request.user)
+        context = self.get_context_data(**user_wf_info)
+        instance = self.object.pinstance
+        if not self.is_print and instance.cur_node.can_edit \
+                and instance.cur_node.audit_view_type == 'edit' \
+                and user_wf_info['task'] and instance.cur_node.resolution == 'started':
+            return redirect(reverse('wf_edit', args=[instance.pk]))
+        return self.render_to_response(context)
+
+    def dispatch(self, request, wf_object, is_print, *args, **kwargs):
+        self.object = wf_object
+        self.is_print = is_print
+        self.wf_code = wf_object.pinstance.process.code
+        self.check_all_permissions(request, wf_object)
+        return super().dispatch(request, *args, **kwargs)

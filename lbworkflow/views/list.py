@@ -20,6 +20,14 @@ class ListWF(ListView):
         'cur_node__name',
     ]
 
+    def permit_filter(self, qs):
+        # only show have permission
+        user = self.request.user
+        if not user.is_superuser:
+            q_param = get_base_wf_permit_query_param(user)
+            qs = qs.filter(q_param)
+        return qs
+
     def get_queryset(self):
         user = self.request.user
         qs = super().get_queryset()
