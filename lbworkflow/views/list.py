@@ -24,17 +24,14 @@ class ListWF(ListView):
         # only show have permission
         user = self.request.user
         if not user.is_superuser:
-            q_param = get_base_wf_permit_query_param(user)
+            q_param = get_base_wf_permit_query_param(user, '')
             qs = qs.filter(q_param)
         return qs
 
     def get_queryset(self):
-        user = self.request.user
         qs = super().get_queryset()
         qs = qs.exclude(cur_node__status__in=['draft', 'given up'])
-        if not user.is_superuser:
-            q_param = get_base_wf_permit_query_param(user, '')
-            qs = qs.filter(q_param)
+        qs = self.permit_filter(qs)
         qs = qs.select_related(
             'process',
             'created_by',
