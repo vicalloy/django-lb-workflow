@@ -33,8 +33,7 @@ def detail(request, pk, ext_ctx={}):
     views = import_wf_views(instance.process.code)
     is_print = ext_ctx.get('is_print')
     func_detail = getattr(views, 'detail', DetailView.as_view())
-    x = func_detail(request, instance.content_object, is_print)
-    return x
+    return func_detail(request, instance.content_object, is_print)
 
 
 def delete(request):
