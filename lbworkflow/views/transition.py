@@ -3,8 +3,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.forms import ModelForm
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormView
 from lbutils import as_callable
@@ -37,9 +36,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
     form_classes = {
         'form': as_callable(settings.WORK_FLOW_FORM)
     }
-
-    def get_success_url(self):
-        return reverse("wf_todo")
+    success_url = reverse_lazy("wf_todo")
 
     def get_template_names(self):
         try:
@@ -123,7 +120,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
             self.save_form(other_form)
         self.do_transition(form.cleaned_data)
         self.add_processed_message(self.process_instance)
-        return HttpResponseRedirect(self.get_success_url())
+        return super().forms_valid(**forms)
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
@@ -145,9 +142,7 @@ class ExecuteTransitionView(TemplateResponseMixin, FormsView):
 class BatchExecuteTransitionView(FormView):
     template_name = 'lbworkflow/batch_transition_form.html'
     form_class = as_callable(settings.BATCH_WORK_FLOW_FORM)
-
-    def get_success_url(self):
-        return reverse("wf_todo")
+    success_url = reverse_lazy("wf_todo")
 
     def get_context_data(self, **kwargs):
         kwargs['task_list'] = self.task_list
@@ -183,7 +178,7 @@ class BatchExecuteTransitionView(FormView):
                 user, instance, task, transition, comment, attachments
             ).execute()
             self.add_processed_message(instance)
-        return HttpResponseRedirect(self.get_success_url())
+        return super().form_valid(form)
 
     def get_task_list(self, request):
         task_pk_list = request.POST.getlist('wi')
@@ -224,9 +219,7 @@ class ExecuteBackToTransitionView(ExecuteTransitionView):
 
 
 class ExecuteGiveUpTransitionView(ExecuteTransitionView):
-
-    def get_success_url(self):
-        return reverse("wf_my_wf")
+    success_url = reverse_lazy("wf_my_wf")
 
     def get_task(self, request):
         pk = request.GET.get('pk')
@@ -247,9 +240,7 @@ class ExecuteGiveUpTransitionView(ExecuteTransitionView):
 
 
 class BatchExecuteGiveUpTransitionView(BatchExecuteTransitionView):
-
-    def get_success_url(self):
-        return reverse("wf_my_wf")
+    success_url = reverse_lazy("wf_my_wf")
 
     def get_task_list(self, request):
         instance_pk_list = request.POST.getlist('pi')
