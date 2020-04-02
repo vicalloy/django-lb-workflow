@@ -137,10 +137,6 @@ class Process(models.Model):
     def __str__(self):
         return self.name
 
-    def have_apply_perm(self, user):
-        # TODO check permission
-        return True
-
     def get_draft_active(self):
         return get_or_none(Node, process=self, status='draft')
 
