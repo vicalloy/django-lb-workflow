@@ -78,10 +78,6 @@ class ProcessInstance(models.Model):
         # TODO permission
         return user.is_superuser
 
-    def can_view(self, user, ext_param_process=None):
-        # TODO permission
-        return True
-
     def can_give_up(self, user):
         if self.cur_node.status != 'in progress':
             return False
@@ -451,10 +447,7 @@ class BaseWFObj(models.Model):
         update self.pinstance.summary on save.
         """
         super().save(*args, **kwargs)
-        instance = self.pinstance
-        if instance:
-            instance.summary = self.get_process_summary()
-            instance.save()
+        self.update_process_summary(commit=True)
 
     def create_pinstance(self, process, submit=False):
         """
