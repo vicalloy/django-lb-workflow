@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import inspect
 import os
+import uuid
 import shutil
 import sys
 
@@ -60,6 +61,8 @@ if __name__ == "__main__":
             load_data()
         elif cmd == 'clean':
             clean()
+        elif cmd == 'uuid':
+            print(str(uuid.uuid4()))
         sys.exit(0)
     gen()
     call_command('makemigrations', 'issue')
