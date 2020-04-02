@@ -11,6 +11,9 @@ class SimpleWorkFlowCreateView(CreateView):
         'form': SimpleWorkFlowForm,
     }
 
+    def get_initial(self, form_class_key):
+        return {'content': self.process.ext_data.get('template', '')}
+
 
 new = SimpleWorkFlowCreateView.as_view()
 

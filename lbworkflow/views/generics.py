@@ -90,6 +90,7 @@ class CreateView(PermissionMixin, WorkflowTemplateResponseMixin, FormsView):
     def dispatch(self, request, wf_code, *args, **kwargs):
         self.wf_code = wf_code
         process = get_object_or_404(Process, code=wf_code)
+        self.process = process
         self.check_all_permissions(request, process)
         return super().dispatch(request, *args, **kwargs)
 
