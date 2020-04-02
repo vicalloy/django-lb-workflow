@@ -194,11 +194,11 @@ class TransitionExecutor(object):
         event = self.last_event
         to_node = event.new_node
 
-        next_operators = to_node.get_operators(instance.created_by, self.operator, instance)
+        next_operators, notice_users, can_view_users = to_node.get_users(
+            instance.created_by, self.operator, instance
+        )
         event.next_operators.add(*next_operators)
-        notice_users = to_node.get_notice_users(instance.created_by, self.operator, instance)
         event.notice_users.add(*notice_users)
-        can_view_users = to_node.get_share_users(instance.created_by, self.operator, instance)
         instance.can_view_users.add(*can_view_users)
 
     def _do_transfer(self):
