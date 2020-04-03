@@ -230,7 +230,7 @@ class Authorization(models.Model):
             authorization=self, status='in progress'
         ).update(agent_user=None)
         Task.objects.filter(
-            user=self.authorized_user, status='in progress',
+            user=self.user, status='in progress',
             instance__process__in=self.processes.all(),
         ).update(agent_user=self.agent_user, authorization=self)
 
