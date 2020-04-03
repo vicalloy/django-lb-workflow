@@ -12,23 +12,29 @@ from .models import Task
 from .models import Transition
 
 
+@admin.register(ProcessCategory)
 class ProcessCategoryAdmin(admin.ModelAdmin):
     search_fields = ('name', )
     list_display = ('name', 'oid', 'is_active')
 
 
+@admin.register(ProcessReportLink)
 class ProcessReportLinkAdmin(admin.ModelAdmin):
     search_fields = ('category__name', 'name', 'url')
     list_display = ('name', 'url', 'category', 'perm', 'oid', 'is_active')
     list_filter = ('category',)
+    autocomplete_fields = ('category',)
 
 
+@admin.register(Process)
 class ProcessAdmin(admin.ModelAdmin):
     search_fields = ('code', 'prefix', 'name', 'category__name')
     list_display = ('code', 'prefix', 'name', 'category', 'oid', 'is_active')
     list_filter = ('category',)
+    autocomplete_fields = ('category',)
 
 
+@admin.register(Node)
 class NodeAdmin(admin.ModelAdmin):
     search_fields = (
         'process__name', 'process__code', 'name', 'code',
@@ -39,8 +45,10 @@ class NodeAdmin(admin.ModelAdmin):
         'operators', 'notice_users', 'share_users',
         'is_active')
     list_filter = ('process',)
+    autocomplete_fields = ('process',)
 
 
+@admin.register(Transition)
 class TransitionAdmin(admin.ModelAdmin):
     search_fields = (
         'process__name', 'process__code',
@@ -53,12 +61,16 @@ class TransitionAdmin(admin.ModelAdmin):
         'app', 'app_param', 'condition',
         'oid', 'is_active')
     list_filter = ('process',)
+    raw_id_fields = ('input_node', 'output_node', )
+    autocomplete_fields = ('process',)
 
 
+@admin.register(App)
 class AppAdmin(admin.ModelAdmin):
     list_display = ('name', 'app_type', 'action')
 
 
+@admin.register(ProcessInstance)
 class ProcessInstanceAdmin(admin.ModelAdmin):
     search_fields = (
         'process__name', 'process__code',
@@ -70,8 +82,10 @@ class ProcessInstanceAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'content_type', 'created_by', 'attachments', 'can_view_users',
         'cur_node')
+    autocomplete_fields = ('process',)
 
 
+@admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     search_fields = (
         'instance__no', 'node__name', 'user__username',
@@ -83,6 +97,7 @@ class TaskAdmin(admin.ModelAdmin):
     raw_id_fields = ('instance', 'node', 'user', 'agent_user', 'authorization', )
 
 
+@admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     search_fields = (
         'instance__no', 'user__username', 'old_node__name',
@@ -92,22 +107,16 @@ class EventAdmin(admin.ModelAdmin):
         'new_node', 'created_on')
     raw_id_fields = (
         'instance', 'user', 'task', 'next_operators',
-        'notice_users')
+        'notice_users', 'attachments', 'old_node', 'new_node')
 
 
+def get_processes(o):
+    return ', '.join(e.name for e in o.processes.all())
+
+
+@admin.register(Authorization)
 class AuthorizationAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'agent_user__username')
-    list_display = ('user', 'agent_user', 'start_on', 'end_on')
+    list_display = ('user', 'agent_user', get_processes, 'start_on', 'end_on')
     raw_id_fields = ('user', 'agent_user')
-
-
-admin.site.register(ProcessCategory, ProcessCategoryAdmin)
-admin.site.register(Process, ProcessAdmin)
-admin.site.register(Node, NodeAdmin)
-admin.site.register(Transition, TransitionAdmin)
-admin.site.register(App, AppAdmin)
-admin.site.register(ProcessInstance, ProcessInstanceAdmin)
-admin.site.register(Task, TaskAdmin)
-admin.site.register(Event, EventAdmin)
-admin.site.register(Authorization, AuthorizationAdmin)
-admin.site.register(ProcessReportLink, ProcessReportLinkAdmin)
+    autocomplete_fields = ('processes', )
