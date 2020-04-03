@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db import models
-from lbutils import get_or_none
 
 from lbworkflow.core.helper import safe_eval
 
@@ -43,7 +42,16 @@ class SimpleUserParser(BaseUserParser):
     def process_func(self, func_str):
         return None
 
-    def _get_users(self, user_str):
+    def get_object_list(self, atom_str, obj_class, nature_key, start_char="[", end_char="]"):
+        atom_str = remove_brackets(atom_str, start_char, end_char)
+        if '.' in atom_str:
+            return self.eval_as_list(atom_str)
+        if ':' in atom_str:
+            pk = atom_str.split(':')[0]
+            return obj_class.objects.filter(pk=pk)
+        return obj_class.objects.filter(**{nature_key: atom_str})
+
+    def get_users(self, user_str):
         """
         #owner
         #operator
@@ -58,12 +66,7 @@ class SimpleUserParser(BaseUserParser):
                 return [self.owner]
             elif user_str == 'operator':
                 return [self.operator]
-        if '.' in user_str:
-            return self.eval_as_list(user_str)
-        if ':' in user_str:
-            pk = user_str.split(':')[0]
-            return User.objects.filter(pk=pk)
-        return User.objects.filter(username=user_str)
+        return self.get_object_list(user_str, User, 'username')
 
     def _get_groups(self, group_str):
         """
@@ -71,18 +74,13 @@ class SimpleUserParser(BaseUserParser):
         g[o.groups]
         g[11:admins]
         """
-        group_str = remove_brackets(group_str, 'g[')
-        if '.' in group_str:
-            return self.eval_as_list(group_str)
-        pk = group_str.split(':')[0]
-        group = get_or_none(Group, pk=pk)
-        return [group] if group else []
+        return self.get_object_list(group_str, Group, 'pk', 'g[')
 
-    def _get_users_by_groups(self, group_str):
+    def get_users_by_groups(self, group_str):
         groups = self._get_groups(group_str)
         return User.objects.filter(group__in=groups)
 
-    def _paser_atom_rule(self, atom_rule):
+    def parse_atom_rule(self, atom_rule):
         """
         #owner
         #operator
@@ -97,24 +95,24 @@ class SimpleUserParser(BaseUserParser):
         if users is not None:  # is function
             return users
         if atom_rule.startswith('#'):
-            return self._get_users(atom_rule)
+            return self.get_users(atom_rule)
         elif atom_rule.startswith('g['):  # role(group)
-            return self._get_users_by_groups(atom_rule)
+            return self.get_users_by_groups(atom_rule)
         elif atom_rule.startswith('['):  # user
-            return self._get_users(atom_rule)
+            return self.get_users(atom_rule)
         # log it?
         return None
 
-    def _to_users(self, rules):
+    def to_users(self, rules):
         all_users = []
         for rule in rules:
-            users = self._paser_atom_rule(rule)
+            users = self.parse_atom_rule(rule)
             if users is not None:
                 all_users.extend(users)
         # TODO ignore quited users
         return all_users
 
-    def _get_active_rules(self):
+    def get_active_rules(self):
         """
         :o.leave_days<7
         [vicalloy]
@@ -135,9 +133,9 @@ class SimpleUserParser(BaseUserParser):
         return [e.strip() for e in str_rules.split(',') if e.strip()]
 
     def parse(self):
-        rules = self._get_active_rules()
+        rules = self.get_active_rules()
         active_rules = []
         for rule in rules:
             active_rules.append(rule)
-        users = self._to_users(active_rules)
+        users = self.to_users(active_rules)
         return list(set(users))
