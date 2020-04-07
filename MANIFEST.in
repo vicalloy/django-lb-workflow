@@ -4,6 +4,7 @@ include LICENSE
 recursive-include lbworkflow/static *
 recursive-include lbworkflow/locale *
 recursive-include lbworkflow/templates *
+recursive-include lbworkflow/simplewf/templates *
 recursive-include lbworkflow/flowgen/app_template *
 global-exclude __pycache__
 global-exclude *.py[co]
