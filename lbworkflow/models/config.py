@@ -1,6 +1,5 @@
 import uuid
 
-from django.conf import settings as django_settings
 from django.db import models
 from django.template import Context
 from django.template import Template
@@ -13,13 +12,6 @@ from lbutils import get_or_none
 from lbworkflow import settings
 from lbworkflow.core.helper import safe_eval
 
-AUTH_USER_MODEL = getattr(django_settings, 'AUTH_USER_MODEL', 'auth.User')
-
-
-class ProcessCategoryManager(models.Manager):
-    def get_by_natural_key(self, uuid):
-        return self.get(uuid=uuid)
-
 
 class ProcessCategory(models.Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
@@ -27,8 +19,6 @@ class ProcessCategory(models.Model):
 
     oid = models.IntegerField(_('Order'), default=999)
     is_active = models.BooleanField(_('Is active'), default=True)
-
-    objects = ProcessCategoryManager()
 
     class Meta:
         ordering = ["oid"]
@@ -54,12 +44,8 @@ class ProcessCategory(models.Model):
         return self.process_set.order_by('oid')
 
 
-class ProcessReportLinkManager(models.Manager):
-    def get_by_natural_key(self, uuid):
-        return self.get(uuid=uuid)
-
-
 class ProcessReportLink(models.Model):
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     category = models.ForeignKey(
         ProcessCategory,
         blank=True, null=True,
@@ -74,8 +60,6 @@ class ProcessReportLink(models.Model):
     oid = models.IntegerField('Order', default=999)
     is_active = models.BooleanField('Is active', default=True)
 
-    objects = ProcessReportLinkManager()
-
     class Meta:
         ordering = ["oid"]
 
@@ -89,10 +73,10 @@ class ProcessReportLink(models.Model):
         except Exception:
             return self.url
 
-
-class ProcessManager(models.Manager):
-    def get_by_natural_key(self, code):
-        return self.get(code=code)
+    def natural_key(self):
+        return (
+            self.uuid,
+        )
 
 
 class Process(models.Model):
@@ -119,8 +103,6 @@ class Process(models.Model):
     oid = models.IntegerField('Order', default=999)
     is_active = models.BooleanField('Is active', default=True)
     ext_data = JSONField(default="{}")
-
-    objects = ProcessManager()
 
     class Meta:
         verbose_name = 'Process'
@@ -208,11 +190,6 @@ class Process(models.Model):
         return transition
 
 
-class NodeManager(models.Manager):
-    def get_by_natural_key(self, uuid):
-        return self.get(uuid=uuid)
-
-
 class Node(models.Model):
     """
     Node is the states of an instance.
@@ -272,8 +249,6 @@ class Node(models.Model):
     is_active = models.BooleanField('Is active', default=True)
     ext_data = JSONField(default="{}")
 
-    objects = NodeManager()
-
     def __str__(self):
         return self.name
 
@@ -305,11 +280,6 @@ class Node(models.Model):
         notice_users = self.get_notice_users(owner, operator, instance)
         share_users = self.get_share_users(owner, operator, instance)
         return operators, notice_users, share_users
-
-
-class TransitionManager(models.Manager):
-    def get_by_natural_key(self, uuid):
-        return self.get(uuid=uuid)
 
 
 class Transition(models.Model):
@@ -375,8 +345,6 @@ class Transition(models.Model):
     is_active = models.BooleanField('Is active', default=True)
     ext_data = JSONField(default="{}")
 
-    objects = TransitionManager()
-
     def __str__(self):
         return '%s - %s' % (self.process.name, self.name)
 
@@ -402,11 +370,6 @@ class Transition(models.Model):
         return self.app.get_url(task, self)
 
 
-class AppManager(models.Manager):
-    def get_by_natural_key(self, uuid):
-        return self.get(uuid=uuid)
-
-
 class App(models.Model):
     """
     An application is a python view that can be called by URL.
@@ -421,8 +384,6 @@ class App(models.Model):
         max_length=255, blank=True,
         help_text="URL: It can be url or django's url name. If it's blank will use transition's app param")
     note = models.TextField(blank=False)
-
-    objects = AppManager()
 
     def __str__(self):
         return self.name
