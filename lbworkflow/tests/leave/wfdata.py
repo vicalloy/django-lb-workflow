@@ -10,7 +10,7 @@ def load_data():
 
 def load_leave():
     """ load_[wf_code] """
-    category = create_category('5f31d065-00cc-0010-beea-641f0a670010', 'HR')
+    category = create_category('5f31d065-00cc-0020-beea-641f0a670010', 'HR')
     process = create_process('leave', 'Leave', category=category)
     create_node('5f31d065-00a0-0010-beea-641f0a670010', process, 'Draft', status='draft')
     create_node('5f31d065-00a0-0010-beea-641f0a670010', process, 'Draft', status='draft')  # test for update
