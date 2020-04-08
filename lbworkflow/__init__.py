@@ -1,6 +1,6 @@
 from lbworkflow.version import get_version
 
-VERSION = (0, 9, 9, 'alpha', 0)
+VERSION = (1, 0, 0, 'alpha', 0)
 
 __version__ = get_version(VERSION)
 
