@@ -1,4 +1,4 @@
-from django.utils.version import get_version
+from lbworkflow.version import get_version
 
 VERSION = (0, 9, 9, 'alpha', 0)
 
