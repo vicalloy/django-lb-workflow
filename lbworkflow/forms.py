@@ -73,8 +73,8 @@ class WorkflowFormMixin:
         obj = self.save()
         # add a edit event, change resolution to draft
         instance = obj.pinstance
-        if instance.cur_node.status in ['rejected', 'draft']:
-            Task.objects.filter(instance=instance, status='running').delete()
+        if instance.cur_node.status in ['rejected', 'draft', 'given up']:
+            Task.objects.filter(instance=instance, status='in progress').delete()
             Event.objects.create(
                 instance=instance, old_node=instance.cur_node,
                 new_node=instance.process.get_draft_active(),
