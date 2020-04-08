@@ -8,6 +8,6 @@ django-lb-workflow = {editable=true, extras=["options"], path = "."}
 
 [dev-packages]
 coverage = "*"
-flake8 = ">=2.0,<3.0"
+flake8 = "==3.7.9"
 isort = "*"
 pre-commit = "*"
