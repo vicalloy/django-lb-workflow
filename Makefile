@@ -1,14 +1,14 @@
+run:
+	cd testproject;python manage.py runserver 0.0.0.0:9000
+
 pyenv:
-	#pip install pipenv --upgrade
-	#pipenv --python 3
+	pip install pipenv --upgrade
+	pipenv --python 3
 	pipenv install -d --skip-lock
 	pipenv shell
 
 test:
 	coverage run ./runtests.py
-
-run:
-	cd testproject;python manage.py runserver 0.0.0.0:9000
 
 isort:
 	isort --recursive lbworkflow
