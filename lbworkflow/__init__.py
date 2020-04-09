@@ -1,7 +1,5 @@
-from lbworkflow.version import get_version
+VERSION = (1, 0, 1, 'alpha', 0)
 
-VERSION = (1, 0, 0, 'alpha', 0)
-
-__version__ = get_version(VERSION)
+__version__ = '1.0.1'
 
 default_app_config = 'lbworkflow.apps.LBWorkflowConfig'
