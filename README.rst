@@ -24,6 +24,14 @@ Switch to another user: http://wf.haoluobo.com/impersonate/search
 
 Stop switch: http://wf.haoluobo.com/impersonate/stop
 
+The code of demo site
+---------------------
+
+Carrot Box: https://github.com/vicalloy/carrot-box/
+
+It's a workflow platform, you can start a new project with it.
+
+
 Documentation
 -------------
 
