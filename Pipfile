@@ -11,3 +11,7 @@ coverage = "*"
 flake8 = "==3.7.9"
 isort = "*"
 pre-commit = "*"
+black = "*"
+
+[pipenv]
+allow_prereleases = true

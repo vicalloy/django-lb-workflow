@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lbworkflow', '0002_auto_20171019_0549'),
+        ("lbworkflow", "0002_auto_20171019_0549"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='task',
-            name='is_joint',
-            field=models.BooleanField(default=False, verbose_name='Is joint'),
+            model_name="task",
+            name="is_joint",
+            field=models.BooleanField(default=False, verbose_name="Is joint"),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='created_on',
+            model_name="event",
+            name="created_on",
             field=models.DateTimeField(auto_now_add=True),
         ),
         migrations.AlterField(
-            model_name='task',
-            name='created_on',
+            model_name="task",
+            name="created_on",
             field=models.DateTimeField(auto_now_add=True),
         ),
     ]

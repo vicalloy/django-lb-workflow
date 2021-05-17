@@ -11,22 +11,59 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('lbworkflow', '0003_auto_20200221_0438'),
+        ("lbworkflow", "0003_auto_20200221_0438"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SimpleWorkFlow',
+            name="SimpleWorkFlow",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True, verbose_name='Created on')),
-                ('summary', models.CharField(max_length=255, verbose_name='Summary')),
-                ('content', models.TextField(blank=True, verbose_name='Content')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='Created by')),
-                ('pinstance', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='simpleworkflow', to='lbworkflow.ProcessInstance', verbose_name='Process instance')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_on",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created on"
+                    ),
+                ),
+                (
+                    "summary",
+                    models.CharField(max_length=255, verbose_name="Summary"),
+                ),
+                (
+                    "content",
+                    models.TextField(blank=True, verbose_name="Content"),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created by",
+                    ),
+                ),
+                (
+                    "pinstance",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="simpleworkflow",
+                        to="lbworkflow.ProcessInstance",
+                        verbose_name="Process instance",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

@@ -32,6 +32,7 @@ class AllowAny(BasePermission):
     permission_classes list, but it's useful because it makes the intention
     more explicit.
     """
+
     pass
 
 
@@ -67,7 +68,7 @@ class PermissionMixin:
         for permission in self.get_permissions():
             if not permission.has_permission(request, self):
                 self.permission_denied(
-                    request, message=getattr(permission, 'message', None)
+                    request, message=getattr(permission, "message", None)
                 )
 
     def check_object_permissions(self, request, obj):
@@ -78,7 +79,7 @@ class PermissionMixin:
         for permission in self.get_permissions():
             if not permission.has_object_permission(request, self, obj):
                 self.permission_denied(
-                    request, message=getattr(permission, 'message', None)
+                    request, message=getattr(permission, "message", None)
                 )
 
 
@@ -88,11 +89,16 @@ class DefaultEditWorkFlowPermission(BasePermission):
         user = request.user
         if instance.is_wf_admin(user):
             return True
-        if instance.cur_node.status in ['draft', 'given up', 'rejected'] and instance.created_by == user:
+        if (
+            instance.cur_node.status in ["draft", "given up", "rejected"]
+            and instance.created_by == user
+        ):
             return True
         task = Task.objects.filter(
             Q(user=user) | Q(agent_user=user),
-            instance=instance, status='in progress').first()
+            instance=instance,
+            status="in progress",
+        ).first()
         if instance.cur_node.can_edit and task:
             return True
         return False

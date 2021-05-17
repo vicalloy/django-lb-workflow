@@ -7,11 +7,14 @@ pyenv:
 	pipenv install -d --skip-lock
 	pipenv shell
 
+black:
+		black ./
+
 test:
 	coverage run ./runtests.py
 
 isort:
-	isort --recursive lbworkflow
+	isort ./lbworkflow
 
 upload:
 	python setup.py sdist --formats=gztar register upload
@@ -35,3 +38,7 @@ build_docker_image:
 
 create_docker_container:
 	docker run -d -p 9000:9000 --name lbworkflow lbworkflow:0.9
+
+install-pre-commit:
+		pre-commit install
+		pre-commit run --all-files

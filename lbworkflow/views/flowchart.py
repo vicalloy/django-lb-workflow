@@ -1,17 +1,18 @@
-from django.template import Context
-from django.template import Template
+from django.template import Context, Template
 
-from lbworkflow.models import Process
-from lbworkflow.models import ProcessInstance
+from lbworkflow.models import Process, ProcessInstance
 
 
 def get_event_transitions(process_instance):
     from lbworkflow.models import Event
-    events = Event.objects.filter(instance=process_instance).order_by('-created_on', '-id')
+
+    events = Event.objects.filter(instance=process_instance).order_by(
+        "-created_on", "-id"
+    )
     transitions = []
     for event in events:
         transition = (event.old_node, event.new_node)
-        if event.new_node.status in ['rejected', 'given up']:
+        if event.new_node.status in ["rejected", "given up"]:
             break
         if transition not in transitions:
             transitions.append(transition)
@@ -47,10 +48,10 @@ def generate_mermaid_src(process_instance):
     nodes = process.node_set.all()
     ctx = Context(
         {
-            'name': process.name,
-            'nodes': nodes,
-            'transitions': transitions,
-            'event_transitions': event_transitions
+            "name": process.name,
+            "nodes": nodes,
+            "transitions": transitions,
+            "event_transitions": event_transitions,
         }
     )
     t = Template(file_template)
@@ -59,23 +60,19 @@ def generate_mermaid_src(process_instance):
 
 def process_flowchart(request, wf_code):
     from django.shortcuts import render
-    template_name = 'lbworkflow/flowchart.html'
+
+    template_name = "lbworkflow/flowchart.html"
     process = Process.objects.get(code=wf_code)
     graph_src = generate_mermaid_src(process)
-    ctx = {
-        'process': process,
-        'graph_src': graph_src
-    }
+    ctx = {"process": process, "graph_src": graph_src}
     return render(request, template_name, ctx)
 
 
 def process_instance_flowchart(request, pk):
     from django.shortcuts import render
-    template_name = 'lbworkflow/flowchart.html'
+
+    template_name = "lbworkflow/flowchart.html"
     process_instance = ProcessInstance.objects.get(pk=pk)
     graph_src = generate_mermaid_src(process_instance)
-    ctx = {
-        'process': process_instance.process,
-        'graph_src': graph_src
-    }
+    ctx = {"process": process_instance.process, "graph_src": graph_src}
     return render(request, template_name, ctx)

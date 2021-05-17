@@ -15,9 +15,10 @@ def run_test():
 
 
 if __name__ == "__main__":
-    os.environ['DJANGO_SETTINGS_MODULE'] = "lbworkflow.tests.settings"
+    os.environ["DJANGO_SETTINGS_MODULE"] = "lbworkflow.tests.settings"
     django.setup()
     from django.core.management import call_command
+
     if (len(sys.argv)) == 2:
         call_command(sys.argv[1])
         sys.exit(0)

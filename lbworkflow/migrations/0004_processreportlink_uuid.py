@@ -7,13 +7,15 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lbworkflow', '0003_auto_20200221_0438'),
+        ("lbworkflow", "0003_auto_20200221_0438"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='processreportlink',
-            name='uuid',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+            model_name="processreportlink",
+            name="uuid",
+            field=models.UUIDField(
+                default=uuid.uuid4, editable=False, unique=True
+            ),
         ),
     ]

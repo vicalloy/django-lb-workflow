@@ -1,8 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect
-from django.views.generic.base import ContextMixin
-from django.views.generic.base import View
+from django.views.generic.base import ContextMixin, View
 
 try:
     from crispy_forms.helper import FormHelper
@@ -10,7 +9,13 @@ except ImportError:
     pass
 
 
-__all__ = ('FormsMixin', 'ModelFormsMixin', 'FormSetMixin', 'FormsView', 'BSFormSetMixin')
+__all__ = (
+    "FormsMixin",
+    "ModelFormsMixin",
+    "FormSetMixin",
+    "FormsView",
+    "BSFormSetMixin",
+)
 
 
 class FormsMixin(ContextMixin):
@@ -49,21 +54,25 @@ class FormsMixin(ContextMixin):
         forms = {}
         self.forms = forms
         for form_class_key, form_class in form_classes.items():
-            forms[form_class_key] = self.create_form(form_class_key, form_class)
+            forms[form_class_key] = self.create_form(
+                form_class_key, form_class
+            )
         return forms
 
     def get_form_kwargs(self, form_class_key, form_class):
         """
         Returns the keyword arguments for instantiating the form.
         """
-        kwargs = {'initial': self.get_initial(form_class_key)}
-        if form_class_key != 'form':
-            kwargs['prefix'] = form_class_key
-        if self.request.method in ('POST', 'PUT'):
-            kwargs.update({
-                'data': self.request.POST,
-                'files': self.request.FILES,
-            })
+        kwargs = {"initial": self.get_initial(form_class_key)}
+        if form_class_key != "form":
+            kwargs["prefix"] = form_class_key
+        if self.request.method in ("POST", "PUT"):
+            kwargs.update(
+                {
+                    "data": self.request.POST,
+                    "files": self.request.FILES,
+                }
+            )
         return kwargs
 
     def get_success_url(self):
@@ -75,7 +84,8 @@ class FormsMixin(ContextMixin):
             url = self.success_url
         else:
             raise ImproperlyConfigured(
-                "No URL to redirect to. Provide a success_url.")
+                "No URL to redirect to. Provide a success_url."
+            )
         return url
 
     def forms_valid(self, **forms):
@@ -93,41 +103,40 @@ class FormsMixin(ContextMixin):
 
 
 class ModelFormsMixin:
-
     def get_form_kwargs(self, form_class_key, form_class):
         kwargs = super().get_form_kwargs(form_class_key, form_class)
         # not (ModelForm or ModelFormSet)
-        formset_form_class = getattr(form_class, 'form', str)
-        if not issubclass(form_class, ModelForm) \
-                and not issubclass(formset_form_class, ModelForm):
+        formset_form_class = getattr(form_class, "form", str)
+        if not issubclass(form_class, ModelForm) and not issubclass(
+            formset_form_class, ModelForm
+        ):
             return kwargs
-        instance = getattr(self, 'object', None)
+        instance = getattr(self, "object", None)
         # if have main form, try to get instance from main form
         # other form may have ForeignKey to main object
-        form = self.forms.get('form')
-        if form and getattr(form, 'instance', None):
-            instance = getattr(form, 'instance', None)
-        kwargs['instance'] = instance
+        form = self.forms.get("form")
+        if form and getattr(form, "instance", None):
+            instance = getattr(form, "instance", None)
+        kwargs["instance"] = instance
         return kwargs
 
 
 def is_formset(form):
     # form class
-    if getattr(form, '__name__', '').endswith('FormSet'):
+    if getattr(form, "__name__", "").endswith("FormSet"):
         return True
     # form instance
-    return type(form).__name__.endswith('FormSet')
+    return type(form).__name__.endswith("FormSet")
 
 
 class FormSetMixin:
-
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
         formset_list = []
         for form in self.forms.values():
             if is_formset(form):
                 formset_list.append(form)
-        kwargs['formset_list'] = formset_list
+        kwargs["formset_list"] = formset_list
         return kwargs
 
     def after_create_formset(self, form_class_key, formset):
@@ -155,6 +164,7 @@ class FormsView(FormSetMixin, ModelFormsMixin, FormsMixin, View):
     """
     A mixin that renders any number of forms on GET and processes it on POST.
     """
+
     def get(self, request, *args, **kwargs):
         """
         Handles GET requests and instantiates a blank version of the forms.
@@ -185,9 +195,10 @@ class BSFormSetMixin:
     """
     Crispy & Bootstrap for formset
     """
+
     def after_create_formset(self, form_class_key, formset):
         super().after_create_formset(form_class_key, formset)
         helper = FormHelper()
-        helper.template = 'lbadminlte/bootstrap3/table_inline_formset.html'
+        helper.template = "lbadminlte/bootstrap3/table_inline_formset.html"
         formset.helper = helper
         return formset

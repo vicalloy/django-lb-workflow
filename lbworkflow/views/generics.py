@@ -1,25 +1,24 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
-from django.views.generic.base import ContextMixin
-from django.views.generic.base import TemplateResponseMixin
-from django.views.generic.base import View
-from django.views.generic.list import MultipleObjectMixin
-from django.views.generic.list import MultipleObjectTemplateResponseMixin
-from lbutils import do_filter
-from lbutils import simple_export2xlsx
+from django.views.generic.base import ContextMixin, TemplateResponseMixin, View
+from django.views.generic.list import (
+    MultipleObjectMixin,
+    MultipleObjectTemplateResponseMixin,
+)
+from lbutils import do_filter, simple_export2xlsx
 
 from lbworkflow import settings
-from lbworkflow.forms import BSQuickSearchForm
-from lbworkflow.forms import BSQuickSearchWithExportForm
+from lbworkflow.forms import BSQuickSearchForm, BSQuickSearchWithExportForm
 from lbworkflow.models import Process
 
 from .forms import FormsView
-from .helper import get_base_wf_permit_query_param
-from .helper import get_wf_template_names
-from .helper import user_wf_info_as_dict
+from .helper import (
+    get_base_wf_permit_query_param,
+    get_wf_template_names,
+    user_wf_info_as_dict,
+)
 from .permissions import PermissionMixin
 
 
@@ -34,13 +33,14 @@ class WorkflowTemplateResponseMixin(TemplateResponseMixin):
             return get_wf_template_names(
                 self.wf_code,
                 self.get_base_template_name(),
-                wf_object=getattr(self, 'object', None),
-                model=getattr(self, 'model', None))
+                wf_object=getattr(self, "object", None),
+                model=getattr(self, "model", None),
+            )
 
 
 class ExcelResponseMixin:
     excel_titles = []
-    excel_file_name = 'flow'
+    excel_file_name = "flow"
 
     def get_excel_data(self, o):
         return []
@@ -55,8 +55,11 @@ class ExcelResponseMixin:
 
     def render_to_excel(self, object_list, **kwargs):
         return simple_export2xlsx(
-            self.excel_file_name, self.excel_titles,
-            object_list, lambda o: self.get_formated_excel_data(o))
+            self.excel_file_name,
+            self.excel_titles,
+            object_list,
+            lambda o: self.get_formated_excel_data(o),
+        )
 
 
 class CreateView(PermissionMixin, WorkflowTemplateResponseMixin, FormsView):
@@ -68,19 +71,19 @@ class CreateView(PermissionMixin, WorkflowTemplateResponseMixin, FormsView):
     )
     wf_code = None
     model = None
-    base_template_name = 'form.html'
+    base_template_name = "form.html"
 
     def get_success_url(self):
-        return reverse('wf_detail', args=(self.object.pinstance.pk, ))
+        return reverse("wf_detail", args=(self.object.pinstance.pk,))
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        kwargs['wf_code'] = self.wf_code
-        kwargs['process'] = get_object_or_404(Process, code=self.wf_code)
+        kwargs["wf_code"] = self.wf_code
+        kwargs["process"] = get_object_or_404(Process, code=self.wf_code)
         return kwargs
 
     def forms_valid(self, **forms):
-        form = forms.pop('form')
+        form = forms.pop("form")
         self.object = form.save_new_process(self.request, self.wf_code)
         # TODO refactor, you may update total amount base items
         for form in forms.values():
@@ -104,10 +107,10 @@ class UpdateView(PermissionMixin, WorkflowTemplateResponseMixin, FormsView):
     )
     wf_code = None
     model = None
-    base_template_name = 'form.html'
+    base_template_name = "form.html"
 
     def get_success_url(self):
-        return reverse('wf_detail', args=(self.object.pinstance.pk, ))
+        return reverse("wf_detail", args=(self.object.pinstance.pk,))
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
@@ -115,7 +118,7 @@ class UpdateView(PermissionMixin, WorkflowTemplateResponseMixin, FormsView):
         return kwargs
 
     def forms_valid(self, **forms):
-        form = forms.pop('form')
+        form = forms.pop("form")
         self.object = form.update_process(self.request)
         # TODO refactor
         for form in forms.values():
@@ -134,8 +137,8 @@ class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
     search_form_class = BSQuickSearchForm
     quick_query_fields = []
     int_quick_query_fields = []
-    ordering = '-pk'
-    base_template_name = 'list.html'
+    ordering = "-pk"
+    base_template_name = "list.html"
 
     def dispatch(self, request, *args, wf_code=None, **kwargs):
         self.wf_code = wf_code
@@ -146,7 +149,12 @@ class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
 
     def do_filter(self, queryset, query_data):
         quick_query_fields = self.get_quick_query_fields()
-        return do_filter(queryset, query_data, quick_query_fields, self.int_quick_query_fields)
+        return do_filter(
+            queryset,
+            query_data,
+            quick_query_fields,
+            self.int_quick_query_fields,
+        )
 
     def get_search_form(self, request):
         if not self.search_form_class:
@@ -160,17 +168,18 @@ class BaseListView(ExcelResponseMixin, MultipleObjectMixin, View):
         search_form = self.get_search_form(request)
         queryset = self.get_queryset()
         self.object_list = self.do_filter(
-            queryset,
-            search_form.cleaned_data if search_form else {})
+            queryset, search_form.cleaned_data if search_form else {}
+        )
 
-        if 'export' in request.GET:
+        if "export" in request.GET:
             return self.render_to_excel(self.object_list)
 
         process = None
         if self.wf_code:
             process = get_object_or_404(Process, code=self.wf_code)
         context = self.get_context_data(
-            search_form=search_form, process=process)
+            search_form=search_form, process=process
+        )
         return self.render_to_response(context)
 
 
@@ -185,10 +194,10 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
 
     def get_quick_query_fields(self):
         fields = [
-            'pinstance__no',
-            'pinstance__summary',
-            'pinstance__created_by__username',
-            'pinstance__cur_node__name',
+            "pinstance__no",
+            "pinstance__summary",
+            "pinstance__created_by__username",
+            "pinstance__cur_node__name",
         ]
         fields.extend(self.quick_query_fields)
         return fields
@@ -209,12 +218,14 @@ class WFListView(WorkflowTemplateResponseMixin, BaseListView):
         return qs
 
 
-class DetailView(PermissionMixin, WorkflowTemplateResponseMixin, ContextMixin, View):
+class DetailView(
+    PermissionMixin, WorkflowTemplateResponseMixin, ContextMixin, View
+):
     permission_classes = settings.perform_import(
         settings.DEFAULT_DETAIL_WF_PERMISSION_CLASSES
     )
-    base_template_name = 'detail.html'
-    base_print_template_name = 'print.html'
+    base_template_name = "detail.html"
+    base_print_template_name = "print.html"
 
     def get_base_template_name(self):
         if self.is_print:
@@ -225,10 +236,14 @@ class DetailView(PermissionMixin, WorkflowTemplateResponseMixin, ContextMixin, V
         user_wf_info = user_wf_info_as_dict(self.object, request.user)
         context = self.get_context_data(**user_wf_info)
         instance = self.object.pinstance
-        if not self.is_print and instance.cur_node.can_edit \
-                and instance.cur_node.audit_view_type == 'edit' \
-                and user_wf_info['task'] and instance.cur_node.resolution == 'started':
-            return redirect(reverse('wf_edit', args=[instance.pk]))
+        if (
+            not self.is_print
+            and instance.cur_node.can_edit
+            and instance.cur_node.audit_view_type == "edit"
+            and user_wf_info["task"]
+            and instance.cur_node.resolution == "started"
+        ):
+            return redirect(reverse("wf_edit", args=[instance.pk]))
         return self.render_to_response(context)
 
     def dispatch(self, request, wf_object, is_print, *args, **kwargs):
