@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "admin-lte": "2.3.11",
-    "blueimp-file-upload": "9.12.5",
+    "blueimp-file-upload": "9.22.1",
     "flatpickr": "2.5.6",
     "font-awesome": "4.7.0",
     "html5shiv": "^3.7.3",
