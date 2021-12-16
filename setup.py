@@ -14,7 +14,7 @@ setup(
     python_requires=">=3.5",
     include_package_data=True,
     install_requires=[
-        "django>=2.2",
+        "django>=2.2,<4.0",
         "jsonfield>=1.0.1",
         "xlsxwriter>=0.9.6",
         "jinja2>=2.9.6",
@@ -30,9 +30,8 @@ setup(
         "options": [
             "django_select2>=7.2.0",
             "django-compressor>=2.1.1",
-            "django-bower>=5.2.0",
             "django-crispy-forms>=1.6",
-            "django-lb-adminlte>=1.1.0",
+            "django-lb-adminlte>=1.2.0",
             "django-impersonate",
             "django-stronghold",
             "django-bootstrap-pagination>=1.7.0",

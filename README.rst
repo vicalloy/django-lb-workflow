@@ -69,7 +69,7 @@ Run test project
 
 Running the test project is as simple as: ::
 
-    python testproject/manage.py bower_install
+    npm install
     python testproject/wfgen.py
     make run
 

@@ -34,11 +34,11 @@ reload_test_data:
 	cd testproject;python manage.py callfunc lbworkflow.tests.purchase.wfdata.load_data
 
 build_docker_image:
-	docker build -t lbworkflow:0.9 .
+	docker build -t lbworkflow .
 
 create_docker_container:
-	docker run -d -p 9000:9000 --name lbworkflow lbworkflow:0.9
+	docker run -d -p 9000:9000 --name lbworkflow lbworkflow
 
 install-pre-commit:
-		pre-commit install
-		pre-commit run --all-files
+	pre-commit install
+	pre-commit run --all-files

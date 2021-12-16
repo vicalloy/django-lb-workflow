@@ -3,6 +3,7 @@ vendor/
 bower_components/
 py3env/
 lbattachments/
+node_modules/
 *.swp
 
 # Byte-compiled / optimized / DLL files
