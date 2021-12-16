@@ -8,7 +8,7 @@ pyenv:
 	pipenv shell
 
 black:
-		black ./
+	black ./
 
 test:
 	coverage run ./runtests.py
