@@ -17,7 +17,7 @@ isort:
 	isort ./lbworkflow
 
 upload:
-	python setup.py sdist --formats=gztar register upload
+	python setup.py sdist --formats=gztar upload
 
 wfgen:
 	python testproject/wfgen.py

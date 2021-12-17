@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "32067cdc79249f3ed984e923525eff97dfc338b719ec2ad0d7add60f746a094d"
+            "sha256": "a3c5680598b4f54a46833c97f7eb7cfcd9c19d10ed9ccf4751c1cbc14791e949"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -68,9 +68,10 @@
         },
         "django-lb-adminlte": {
             "hashes": [
-                "sha256:09c40979a74e6a498c26c084afc95db4d668e69b9ca2f8f4f89e57b32dcdfa7e"
+                "sha256:7de9061b275cb9c6c891980c9039bb2fecfabaa8b160acfe3292f277fe0b6f3f"
             ],
-            "version": "==1.2.0"
+            "index": "pypi",
+            "version": "==1.2.1"
         },
         "django-lb-workflow": {
             "editable": true,

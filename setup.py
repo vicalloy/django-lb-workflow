@@ -31,7 +31,7 @@ setup(
             "django_select2>=7.2.0",
             "django-compressor>=2.1.1",
             "django-crispy-forms>=1.6",
-            "django-lb-adminlte>=1.2.0",
+            "django-lb-adminlte>=1.2.1",
             "django-impersonate",
             "django-stronghold",
             "django-bootstrap-pagination>=1.7.0",
