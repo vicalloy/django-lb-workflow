@@ -31,10 +31,29 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
-blueimp-file-upload@9.12.5:
-  version "9.12.5"
-  resolved "https://registry.npmmirror.com/blueimp-file-upload/download/blueimp-file-upload-9.12.5.tgz#d148b134787ecea06456abc7ece84e3e3b3c26ab"
-  integrity sha1-0UixNHh+zqBkVqvH7OhOPjs8Jqs=
+blueimp-canvas-to-blob@3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/blueimp-canvas-to-blob/-/blueimp-canvas-to-blob-3.5.0.tgz#5679ac32f6a2835821f0c3ad661719ff85a9236b"
+  integrity sha1-VnmsMvaig1gh8MOtZhcZ/4WpI2s=
+
+blueimp-file-upload@9.22.1:
+  version "9.22.1"
+  resolved "https://registry.yarnpkg.com/blueimp-file-upload/-/blueimp-file-upload-9.22.1.tgz#08a9fccbaf1ec930acf6242c217620b057f0ecc6"
+  integrity sha512-ezGkn/agWUWZOw8mYa5yYC9LvUlrT5bN3zk2fPlpLWgyhbBMz8BSGKO3M48BWlXWAeR+lVtEhy9xiG8FLnHEVw==
+  optionalDependencies:
+    blueimp-canvas-to-blob "3.5.0"
+    blueimp-load-image "2.12.2"
+    blueimp-tmpl "3.6.0"
+
+blueimp-load-image@2.12.2:
+  version "2.12.2"
+  resolved "https://registry.yarnpkg.com/blueimp-load-image/-/blueimp-load-image-2.12.2.tgz#6a17598aab858d4fbf01543e0631141b51057c87"
+  integrity sha1-ahdZiquFjU+/AVQ+BjEUG1EFfIc=
+
+blueimp-tmpl@3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/blueimp-tmpl/-/blueimp-tmpl-3.6.0.tgz#a4910975d042e2bc03ba77f0e62d04f1548a524c"
+  integrity sha1-pJEJddBC4rwDunfw5i0E8VSKUkw=
 
 camelcase@^5.0.0:
   version "5.3.1"
