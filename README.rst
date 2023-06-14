@@ -18,7 +18,7 @@ Demo site
 
 Demo site: http://wf.haoluobo.com/
 
-username: ``admin`` password: ``password``
+username: ``admin`` password: ``$password``
 
 Switch to another user: http://wf.haoluobo.com/impersonate/search
 
